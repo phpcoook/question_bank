@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tutor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -21,22 +21,21 @@ class TutorController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'email' => 'required|email|unique:students,email',
+                'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8',
-                'grad' => 'nullable|string|max:255',
                 'date_of_birth' => 'required|date',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
 
-                $tutor = new Tutor();
+                $tutor = new User();
                 $tutor->first_name = $request->first_name;
                 $tutor->last_name = $request->last_name;
                 $tutor->email = $request->email;
                 $tutor->password = bcrypt($request->password);
-                $tutor->grad = $request->grad;
-                $tutor->birthdate = $request->date_of_birth;
+                $tutor->date_of_birth = $request->date_of_birth;
+                $tutor->role = 'tutor';
                 $tutor->save();
 
                 return redirect()->route('tutor.index')->with('success', 'Tutor created successfully.');
@@ -55,7 +54,7 @@ class TutorController extends Controller
     public function getTutorData()
     {
         try {
-            $tutor = Tutor::all();
+            $tutor = User::where('role','tutor')->get();
             return DataTables::of($tutor)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($tutor) {
@@ -74,7 +73,7 @@ class TutorController extends Controller
     public function edit($id)
     {
         try {
-            $data = Tutor::find($id);
+            $data = User::find($id);
             return view('tutor.edit', compact('data'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -88,22 +87,19 @@ class TutorController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email',
-//            'password' => 'required|string|min:8',
-            'grad' => 'nullable|string|max:255',
             'date_of_birth' => 'required|date',
         ]);
         if ($validator->fails()) {
             return back()->withInput()->withErrors($validator);
         } else {
-            $tutor = Tutor::findOrFail($id);
+            $tutor = User::findOrFail($id);
             $tutor->first_name = $request->first_name;
             $tutor->last_name = $request->last_name;
             $tutor->email = $request->email;
             if (!empty($request->password)) {
                 $tutor->password = bcrypt($request->password);
             }
-            $tutor->grad = $request->grad;
-            $tutor->birthdate = $request->date_of_birth;
+            $tutor->date_of_birth = $request->date_of_birth;
             $tutor->save();
 
             return redirect()->route('tutor.index')->with('success', 'Tutor Update successfully.');
@@ -113,7 +109,7 @@ class TutorController extends Controller
     public function destroy($id)
     {
         try {
-            $tutor = Tutor::findOrFail($id);
+            $tutor = User::findOrFail($id);
             $tutor->delete();
             return response()->json(['success' => 'Record deleted successfully']);
         } catch (\Exception $e) {

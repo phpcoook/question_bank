@@ -12,15 +12,22 @@
             </div>
         </div>
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mx-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-success alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-check"></i></h5>
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
+
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mx-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert  alert-danger alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-ban"></i></h5>
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
 
@@ -31,7 +38,7 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label for="first_name">First Name ddd</label>
+                            <label for="first_name">First Name</label>
                             <input type="text" name="first_name" id="first_name" class="form-control"
                                    placeholder="Enter First Name" required>
                             @error('first_name')
@@ -62,14 +69,6 @@
                             <input type="password" name="password" id="password" class="form-control"
                                    placeholder="Enter Password" required>
                             @error('password')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="grade">Grade</label>
-                            <input type="text" name="grad" id="grade" class="form-control" placeholder="Enter Grade" required>
-                            @error('grade')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -114,12 +113,6 @@
                         required: true,
                         minlength: 6
                     },
-                    grade: {
-                        required: true,
-                        digits: true,
-                        minlength: 1,
-                        maxlength: 2
-                    },
                     date_of_birth: {
                         required: true,
                         date: true
@@ -141,12 +134,6 @@
                     password: {
                         required: "Please provide a password",
                         minlength: "Password must be at least 6 characters long"
-                    },
-                    grade: {
-                        required: "Please enter the grad",
-                        digits: "Please enter a valid number",
-                        minlength: "Grad must be at least 1 digit long",
-                        maxlength: "Grad must not exceed 2 digits"
                     },
                     date_of_birth: {
                         required: "Please select the date of birth",

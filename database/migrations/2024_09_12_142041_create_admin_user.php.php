@@ -18,7 +18,6 @@ return new class extends Migration {
         $user->email = 'admin@admin.com';
         $user->password = Hash::make(123456789);
         $user->role = 'admin';
-        $user->grad = null;
         $user->date_of_birth = '2024-09-18';
         $user->save();
     }

@@ -15,15 +15,22 @@
             </div>
         </div>
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mx-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-success alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-check"></i></h5>
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
+
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mx-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert  alert-danger alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-ban"></i></h5>
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
 
@@ -65,14 +72,14 @@
             $('#Student-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('student.data') }}",
+                    ajax: "{{ route('student.data') }}",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'first_name', name: 'first_name'},
                     {data: 'last_name', name: 'last_name'},
                     {data: 'email', name: 'email'},
-                    {data: 'grad', name: 'grad'},
-                    {data: 'birthdate', name: 'birthdate'},
+                    {data: 'grade', name: 'grade'},
+                    {data: 'date_of_birth', name: 'date_of_birth'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });

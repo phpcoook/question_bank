@@ -12,15 +12,22 @@
             </div>
         </div>
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mx-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-success alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-check"></i></h5>
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
+
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mx-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert  alert-danger alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-ban"></i></h5>
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
 
@@ -39,6 +46,15 @@
                                 <option value="challenging">Challenging</option>
                             </select>
                             @error('difficulty')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="code">Code</label>
+                            <input type="text" name="code" id="code" class="form-control"
+                                   placeholder="Enter Code" required>
+                            @error('code')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

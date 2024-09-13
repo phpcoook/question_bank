@@ -23,34 +23,30 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
+                'code' => 'required|integer',
                 'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
-                $code = date('ymdhis');
 
                 $question = new Question();
-                $question->code = $code;
+                $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->question = $request->question;
                 $question->answer = $request->answer;
                 $question->save();
 
-                Log::info('teskljkljklj');
                 if ($request->hasFile('image')) {
                     foreach ($request->file('image') as $image) {
-                        // Get the original name and generate a unique file name
                         $imageName = time() . '_' . $image->getClientOriginalName();
 
-                        // Move the file to the public directory (you can change the path)
                         $image->move(public_path('uploads/questions'), $imageName);
 
-                        // Create a new record in the question_images table
                         $questionImage = new QuestionImage();
-                        $questionImage->question_id = $question->id; // Associate with the question
-                        $questionImage->image_name = $imageName; // Store the file name
-                        $questionImage->save(); // Save the image record
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->save();
                     }
                 }
                 return redirect()->route('question.index')->with('success', 'Question created successfully.');
@@ -103,6 +99,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
+                'code' => 'required|integer',
                 'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
             if ($validator->fails()) {
@@ -113,6 +110,7 @@ class QuestionBanController extends Controller
                 $question->difficulty = $request->difficulty;
                 $question->question = $request->question;
                 $question->answer = $request->answer;
+                $question->code = $request->code;
                 $question->save();
 
                 if ($request->hasFile('image')) {

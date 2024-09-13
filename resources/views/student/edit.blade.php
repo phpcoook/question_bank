@@ -12,15 +12,22 @@
             </div>
         </div>
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show mx-3" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert alert-success alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-check"></i></h5>
+                    {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
+
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show mx-3" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert  alert-danger alert-dismissible mx-3">
+                <div class="d-flex gap-2">
+                    <h5><i class="icon fas fa-ban"></i></h5>
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
             </div>
         @endif
 
@@ -73,7 +80,7 @@
                         <div class="form-group">
                             <label for="grade">Grade</label>
                             <input type="text" name="grade" id="grade" class="form-control" placeholder="Enter Grade"
-                                   value="{{ old('grade', $data->grad) }}" required>
+                                   value="{{ old('grade', $data->grade) }}" required>
                             @error('grade')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -82,7 +89,7 @@
                         <div class="form-group">
                             <label for="date_of_birth">Date of Birth</label>
                             <input type="date" name="date_of_birth" id="date_of_birth" class="form-control"
-                                   value="{{ old('date_of_birth', $data->birthdate) }}" required>
+                                   value="{{ old('date_of_birth', $data->date_of_birth) }}" required>
                             @error('date_of_birth')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror

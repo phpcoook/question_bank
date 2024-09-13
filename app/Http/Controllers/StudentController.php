@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Student;
 use Yajra\DataTables\DataTables;
 
 class StudentController extends Controller
@@ -22,21 +21,20 @@ class StudentController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'email' => 'required|email|unique:students,email',
+                'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8',
-                'grad' => 'nullable|string|max:255',
+                'grade' => 'nullable|string|max:255',
                 'date_of_birth' => 'required|date',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
-
                 $user = new User();
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
                 $user->password = bcrypt($request->password);
-                $user->grad = $request->grade;
+                $user->grade = $request->grade;
                 $user->date_of_birth = $request->date_of_birth;
                 $user->role = 'student';
                 $user->save();
@@ -57,7 +55,7 @@ class StudentController extends Controller
     public function getStudentData()
     {
         try {
-            $student = Student::all();
+            $student = User::where('role', 'student')->get();
             return DataTables::of($student)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($student) {
@@ -76,7 +74,7 @@ class StudentController extends Controller
     public function edit($id)
     {
         try {
-            $data = Student::find($id);
+            $data = User::find($id);
             return view('student.edit', compact('data'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -97,15 +95,15 @@ class StudentController extends Controller
         if ($validator->fails()) {
             return back()->withInput()->withErrors($validator);
         } else {
-            $student = Student::findOrFail($id);
+            $student = User::findOrFail($id);
             $student->first_name = $request->first_name;
             $student->last_name = $request->last_name;
             $student->email = $request->email;
-            if(!empty($request->password)){
+            if (!empty($request->password)) {
                 $student->password = bcrypt($request->password);
             }
-            $student->grad = $request->grade;
-            $student->birthdate = $request->date_of_birth;
+            $student->grade = $request->grade;
+            $student->date_of_birth = $request->date_of_birth;
             $student->save();
 
             return redirect()->route('student.index')->with('success', 'Student Update successfully.');
@@ -115,7 +113,7 @@ class StudentController extends Controller
     public function destroy($id)
     {
         try {
-            $school = Student::findOrFail($id);
+            $school = User::findOrFail($id);
             $school->delete();
             return response()->json(['success' => 'Record deleted successfully']);
         } catch (\Exception $e) {
