@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <base href="{{ url('question_bank/') }}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>AdminLTE 3 | Log in</title>
