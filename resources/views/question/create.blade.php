@@ -128,10 +128,6 @@
                         required: true,
                         minlength: 10
                     },
-                    "image[]": {
-                        required: true,
-                        extension: "jpg|jpeg|png|gif"
-                    },
                     answer: {
                         required: true,
                         minlength: 5
@@ -144,10 +140,6 @@
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
-                    },
-                    "image[]": {
-                        required: "Please upload an image",
-                        extension: "Please upload a valid image file (jpg, jpeg, png, gif)"
                     },
                     answer: {
                         required: "Please provide an answer",

@@ -23,8 +23,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
-                'code' => 'required|integer',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+                'code' => 'required',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -41,7 +40,7 @@ class QuestionBanController extends Controller
                     foreach ($request->file('image') as $image) {
                         $imageName = time() . '_' . $image->getClientOriginalName();
 
-                        $image->move(public_path('uploads/questions'), $imageName);
+                        $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
                         $questionImage->question_id = $question->id;
@@ -99,8 +98,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
-                'code' => 'required|integer',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+                'code' => 'required',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -115,7 +113,7 @@ class QuestionBanController extends Controller
 
                 if ($request->hasFile('image')) {
                     foreach ($question->images as $oldImage) {
-                        $oldImagePath = public_path('uploads/questions/' . $oldImage->image_name);
+                        $oldImagePath = storage_path('app/images/' . $oldImage->image_name);
                         if (file_exists($oldImagePath)) {
                             unlink($oldImagePath);
                         }
@@ -128,7 +126,7 @@ class QuestionBanController extends Controller
                         $imageName = time() . '_' . $image->getClientOriginalName();
 
                         // Move the file to the public directory
-                        $image->move(public_path('uploads/questions'), $imageName);
+                         $image->storeAs('public', $imageName);
 
                         // Create a new record in the question_images table
                         $questionImage = new QuestionImage();

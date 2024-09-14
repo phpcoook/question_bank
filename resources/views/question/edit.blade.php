@@ -1,5 +1,16 @@
 @extends('layouts.layoutMaster')
 
+@section('page-style')
+    <style>
+        .input_image_div {
+            max-width: 41px;
+            margin-right: 12px;
+        }
+        .input_image {
+            max-width: -webkit-fill-available;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -86,7 +97,10 @@
                                 @if(!empty($image))
                                     @foreach($image as $image)
                                         <div class="input-group mb-3">
-                                            {{--                                            <img src="{{ asset('uploads/questions/' .$image->image_name)}} alt="{{$image->image_name}}" style="max-width: 100px; max-height: 100px; margin-right: 10px;"><img src="{{ asset('uploads/questions/' . $image->image_name) }}" alt="{{ $image->image_name }}" style="max-width: 100px; max-height: 100px; margin-right: 10px;">--}}
+                                            <div class="input_image_div">
+                                            <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                 alt="image" class="input_image">
+                                            </div>
                                             <input type="text" class="form-control" value="{{ $image->image_name }}"
                                                    readonly>
                                             <button type="button" class="btn btn-danger remove-image-row">Remove
@@ -150,10 +164,6 @@
                         required: true,
                         minlength: 10
                     },
-                    // "image[]": {
-                    //     required: true,
-                    //     extension: "jpg|jpeg|png|gif"
-                    // },
                     answer: {
                         required: true,
                         minlength: 5
@@ -167,10 +177,6 @@
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
                     },
-                    // "image[]": {
-                    //     required: "Please upload an image",
-                    //     extension: "Please upload a valid image file (jpg, jpeg, png, gif)"
-                    // },
                     answer: {
                         required: "Please provide an answer",
                         minlength: "Your answer must be at least 5 characters long"
