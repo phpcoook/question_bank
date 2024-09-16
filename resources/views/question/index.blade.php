@@ -1,6 +1,16 @@
 @extends('layouts.layoutMaster')
 @section('page-style')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <style>
+        .ellipsis {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .question-col, .answer-col {
+            max-width: 200px;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -75,11 +85,23 @@
                 ajax: "{{ route('questions.data') }}",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'code', name: 'code'}, // Adjust to match your data
-                    {data: 'difficulty', name: 'difficulty'}, // Adjust to match your data
-                    {data: 'question', name: 'question'}, // Adjust to match your data
-                    {data: 'answer', name: 'answer'}, // Adjust to match your data
-                    {data: 'actions', name: 'actions', orderable: false, searchable: false} // For action buttons
+                    {data: 'code', name: 'code'},
+                    {data: 'difficulty', name: 'difficulty'},
+                    {
+                        data: 'question',
+                        name: 'question',
+                        render: function (data, type, row) {
+                            return '<div class="ellipsis question-col" title="' + data + '">' + data + '</div>';
+                        }
+                    },
+                    {
+                        data: 'answer',
+                        name: 'answer',
+                        render: function (data, type, row) {
+                            return '<div class="ellipsis answer-col" title="' + data + '">' + data + '</div>';
+                        }
+                    },
+                    {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });
 

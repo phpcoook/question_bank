@@ -117,4 +117,8 @@ class TutorController extends Controller
             return response()->json(['error' => 'Something went wrong!'], 500);
         }
     }
+
+    public function dashboard(){
+        return view('tutor.dashboard');
+    }
 }

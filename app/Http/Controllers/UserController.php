@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function loginView()
     {
-        return view('login');
+        return view('adminlogin');
     }
 
     public function login(Request $request)
@@ -38,7 +38,11 @@ class UserController extends Controller
             if ($user && $user->email_verified_at !== null) {
                 // Attempt to authenticate the user
                 if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
-                    return redirect()->route('question.index'); // Redirect to intended page or dashboard
+                    if (Auth::user()->role == 'admin') {
+                        return redirect()->route('question.index'); // Redirect to intended page or dashboard
+                    }else if(Auth::user()->role == 'student' || Auth::user()->role == 'tutor'){
+                        return redirect()->route('login');
+                    }
                 } else {
                     return redirect()->back()
                         ->withErrors(['password' => 'Invalid credentials'])
@@ -57,9 +61,13 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::user()->role == 'admin') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('admin.login')->with('status', 'Successfully logged out.');
+        }
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         return redirect()->route('login')->with('status', 'Successfully logged out.');
     }
 }

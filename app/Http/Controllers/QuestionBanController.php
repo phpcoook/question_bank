@@ -147,13 +147,20 @@ class QuestionBanController extends Controller
     public function destroy($id)
     {
         try {
-            $school = Question::findOrFail($id);
-            $school->delete();
-            return response()->json(['success' => 'Record deleted successfully']);
+            $question = Question::findOrFail($id);
+            $questionImages = QuestionImage::where('question_id', $id)->get();
+            foreach ($questionImages as $image) {
+                $imagePath = public_path('uploads/questions/' . $image->image_name);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $image->delete();
+            }
+            $question->delete();
+            return response()->json(['success' => 'Question and associated images deleted successfully']);
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
             return response()->json(['error' => 'Something went wrong!'], 500);
         }
     }
-
 }

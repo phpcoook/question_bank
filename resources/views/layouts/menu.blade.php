@@ -26,23 +26,41 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <a href="{{ route('question.index') }}"
-                   class="nav-link {{ request()->routeIs('question.index') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Question List</p>
-                </a>
+                @if(Auth::user()->role == 'admin')
+                    <a href="{{ route('question.index') }}"
+                       class="nav-link {{ request()->routeIs('question.index') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Question List</p>
+                    </a>
 
-                <a href="{{ route('student.index') }}"
-                   class="nav-link {{ request()->routeIs('student.index') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Student List</p>
-                </a>
+                    <a href="{{ route('student.index') }}"
+                       class="nav-link {{ request()->routeIs('student.index') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Student List</p>
+                    </a>
 
-                <a href="{{ route('tutor.index') }}"
-                   class="nav-link {{ request()->routeIs('tutor.index') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Tutor List</p>
-                </a>
+                    <a href="{{ route('tutor.index') }}"
+                       class="nav-link {{ request()->routeIs('tutor.index') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Tutor List</p>
+                    </a>
+                @endif
+
+                    @if(Auth::user()->role == 'student')
+                        <a href="{{ route('student.dashboard') }}"
+                           class="nav-link {{ request()->routeIs('student.dashboard') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    @endif
+
+                    @if(Auth::user()->role == 'tutor')
+                        <a href="{{ route('tutor.dashboard') }}"
+                           class="nav-link {{ request()->routeIs('tutor.dashboard') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    @endif
 
                 <li class="nav-item">
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
