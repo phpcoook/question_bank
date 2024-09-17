@@ -80,8 +80,7 @@
 
                         <div class="form-group">
                             <label for="question">Question</label>
-                            <input type="text" class="form-control" name="question" placeholder="Enter Question"
-                                   value="{{ old('question', $data->question) }}">
+                            <textarea class="form-control" name="question" rows="3" placeholder="Enter Question">{{ old('question', $data->question) }}</textarea>
                             @error('question')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -103,12 +102,14 @@
                                             </div>
                                             <input type="text" class="form-control" value="{{ $image->image_name }}"
                                                    readonly>
-                                            <button type="button" class="btn btn-danger remove-image-row">Remove
+                                            <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
+                                            <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove
                                             </button>
                                         </div>
                                     @endforeach
                                 @endif
                             </div>
+                            <input type="hidden" name="remove_images" id="remove_images" value="">
                             @error('image')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -116,12 +117,12 @@
 
                         <div class="form-group">
                             <label for="answer">Answer</label>
-                            <input type="text" name="answer" class="form-control" placeholder="Enter Answer"
-                                   value="{{ old('answer', $data->answer) }}">
+                            <textarea name="answer" class="form-control" rows="3" placeholder="Enter Answer">{{ old('answer', $data->answer) }}</textarea>
                             @error('answer')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+
                     </div>
 
                     <div class="card-footer d-flex justify-content-end">
@@ -135,24 +136,53 @@
 @endsection
 
 @section('page-script')
-    <script>
-        $(document).ready(function () {
-            // Handle adding new image input fields dynamically
-            $(document).on('click', '.add-image-row', function () {
-                var newRow = `
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" name="image[]">
-                        <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                    </div>`;
-                $('#image-rows').append(newRow);
-            });
+{{--    <script>--}}
+{{--        $(document).ready(function () {--}}
+{{--            // Handle adding new image input fields dynamically--}}
+{{--            $(document).on('click', '.add-image-row', function () {--}}
+{{--                var newRow = `--}}
+{{--                    <div class="input-group mb-3">--}}
+{{--                        <input type="file" class="form-control" name="image[]">--}}
+{{--                        <button type="button" class="btn btn-danger remove-image-row">Remove</button>--}}
+{{--                    </div>`;--}}
+{{--                $('#image-rows').append(newRow);--}}
+{{--            });--}}
 
-            // Handle removing an image row
-            $(document).on('click', '.remove-image-row', function () {
-                $(this).closest('.input-group').remove();
-            });
+{{--            // Handle removing an image row--}}
+{{--            $(document).on('click', '.remove-image-row', function () {--}}
+{{--                $(this).closest('.input-group').remove();--}}
+{{--            });--}}
+{{--        });--}}
+{{--    </script>--}}
+<script>
+    $(document).ready(function () {
+        // Handle adding new image input fields dynamically
+        $(document).on('click', '.add-image-row', function () {
+            var newRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="image[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+            $('#image-rows').append(newRow);
         });
-    </script>
+
+        // Handle removing an image row
+        $(document).on('click', '.remove-image-row', function () {
+            var imageId = $(this).data('image-id'); // Check if the image has an ID associated with it
+            if (imageId) {
+                // Add the image ID to the hidden field if it exists
+                const currentValue = $('#remove_images').val() ? $('#remove_images').val().split(',') : [];
+                if (!currentValue.includes(imageId.toString())) {
+                    currentValue.push(imageId);
+                    $('#remove_images').val(currentValue.join(','));
+                }
+            }
+            // Remove the image row from the DOM
+            $(this).closest('.input-group').remove();
+        });
+    });
+</script>
+
     <script>
         $(document).ready(function () {
             $("#question-edit").validate({

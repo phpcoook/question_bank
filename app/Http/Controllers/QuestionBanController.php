@@ -95,6 +95,8 @@ class QuestionBanController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            Log::info('$request');
+            Log::info($request);
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
@@ -111,22 +113,29 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->save();
 
-                if ($request->hasFile('image')) {
-                    foreach ($question->images as $oldImage) {
-                        $oldImagePath = storage_path('app/images/' . $oldImage->image_name);
-                        if (file_exists($oldImagePath)) {
-                            unlink($oldImagePath);
+                // Handle image removal
+                if ($request->remove_images) {
+                    $removeImages = explode(',', $request->remove_images);
+                    foreach ($removeImages as $imageId) {
+                        $oldImage = QuestionImage::find($imageId);
+                        if ($oldImage) {
+                            $oldImagePath = storage_path('app/public/images/' . $oldImage->image_name);
+                            if (file_exists($oldImagePath)) {
+                                unlink($oldImagePath); // Remove image from storage
+                            }
+                            $oldImage->delete(); // Remove image record from database
                         }
-                        $oldImage->delete();
                     }
+                }
 
-                    // Upload new images
+                // Handle new image uploads
+                if ($request->hasFile('image')) {
                     foreach ($request->file('image') as $image) {
-                        // Get the original name and generate a unique file name
+                        // Generate a unique file name
                         $imageName = time() . '_' . $image->getClientOriginalName();
 
-                        // Move the file to the public directory
-                         $image->storeAs('public', $imageName);
+                        // Store the image in the storage directory (you can adjust the path as needed)
+                        $image->storeAs('public/images', $imageName);
 
                         // Create a new record in the question_images table
                         $questionImage = new QuestionImage();
@@ -135,6 +144,7 @@ class QuestionBanController extends Controller
                         $questionImage->save(); // Save the image record
                     }
                 }
+
                 return redirect()->route('question.index')->with('success', 'Question Update successfully.');
             }
 

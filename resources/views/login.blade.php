@@ -25,7 +25,7 @@
     <script>
         setTimeout(function () {
             $('.alert').fadeOut();
-        },800)
+        },3000)
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
