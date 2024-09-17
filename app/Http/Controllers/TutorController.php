@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Register;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
@@ -37,6 +39,9 @@ class TutorController extends Controller
                 $tutor->date_of_birth = $request->date_of_birth;
                 $tutor->role = 'tutor';
                 $tutor->save();
+
+                // Send the registration email
+                Mail::to($tutor->email)->send(new Register($tutor,$request->password));
 
                 return redirect()->route('tutor.index')->with('success', 'Tutor created successfully.');
             }

@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
-
+use App\Mail\Register;
+use Illuminate\Support\Facades\Mail;
 class StudentController extends Controller
 {
     public function loginView()
@@ -89,6 +90,9 @@ class StudentController extends Controller
                 $user->date_of_birth = $request->date_of_birth;
                 $user->role = 'student';
                 $user->save();
+
+                // Send the registration email
+                Mail::to($user->email)->send(new Register($user,$request->password));
 
                 return redirect()->route('student.index')->with('success', 'Student created successfully.');
             }
