@@ -114,7 +114,6 @@
                         },
                         success: function (result) {
                             $('#Question-table').DataTable().ajax.reload(); // Reload table data
-                            alert('Item deleted successfully!');
                         },
                         error: function (error) {
                             alert('Error deleting item!');

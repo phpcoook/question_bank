@@ -61,7 +61,7 @@
 
                         <div class="form-group">
                             <label for="question">Question</label>
-                            <textarea class="form-control" rows="3" name="question" placeholder="Enter ..."></textarea>
+                            <textarea class="form-control latex-editor" rows="3" name="question" placeholder="Enter ..."></textarea>
                             @error('question')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -82,12 +82,14 @@
 
                         <div class="form-group">
                             <label for="answer">Answer</label>
-                            <textarea class="form-control" rows="3" name="answer" placeholder="Enter ..."></textarea>
+                            <textarea class="form-control latex-editor" rows="3" name="answer" placeholder="Enter ..."></textarea>
                             @error('answer')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
+
+
 
                     <div class="card-footer d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -99,6 +101,36 @@
 @endsection
 
 @section('page-script')
+    <!-- Place the first <script> tag in your HTML's <head> -->
+    <script src="https://cdn.tiny.cloud/1/wjxs8gs2u0a4qac3s0lf3dfs2cwpor8tlwc84wx5u938irjw/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
+
+    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+    <script>
+        tinymce.init({
+            selector: 'textarea.latex-editor',
+            external_plugins: {
+                tiny_mce_wiris: '{{url('assets/js/math.js')}}',
+            },
+            draggable_modal: true,
+            extended_valid_elements: "*[.*]",
+            plugins: [
+                // Core editing features
+                'math', 'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                // Your account includes a free trial of TinyMCE premium features
+                // Try the most popular premium features until Oct 1, 2024:
+                'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown',
+            ],
+            toolbar: 'tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+        });
+    </script>
     <script>
         $(document).ready(function () {
             // Handle adding new image input fields dynamically

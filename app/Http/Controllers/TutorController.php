@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Hash;
 
 class TutorController extends Controller
 {
@@ -35,7 +36,7 @@ class TutorController extends Controller
                 $tutor->first_name = $request->first_name;
                 $tutor->last_name = $request->last_name;
                 $tutor->email = $request->email;
-                $tutor->password = bcrypt($request->password);
+                $tutor->password = Hash::make($request->password);
                 $tutor->date_of_birth = $request->date_of_birth;
                 $tutor->role = 'tutor';
                 $tutor->save();

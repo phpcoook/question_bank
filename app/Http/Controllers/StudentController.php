@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use App\Mail\Register;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+
 class StudentController extends Controller
 {
     public function loginView()
@@ -24,7 +26,7 @@ class StudentController extends Controller
             // Validate the login form data
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
-                'password' => 'required|min:6',
+                'password' => 'required|min:8',
             ]);
 
             if ($validator->fails()) {
@@ -85,7 +87,7 @@ class StudentController extends Controller
                 $user->first_name = $request->first_name;
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
-                $user->password = bcrypt($request->password);
+                $user->password = Hash::make($request->password);
                 $user->grade = $request->grade;
                 $user->date_of_birth = $request->date_of_birth;
                 $user->role = 'student';
@@ -139,11 +141,13 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
+        Log::info('$request');
+        Log::info($request);
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email',
-//            'password' => 'required|string|min:8',
+//            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'required|string|min:8',
             'grad' => 'nullable|string|max:255',
             'date_of_birth' => 'required|date',
         ]);
@@ -151,15 +155,27 @@ class StudentController extends Controller
             return back()->withInput()->withErrors($validator);
         } else {
             $student = User::findOrFail($id);
+
+            // Check if email or password is changed
+            $emailChanged = $student->email !== $request->email;
+            $passwordChanged = !empty($request->password);
+
             $student->first_name = $request->first_name;
             $student->last_name = $request->last_name;
             $student->email = $request->email;
-            if (!empty($request->password)) {
+
+            if ($passwordChanged) {
                 $student->password = bcrypt($request->password);
             }
+
             $student->grade = $request->grade;
             $student->date_of_birth = $request->date_of_birth;
             $student->save();
+
+            // Send email notification if email or password is updated
+            if ($emailChanged || $passwordChanged) {
+                Mail::to($request->email)->send(new Register($student,$request->password));
+            }
 
             return redirect()->route('student.index')->with('success', 'Student Update successfully.');
         }

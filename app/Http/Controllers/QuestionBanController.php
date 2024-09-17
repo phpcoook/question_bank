@@ -23,7 +23,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
-                'code' => 'required',
+                'code' => 'required|unique:question,code',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -32,8 +32,8 @@ class QuestionBanController extends Controller
                 $question = new Question();
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
-                $question->question = $request->question;
-                $question->answer = $request->answer;
+                $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
+                $question->answer = htmlspecialchars($request->answer, ENT_QUOTES, 'UTF-8');
                 $question->save();
 
                 if ($request->hasFile('image')) {
@@ -108,8 +108,8 @@ class QuestionBanController extends Controller
 
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
-                $question->question = $request->question;
-                $question->answer = $request->answer;
+                $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
+                $question->answer = htmlspecialchars($request->answer, ENT_QUOTES, 'UTF-8');
                 $question->code = $request->code;
                 $question->save();
 
