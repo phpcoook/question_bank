@@ -1,5 +1,5 @@
 @extends('layouts.layoutMaster')
-
+@section('title',env('WEB_NAME').' | Tutor Edit')
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">

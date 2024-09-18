@@ -36,18 +36,34 @@ class QuestionBanController extends Controller
                 $question->answer = htmlspecialchars($request->answer, ENT_QUOTES, 'UTF-8');
                 $question->save();
 
-                if ($request->hasFile('image')) {
-                    foreach ($request->file('image') as $image) {
+                // Handle question images
+                if ($request->hasFile('questionimage')) {
+                    foreach ($request->file('questionimage') as $image) {
                         $imageName = time() . '_' . $image->getClientOriginalName();
-
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
+                        $questionImage->type = 'question'; // Mark it as a question image
                         $questionImage->save();
                     }
                 }
+
+                // Handle answer images
+                if ($request->hasFile('answerimage')) {
+                    foreach ($request->file('answerimage') as $image) {
+                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $image->storeAs('public/images', $imageName);
+
+                        $questionImage = new QuestionImage();
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->type = 'answer'; // Mark it as an answer image
+                        $questionImage->save();
+                    }
+                }
+
                 return redirect()->route('question.index')->with('success', 'Question created successfully.');
             }
         } catch (\Exception $e) {
@@ -64,7 +80,7 @@ class QuestionBanController extends Controller
     public function getQuestionsData()
     {
         try {
-            $questions = Question::all();
+            $questions = Question::orderBy('created_at', 'desc')->get();
             return DataTables::of($questions)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($question) {
@@ -84,8 +100,8 @@ class QuestionBanController extends Controller
     {
         try {
             $data = Question::find($id);
-            $image = QuestionImage::where('question_id', $id)->get();
-            return view('question.edit', compact('data', 'image'));
+            $images = QuestionImage::where('question_id', $id)->get();
+            return view('question.edit', compact('data', 'images'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
@@ -95,8 +111,6 @@ class QuestionBanController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            Log::info('$request');
-            Log::info($request);
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
@@ -113,9 +127,9 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->save();
 
-                // Handle image removal
-                if ($request->remove_images) {
-                    $removeImages = explode(',', $request->remove_images);
+                // Handle question images removal
+                if ($request->remove_question_images) {
+                    $removeImages = explode(',', $request->remove_question_images);
                     foreach ($removeImages as $imageId) {
                         $oldImage = QuestionImage::find($imageId);
                         if ($oldImage) {
@@ -128,20 +142,47 @@ class QuestionBanController extends Controller
                     }
                 }
 
-                // Handle new image uploads
-                if ($request->hasFile('image')) {
-                    foreach ($request->file('image') as $image) {
-                        // Generate a unique file name
-                        $imageName = time() . '_' . $image->getClientOriginalName();
 
-                        // Store the image in the storage directory (you can adjust the path as needed)
+                // Handle answer images removal
+                if ($request->remove_answer_images) {
+                    $removeImages = explode(',', $request->remove_answer_images);
+                    foreach ($removeImages as $imageId) {
+                        $oldImage = QuestionImage::find($imageId);
+                        if ($oldImage) {
+                            $oldImagePath = storage_path('app/public/images/' . $oldImage->image_name);
+                            if (file_exists($oldImagePath)) {
+                                unlink($oldImagePath); // Remove image from storage
+                            }
+                            $oldImage->delete(); // Remove image record from database
+                        }
+                    }
+                }
+
+                // Handle question images
+                if ($request->hasFile('questionimage')) {
+                    foreach ($request->file('questionimage') as $image) {
+                        $imageName = time() . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
-                        // Create a new record in the question_images table
                         $questionImage = new QuestionImage();
-                        $questionImage->question_id = $question->id; // Associate with the question
-                        $questionImage->image_name = $imageName; // Store the file name
-                        $questionImage->save(); // Save the image record
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->type = 'question'; // Mark it as a question image
+                        $questionImage->save();
+                    }
+                }
+
+                // Handle answer images
+                if ($request->hasFile('answerimage')) {
+                    foreach ($request->file('answerimage') as $image) {
+                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $image->storeAs('public/images', $imageName);
+
+                        $questionImage = new QuestionImage();
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->type = 'answer'; // Mark it as an answer image
+                        $questionImage->save();
                     }
                 }
 
@@ -160,7 +201,7 @@ class QuestionBanController extends Controller
             $question = Question::findOrFail($id);
             $questionImages = QuestionImage::where('question_id', $id)->get();
             foreach ($questionImages as $image) {
-                $imagePath = public_path('uploads/questions/' . $image->image_name);
+                $imagePath = storage_path('app/public/images/' . $image->image_name);
                 if (file_exists($imagePath)) {
                     unlink($imagePath);
                 }

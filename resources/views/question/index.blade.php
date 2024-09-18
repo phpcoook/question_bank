@@ -1,4 +1,5 @@
 @extends('layouts.layoutMaster')
+@section('title',env('WEB_NAME').' | Question List')
 @section('page-style')
     <style>
         .ellipsis {

@@ -1,5 +1,5 @@
 @extends('layouts.layoutMaster')
-
+@section('title',env('WEB_NAME').' | Question Create')
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -41,9 +41,9 @@
                             <label for="difficulty">Difficulty</label>
                             <select name="difficulty" class="form-control" required>
                                 <option value="">Select Difficulty</option>
-                                <option value="foundation">Foundation</option>
-                                <option value="intermediate">Intermediate</option>
-                                <option value="challenging">Challenging</option>
+                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>Foundation</option>
+                                <option value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
+                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>Challenging</option>
                             </select>
                             @error('difficulty')
                             <div class="text-danger">{{ $message }}</div>
@@ -53,7 +53,7 @@
                         <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control"
-                                   placeholder="Enter Code" required>
+                                   placeholder="Enter Code" value="{{ old('code') }}" required>
                             @error('code')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -61,35 +61,49 @@
 
                         <div class="form-group">
                             <label for="question">Question</label>
-                            <textarea class="form-control latex-editor" rows="3" name="question" placeholder="Enter ..."></textarea>
+                            <textarea class="form-control latex-editor" rows="3" name="question" placeholder="Enter ...">{{ old('question') }}</textarea>
                             @error('question')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
+                    <!-- Question Image Upload -->
                         <div class="form-group">
-                            <label for="image">Image</label>
-                            <div id="image-rows">
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="image[]">
-                                    <button type="button" class="btn btn-success add-image-row">Add Image</button>
+                            <label for="questionimage">Question Image</label>
+                            <div id="question-image-rows">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="questionimage[]">
+                                    <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
                                 </div>
                             </div>
-                            @error('image')
+                            @error('questionimage')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="answer">Answer</label>
-                            <textarea class="form-control latex-editor" rows="3" name="answer" placeholder="Enter ..."></textarea>
+                            <textarea class="form-control latex-editor" rows="3" name="answer" placeholder="Enter ...">{{ old('answer') }}</textarea>
                             @error('answer')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <!-- Answer Image Upload -->
+                        <div class="form-group">
+                            <label for="answerimage">Answer Image</label>
+                            <div id="answer-image-rows">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="answerimage[]">
+                                    <button type="button" class="btn btn-success add-answer-image-row">Add Answer Image</button>
+                                </div>
+                            </div>
+                            @error('answerimage')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
-
-
 
                     <div class="card-footer d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -133,22 +147,33 @@
     </script>
     <script>
         $(document).ready(function () {
-            // Handle adding new image input fields dynamically
-            $(document).on('click', '.add-image-row', function () {
-                var newRow = `
-                    <div class="input-group mb-3">
-                        <input type="file" class="form-control" name="image[]">
-                        <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                    </div>`;
-                $('#image-rows').append(newRow);
+            // Handle adding new image input fields for question images
+            $(document).on('click', '.add-question-image-row', function () {
+                var newQuestionRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="questionimage[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+                $('#question-image-rows').append(newQuestionRow);
             });
 
-            // Handle removing an image row
+            // Handle adding new image input fields for answer images
+            $(document).on('click', '.add-answer-image-row', function () {
+                var newAnswerRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="answerimage[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+                $('#answer-image-rows').append(newAnswerRow);
+            });
+
+            // Handle removing an image row for both question and answer images
             $(document).on('click', '.remove-image-row', function () {
                 $(this).closest('.input-group').remove();
             });
         });
     </script>
+
     <script>
         $(document).ready(function () {
             $("#question-form").validate({

@@ -1,4 +1,5 @@
 @extends('layouts.layoutMaster')
+@section('title',env('WEB_NAME').' | Student List')
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">

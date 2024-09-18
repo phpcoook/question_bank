@@ -1,5 +1,5 @@
 @extends('layouts.layoutMaster')
-
+@section('title',env('WEB_NAME').' | Question Edit')
 @section('page-style')
     <style>
         .input_image_div {
@@ -87,32 +87,28 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="image">Image</label>
+                            <label for="image">Question Images</label>
                             <div id="image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="image[]">
-                                    <button type="button" class="btn btn-success add-image-row">Add Image</button>
+                                    <input type="file" class="form-control" name="questionimage[]">
+                                    <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
                                 </div>
-                                @if(!empty($image))
-                                    @foreach($image as $image)
-                                        <div class="input-group mb-3">
-                                            <div class="input_image_div">
-                                            <img src="{{ asset('storage/images/' . $image->image_name) }}"
-                                                 alt="image" class="input_image">
+                                @if(!empty($images))
+                                    @foreach($images as $image)
+                                        @if(!empty($image->type) && $image->type == 'question')
+                                            <div class="input-group mb-3">
+                                                <div class="input_image_div">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                </div>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
-                                            <input type="text" class="form-control" value="{{ $image->image_name }}"
-                                                   readonly>
-                                            <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                            <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove
-                                            </button>
-                                        </div>
+                                        @endif
                                     @endforeach
                                 @endif
                             </div>
-                            <input type="hidden" name="remove_images" id="remove_images" value="">
-                            @error('image')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            <input type="hidden" name="remove_question_images" id="remove_question_images" value="">
                         </div>
 
                         <div class="form-group">
@@ -121,6 +117,32 @@
                             @error('answer')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
+                        </div>
+
+                        <!-- Answer Images (Fixed part) -->
+                        <div class="form-group">
+                            <label for="answerimage">Answer Images</label>
+                            <div id="answer-image-rows">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="answerimage[]">
+                                    <button type="button" class="btn btn-success add-answer-image-row">Add Answer Image</button>
+                                </div>
+                                @if(!empty($images))
+                                    @foreach($images as $image)
+                                        @if(!empty($image->type) && $image->type == 'answer')
+                                            <div class="input-group mb-3">
+                                                <div class="input_image_div">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                </div>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </div>
+                            <input type="hidden" name="remove_answer_images" id="remove_answer_images" value="">
                         </div>
 
                     </div>
@@ -136,45 +158,37 @@
 @endsection
 
 @section('page-script')
-{{--    <script>--}}
-{{--        $(document).ready(function () {--}}
-{{--            // Handle adding new image input fields dynamically--}}
-{{--            $(document).on('click', '.add-image-row', function () {--}}
-{{--                var newRow = `--}}
-{{--                    <div class="input-group mb-3">--}}
-{{--                        <input type="file" class="form-control" name="image[]">--}}
-{{--                        <button type="button" class="btn btn-danger remove-image-row">Remove</button>--}}
-{{--                    </div>`;--}}
-{{--                $('#image-rows').append(newRow);--}}
-{{--            });--}}
-
-{{--            // Handle removing an image row--}}
-{{--            $(document).on('click', '.remove-image-row', function () {--}}
-{{--                $(this).closest('.input-group').remove();--}}
-{{--            });--}}
-{{--        });--}}
-{{--    </script>--}}
 <script>
     $(document).ready(function () {
         // Handle adding new image input fields dynamically
-        $(document).on('click', '.add-image-row', function () {
+        $(document).on('click', '.add-question-image-row', function () {
             var newRow = `
                 <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="image[]">
+                    <input type="file" class="form-control" name="questionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
             $('#image-rows').append(newRow);
         });
 
+        // Handle adding new image input fields for answer images
+        $(document).on('click', '.add-answer-image-row', function () {
+            var newAnswerRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="answerimage[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+            $('#answer-image-rows').append(newAnswerRow);
+        });
+
         // Handle removing an image row
         $(document).on('click', '.remove-image-row', function () {
-            var imageId = $(this).data('image-id'); // Check if the image has an ID associated with it
+            var imageId = $(this).data('image-id');
+            var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_answer_images';
             if (imageId) {
-                // Add the image ID to the hidden field if it exists
-                const currentValue = $('#remove_images').val() ? $('#remove_images').val().split(',') : [];
+                const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
                 if (!currentValue.includes(imageId.toString())) {
                     currentValue.push(imageId);
-                    $('#remove_images').val(currentValue.join(','));
+                    $(targetFieldId).val(currentValue.join(','));
                 }
             }
             // Remove the image row from the DOM

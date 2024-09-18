@@ -60,7 +60,7 @@ class TutorController extends Controller
     public function getTutorData()
     {
         try {
-            $tutor = User::where('role','tutor')->get();
+            $tutor = User::where('role','tutor')->orderBy('created_at', 'desc')->get();
             return DataTables::of($tutor)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($tutor) {

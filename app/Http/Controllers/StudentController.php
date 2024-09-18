@@ -112,7 +112,7 @@ class StudentController extends Controller
     public function getStudentData()
     {
         try {
-            $student = User::where('role', 'student')->get();
+            $student = User::where('role', 'student')->orderBy('created_at', 'desc')->get();
             return DataTables::of($student)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($student) {
@@ -141,8 +141,6 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
-        Log::info('$request');
-        Log::info($request);
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -158,22 +156,16 @@ class StudentController extends Controller
 
             // Check if email or password is changed
             $emailChanged = $student->email !== $request->email;
-            $passwordChanged = !empty($request->password);
 
             $student->first_name = $request->first_name;
             $student->last_name = $request->last_name;
             $student->email = $request->email;
-
-            if ($passwordChanged) {
-                $student->password = bcrypt($request->password);
-            }
-
             $student->grade = $request->grade;
             $student->date_of_birth = $request->date_of_birth;
             $student->save();
 
             // Send email notification if email or password is updated
-            if ($emailChanged || $passwordChanged) {
+            if (!empty($emailChanged)) {
                 Mail::to($request->email)->send(new Register($student,$request->password));
             }
 

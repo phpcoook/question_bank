@@ -1,5 +1,5 @@
 @extends('layouts.layoutMaster')
-
+@section('title',env('WEB_NAME').' | Tutor Create')
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -40,7 +40,7 @@
                         <div class="form-group">
                             <label for="first_name">First Name</label>
                             <input type="text" name="first_name" id="first_name" class="form-control"
-                                   placeholder="Enter First Name" required>
+                                   placeholder="Enter First Name" value="{{ old('first_name') }}" required>
                             @error('first_name')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -49,7 +49,7 @@
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
                             <input type="text" name="last_name" id="last_name" class="form-control"
-                                   placeholder="Enter Last Name" required>
+                                   placeholder="Enter Last Name" value="{{ old('last_name') }}" required>
                             @error('last_name')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -58,7 +58,7 @@
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input type="email" name="email" id="email" class="form-control" placeholder="Enter Email"
-                                   required>
+                                   value="{{ old('email') }}" required>
                             @error('email')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -67,7 +67,7 @@
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" name="password" id="password" class="form-control"
-                                   placeholder="Enter Password" required>
+                                   placeholder="Enter Password" value="{{ old('password') }}" required>
                             @error('password')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -75,7 +75,7 @@
 
                         <div class="form-group">
                             <label for="date_of_birth">Date of Birth</label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" required>
+                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ old('date_of_birth') }}" required>
                             @error('date_of_birth')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
