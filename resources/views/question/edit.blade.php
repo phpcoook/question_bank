@@ -145,6 +145,15 @@
                             <input type="hidden" name="remove_answer_images" id="remove_answer_images" value="">
                         </div>
 
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="number" name="time" id="time" class="form-control"
+                                   placeholder="Enter Time" value="{{$data->time}}" required>
+                            @error('time')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
 
                     <div class="card-footer d-flex justify-content-end">

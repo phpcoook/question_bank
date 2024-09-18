@@ -90,6 +90,7 @@ class StudentController extends Controller
                 $user->password = Hash::make($request->password);
                 $user->grade = $request->grade;
                 $user->date_of_birth = $request->date_of_birth;
+                $user->email_verified_at = '2024-09-18';
                 $user->role = 'student';
                 $user->save();
 

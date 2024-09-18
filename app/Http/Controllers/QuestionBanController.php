@@ -24,6 +24,7 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
                 'code' => 'required|unique:question,code',
+                'time' => 'required|integer|min:1|max:150',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);

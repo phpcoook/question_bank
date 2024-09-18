@@ -38,6 +38,7 @@ class TutorController extends Controller
                 $tutor->email = $request->email;
                 $tutor->password = Hash::make($request->password);
                 $tutor->date_of_birth = $request->date_of_birth;
+                $tutor->email_verified_at = '2024-09-18';
                 $tutor->role = 'tutor';
                 $tutor->save();
 
