@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionBanController;
 use App\Http\Controllers\StudentController;
@@ -60,6 +61,12 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-    Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
-    Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
+    Route::middleware(['student'])->group(function () {
+        Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
+        Route::get('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
+        Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
+    });
+    Route::middleware(['tutor'])->group(function () {
+        Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
+    });
 });

@@ -24,7 +24,7 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
                 'code' => 'required|unique:question,code',
-                'time' => 'required|integer|min:1|max:150',
+                'time' => 'required|integer',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -34,7 +34,7 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
-                $question->answer = htmlspecialchars($request->answer, ENT_QUOTES, 'UTF-8');
+                $question->time = $request->time;
                 $question->save();
 
                 // Handle question images
@@ -116,6 +116,7 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'question' => 'required|string|max:5000',
                 'code' => 'required',
+                'time' => 'required|integer',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -124,8 +125,8 @@ class QuestionBanController extends Controller
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
                 $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
-                $question->answer = htmlspecialchars($request->answer, ENT_QUOTES, 'UTF-8');
                 $question->code = $request->code;
+                $question->time = $request->time;
                 $question->save();
 
                 // Handle question images removal

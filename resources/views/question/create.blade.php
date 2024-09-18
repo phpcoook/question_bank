@@ -81,17 +81,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="answer">Answer</label>
-                            <textarea class="form-control latex-editor" rows="3" name="answer" placeholder="Enter ...">{{ old('answer') }}</textarea>
-                            @error('answer')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <!-- Answer Image Upload -->
                         <div class="form-group">
-                            <label for="answerimage">Answer Image</label>
+                            <label for="answerimage">Solution</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
@@ -125,7 +117,7 @@
 
 @section('page-script')
     <!-- Place the first <script> tag in your HTML's <head> -->
-    <script src="https://cdn.tiny.cloud/1/wjxs8gs2u0a4qac3s0lf3dfs2cwpor8tlwc84wx5u938irjw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
 
     <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
@@ -193,10 +185,6 @@
                     question: {
                         required: true,
                         minlength: 10
-                    },
-                    answer: {
-                        required: true,
-                        minlength: 5
                     }
                 },
                 messages: {
@@ -206,10 +194,6 @@
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
-                    },
-                    answer: {
-                        required: "Please provide an answer",
-                        minlength: "Your answer must be at least 5 characters long"
                     }
                 },
                 errorElement: 'div',

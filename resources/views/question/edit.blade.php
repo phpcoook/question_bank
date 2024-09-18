@@ -111,17 +111,10 @@
                             <input type="hidden" name="remove_question_images" id="remove_question_images" value="">
                         </div>
 
-                        <div class="form-group">
-                            <label for="answer">Answer</label>
-                            <textarea name="answer" class="form-control latex-editor" rows="3" placeholder="Enter Answer">{{ old('answer', htmlspecialchars_decode($data->answer)) }}</textarea>
-                            @error('answer')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
 
                         <!-- Answer Images (Fixed part) -->
                         <div class="form-group">
-                            <label for="answerimage">Answer Images</label>
+                            <label for="answerimage">Solution</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
@@ -206,7 +199,7 @@
     });
 </script>
 <!-- Place the first <script> tag in your HTML's <head> -->
-    <script src="https://cdn.tiny.cloud/1/wjxs8gs2u0a4qac3s0lf3dfs2cwpor8tlwc84wx5u938irjw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
@@ -252,10 +245,6 @@
                     question: {
                         required: true,
                         minlength: 10
-                    },
-                    answer: {
-                        required: true,
-                        minlength: 5
                     }
                 },
                 messages: {
@@ -265,10 +254,6 @@
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
-                    },
-                    answer: {
-                        required: "Please provide an answer",
-                        minlength: "Your answer must be at least 5 characters long"
                     }
                 },
                 errorElement: 'div',

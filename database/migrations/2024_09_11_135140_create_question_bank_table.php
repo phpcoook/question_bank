@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('code');
             $table->enum('difficulty', ['foundation', 'intermediate','challenging']);
             $table->text('question');
-            $table->string('answer')->nullable(true);;
+            $table->string('answer')->nullable(true);
             $table->timestamps();
         });
     }
