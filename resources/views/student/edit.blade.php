@@ -69,9 +69,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="password">Change Password</label>
                             <input type="password" name="password" id="password" class="form-control"
-                                   placeholder="Enter Password" value="{{ old('password', $data->password) }}" required>
+                                   placeholder="Enter Password">
                             @error('password')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror

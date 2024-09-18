@@ -69,7 +69,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="password">Change Password</label>
                             <input type="password" name="password" id="password" class="form-control"
                                    placeholder="Enter Password">
                             @error('password')

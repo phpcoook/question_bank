@@ -146,7 +146,7 @@ class StudentController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
 //            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'required|string|min:8',
+//            'password' => 'required|string|min:8',
             'grad' => 'nullable|string|max:255',
             'date_of_birth' => 'required|date',
         ]);
@@ -163,12 +163,15 @@ class StudentController extends Controller
             $student->email = $request->email;
             $student->grade = $request->grade;
             $student->date_of_birth = $request->date_of_birth;
+            if(!empty($request->password)){
+                $student->password = Hash::make($request->password);
+            }
             $student->save();
 
             // Send email notification if email or password is updated
-            if (!empty($emailChanged)) {
-                Mail::to($request->email)->send(new Register($student,$request->password));
-            }
+//            if (!empty($emailChanged)) {
+//                Mail::to($request->email)->send(new Register($student,$request->password));
+//            }
 
             return redirect()->route('student.index')->with('success', 'Student Update successfully.');
         }

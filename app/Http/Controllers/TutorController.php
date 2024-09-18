@@ -103,8 +103,8 @@ class TutorController extends Controller
             $tutor->first_name = $request->first_name;
             $tutor->last_name = $request->last_name;
             $tutor->email = $request->email;
-            if (!empty($request->password)) {
-                $tutor->password = bcrypt($request->password);
+            if(!empty($request->password)){
+                $tutor->password = Hash::make($request->password);
             }
             $tutor->date_of_birth = $request->date_of_birth;
             $tutor->save();
