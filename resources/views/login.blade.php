@@ -80,7 +80,7 @@
                 @endif
 
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    <input type="email" name="email" class="form-control" placeholder="Email" required tabindex="1">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" id="password-field" name="password" class="form-control" placeholder="Password" required>
+                    <input type="password" id="password-field" name="password" class="form-control" placeholder="Password" required tabindex="2">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" id="toggle-password">
                             <span class="fas fa-eye" id="toggle-icon"></span>
@@ -98,7 +98,7 @@
 
                 <div class="row d-flex justify-content-center">
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block" tabindex="3">Sign In</button>
                     </div>
                 </div>
             </form>
