@@ -94,10 +94,16 @@
             const seconds = elapsedTime % 60;
             document.getElementById('time').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
+        function decodeHTMLEntities(encodedString) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = encodedString;
+            return textarea.value;
+        }
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
-            document.getElementById('question').innerText = questionData.question;
+            const decodedMathML = decodeHTMLEntities(questionData.question);
+            document.getElementById('question').innerHTML = decodedMathML;
             document.getElementById('buttons').innerHTML = `
         <button class="btn btn-success" onclick="handleAnswer('correct')">Correct</button>
         <button class="btn btn-danger mx-2" onclick="handleAnswer('wrong')">Wrong</button>

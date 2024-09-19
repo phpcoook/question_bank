@@ -16,6 +16,8 @@ class QuizController extends Controller
 
     public function startQuiz($target = 30)
     {
+        $questions = Question::select('id', 'question', 'time')->get()->toArray();
+
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
@@ -25,7 +27,11 @@ class QuizController extends Controller
         }
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
-        $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
+        $randomCombinations = !empty($result) ? $result[array_rand($result)] : [];
+        $randomCombination = array_map(function($item) {
+            $item['question'] = html_entity_decode($item['question']);
+            return $item;
+        }, $randomCombinations);
         return view('student.quiz', compact('randomCombination'));
     }
 
