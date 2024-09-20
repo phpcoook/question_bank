@@ -51,9 +51,15 @@
 
             <div class="card card-primary text-center">
                 @if(!empty($randomCombination))
+{{--                    @foreach($randomCombination as $question)--}}
+{{--                        @foreach($question['images'] as $image)--}}
+{{--                            <img src="{{ asset('storage/images/' . $image['image_name']) }}" alt="image" class="input_image" width="50" height="50">--}}
+{{--                        @endforeach--}}
+{{--                    @endforeach--}}
                 <h3 class="mt-5">Try to Answer in given time!</h3>
                 <div class="timer" id="timer">Time: <span id="time">0:00</span></div>
                 <div class="question" id="question"></div>
+                <div class="images" id="images"></div>
                 <div class="buttons" id="buttons"></div>
                 <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
                 @else
@@ -71,9 +77,10 @@
         var totalTime = 0
         const questions = [
                 @foreach($randomCombination as $question)
-            { id: {{ $question['id'] }}, question: "{{ $question['question'] }}", time: {{ $question['time'] }} },
-            @endforeach
+                    { id: {{ $question['id'] }}, question: "{{ $question['question'] }}", time: {{ $question['time'] }}, images: {!! json_encode($question) !!} },
+                @endforeach
         ];
+        console.log(questions)
 
         let currentQuestionIndex = 0;
         let timer;
@@ -103,7 +110,13 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             const decodedMathML = decodeHTMLEntities(questionData.question);
-            document.getElementById('question').innerHTML = decodedMathML;
+            // document.getElementById('question').innerHTML = decodedMathML;
+            var imagesHtml = '';
+            var baseUrl = window.location.origin + '/';
+            $.each(questionData.images.images, function(imgIndex, image) {
+                imagesHtml += '<img src="'+ baseUrl + 'storage/images/' + image.image_name + '" alt="Image '+ imgIndex +'" width="200" height="150">';
+            });
+            document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
         <button class="btn btn-success" onclick="handleAnswer('correct')">Correct</button>
         <button class="btn btn-danger mx-2" onclick="handleAnswer('wrong')">Wrong</button>
