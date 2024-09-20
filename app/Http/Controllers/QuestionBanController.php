@@ -22,7 +22,6 @@ class QuestionBanController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
-//                'question' => 'required|string|max:5000',
                 'code' => 'required|unique:question,code',
                 'time' => 'required|integer',
             ]);
@@ -33,8 +32,6 @@ class QuestionBanController extends Controller
                 $question = new Question();
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
-//                $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
-                $question->question = 'Null';
                 $question->time = $request->time;
                 $question->save();
 
@@ -115,7 +112,6 @@ class QuestionBanController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
-//                'question' => 'required|string|max:5000',
                 'code' => 'required',
                 'time' => 'required|integer',
             ]);
@@ -125,8 +121,6 @@ class QuestionBanController extends Controller
 
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
-//                $question->question = htmlspecialchars($request->question, ENT_QUOTES, 'UTF-8');
-                $question->question = 'Null';
                 $question->code = $request->code;
                 $question->time = $request->time;
                 $question->save();
