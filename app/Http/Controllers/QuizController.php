@@ -64,9 +64,9 @@ class QuizController extends Controller
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
-            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->orderBy('time','ASC')->get()->toArray();
         } else {
-            $questions = Question::select('id', 'question', 'time')->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->orderBy('time','ASC')->get()->toArray();
         }
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
