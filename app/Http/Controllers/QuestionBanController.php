@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +34,7 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
+                $question->question = 'Null';
                 $question->save();
 
                 // Handle question images
@@ -196,6 +198,11 @@ class QuestionBanController extends Controller
     public function destroy($id)
     {
         try {
+            $quizRecords = Quiz::where('question_id',$id)->get();
+            foreach ($quizRecords as $quiz) {
+                $quiz->delete();
+            }
+
             $question = Question::findOrFail($id);
             $questionImages = QuestionImage::where('question_id', $id)->get();
             foreach ($questionImages as $image) {
