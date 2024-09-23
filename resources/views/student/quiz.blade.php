@@ -103,9 +103,9 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             var imagesHtml = '';
-            var baseUrl = window.location.origin + '/';
+            var baseUrl = '{{url('/')}}'+'/';
             $.each(questionData.images, function(imgIndex, image) {
-                imagesHtml += '<img src="'+ baseUrl + 'storage/images/' + image.image_name + '" alt="Image '+ imgIndex +'" width="200" height="150">';
+                imagesHtml += '<img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150">';
             });
             console.log(questionData);
             document.getElementById('images').innerHTML = imagesHtml;
