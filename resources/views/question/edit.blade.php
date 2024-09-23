@@ -89,14 +89,14 @@
                         <div class="form-group">
                             <label for="image">Question Images</label>
                             <div id="image-rows">
-                                <div class="input-group mb-3">
+                                <div class="input-group">
                                     <input type="file" class="form-control" name="questionimage[]">
                                     <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'question')
-                                            <div class="input-group mb-3">
+                                            <div class="input-group mt-3">
                                                 <div class="input_image_div">
                                                     <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
                                                 </div>
@@ -165,7 +165,7 @@
         // Handle adding new image input fields dynamically
         $(document).on('click', '.add-question-image-row', function () {
             var newRow = `
-                <div class="input-group mb-3">
+                <div class="input-group mt-3">
                     <input type="file" class="form-control" name="questionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
@@ -245,6 +245,10 @@
                     question: {
                         required: true,
                         minlength: 10
+                    },
+                    'questionimage[]': {
+                        required: true,
+                        extension: "jpg,jpeg,png,gif"
                     }
                 },
                 messages: {
@@ -254,6 +258,10 @@
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
+                    },
+                    'questionimage[]': {
+                        required: "Please upload at least one question image",
+                        extension: "Only image files (jpg, jpeg, png, gif) are allowed"
                     }
                 },
                 errorElement: 'div',

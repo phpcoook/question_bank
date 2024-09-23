@@ -71,7 +71,7 @@
                         <div class="form-group">
                             <label for="questionimage">Question Image</label>
                             <div id="question-image-rows">
-                                <div class="input-group mb-3">
+                                <div class="input-group">
                                     <input type="file" class="form-control" name="questionimage[]">
                                     <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
                                 </div>
@@ -151,7 +151,7 @@
             // Handle adding new image input fields for question images
             $(document).on('click', '.add-question-image-row', function () {
                 var newQuestionRow = `
-                <div class="input-group mb-3">
+                <div class="input-group mt-3">
                     <input type="file" class="form-control" name="questionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
@@ -185,6 +185,10 @@
                     question: {
                         required: true,
                         minlength: 10
+                    },
+                    'questionimage[]': {
+                        required: true,
+                        extension: "jpg,jpeg,png,gif"
                     }
                 },
                 messages: {
@@ -194,6 +198,10 @@
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
+                    },
+                    'questionimage[]': {
+                        required: "Please upload at least one question image",
+                        extension: "Only image files (jpg, jpeg, png, gif) are allowed"
                     }
                 },
                 errorElement: 'div',

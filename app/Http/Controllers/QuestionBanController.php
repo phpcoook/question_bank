@@ -25,6 +25,8 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required|unique:question,code',
                 'time' => 'required|integer',
+                'questionimage' => 'required|array',
+                'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -115,6 +117,8 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required',
                 'time' => 'required|integer',
+                'questionimage' => 'required|array',
+                'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
