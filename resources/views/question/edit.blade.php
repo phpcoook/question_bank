@@ -92,7 +92,7 @@
                                                 <div class="input_image_div">
                                                     <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
                                                 <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
@@ -100,6 +100,9 @@
                                     @endforeach
                                 @endif
                             </div>
+                            @error('question_images')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
                             <input type="hidden" name="remove_question_images" id="remove_question_images" value="">
                         </div>
 
