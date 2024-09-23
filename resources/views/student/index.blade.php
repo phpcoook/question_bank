@@ -84,14 +84,13 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '/student/' + id,
+                        url: "{{ route('student.destroy', ':id') }}".replace(':id', id),
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
                         },
                         success: function (result) {
                             $('#Student-table').DataTable().ajax.reload();
-                            alert('Item deleted successfully!');
                         },
                         error: function (error) {
                             alert('Error deleting item!');
