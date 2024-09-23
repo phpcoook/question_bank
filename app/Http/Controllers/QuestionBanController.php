@@ -34,7 +34,6 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
-                $question->question = 'Null';
                 $question->save();
 
                 // Handle question images
