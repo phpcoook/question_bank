@@ -59,8 +59,6 @@
                                 <th>No</th>
                                 <th>Code</th>
                                 <th>Difficulty</th>
-                                <th>Question</th>
-                                <th>Answer</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -85,20 +83,6 @@
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'code', name: 'code'},
                     {data: 'difficulty', name: 'difficulty'},
-                    {
-                        data: 'question',
-                        name: 'question',
-                        render: function (data, type, row) {
-                            return '<div class="ellipsis question-col" title="' + data + '">' + data + '</div>';
-                        }
-                    },
-                    {
-                        data: 'answer',
-                        name: 'answer',
-                        render: function (data, type, row) {
-                            return '<div class="ellipsis answer-col" title="' + data + '">' + data + '</div>';
-                        }
-                    },
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });

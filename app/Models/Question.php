@@ -16,4 +16,10 @@ class Question extends Model
     {
         return $this->hasMany(QuestionImage::class);
     }
+
+    public function quizImage()
+    {
+        return $this->hasMany(QuestionImage::class)->where('type', 'question');
+    }
+
 }

@@ -51,14 +51,8 @@
 
             <div class="card card-primary text-center">
                 @if(!empty($randomCombination))
-{{--                    @foreach($randomCombination as $question)--}}
-{{--                        @foreach($question['images'] as $image)--}}
-{{--                            <img src="{{ asset('storage/images/' . $image['image_name']) }}" alt="image" class="input_image" width="50" height="50">--}}
-{{--                        @endforeach--}}
-{{--                    @endforeach--}}
                 <h3 class="mt-5">Try to Answer in given time!</h3>
                 <div class="timer" id="timer">Time: <span id="time">0:00</span></div>
-                <div class="question" id="question"></div>
                 <div class="images" id="images"></div>
                 <div class="buttons" id="buttons"></div>
                 <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
@@ -77,10 +71,9 @@
         var totalTime = 0
         const questions = [
                 @foreach($randomCombination as $question)
-                    { id: {{ $question['id'] }}, question: "{{ $question['question'] }}", time: {{ $question['time'] }}, images: {!! json_encode($question) !!} },
-                @endforeach
+            { id: {{ $question['id'] }}, time: {{ $question['time'] }}, images: {!! json_encode($question['quiz_image']) !!} },
+            @endforeach
         ];
-        console.log(questions)
 
         let currentQuestionIndex = 0;
         let timer;
@@ -109,13 +102,12 @@
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
-            const decodedMathML = decodeHTMLEntities(questionData.question);
-            // document.getElementById('question').innerHTML = decodedMathML;
             var imagesHtml = '';
             var baseUrl = window.location.origin + '/';
-            $.each(questionData.images.images, function(imgIndex, image) {
+            $.each(questionData.images, function(imgIndex, image) {
                 imagesHtml += '<img src="'+ baseUrl + 'storage/images/' + image.image_name + '" alt="Image '+ imgIndex +'" width="200" height="150">';
             });
+            console.log(questionData);
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
         <button class="btn btn-success" onclick="handleAnswer('correct')">Correct</button>
@@ -125,6 +117,7 @@
             updateTimerDisplay();
             startTimer(questionData.time);
         }
+
 
         function handleAnswer(response) {
             clearInterval(timer);
@@ -145,9 +138,9 @@
             const totalMinutes = Math.floor(totalTime / 60);
             const totalSeconds = totalTime % 60;
             document.getElementById('totalTime').innerHTML = `Thank you for participating in the quiz! Total time taken: ${totalMinutes} minutes and ${totalSeconds} seconds.`;
-            document.getElementById('question').innerText = '';
             document.getElementById('buttons').innerHTML = '';
             document.getElementById('time').innerText = '0:00';
+            document.getElementById('images').innerHTML = '';
         }
 
 

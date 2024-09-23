@@ -16,22 +16,17 @@ class QuizController extends Controller
 
     public function startQuiz($target = 30)
     {
-        $questions = Question::with('images')->select('id', 'question', 'time')->get()->toArray();
-
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
-            $questions = Question::with('images')->select('id', 'question', 'time')->whereNotIn('id', $notIn)->get()->toArray();
+            $questions = Question::with('quizImage')->select('id', 'time')->whereNotIn('id', $notIn)->get()->toArray();
         } else {
-            $questions = Question::with('images')->select('id', 'question', 'time')->get()->toArray();
+            $questions = Question::with('quizImage')->select('id', 'time')->get()->toArray();
         }
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
-        $randomCombinations = !empty($result) ? $result[array_rand($result)] : [];
-        $randomCombination = array_map(function($item) {
-            $item['question'] = html_entity_decode($item['question']);
-            return $item;
-        }, $randomCombinations);
+        $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
+
         return view('student.quiz', compact('randomCombination'));
     }
 
@@ -69,9 +64,9 @@ class QuizController extends Controller
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
-            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->orderBy('time','ASC')->get()->toArray();
         } else {
-            $questions = Question::select('id', 'question', 'time')->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->orderBy('time','ASC')->get()->toArray();
         }
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
