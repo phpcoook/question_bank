@@ -117,13 +117,10 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required',
                 'time' => 'required|integer',
-                'questionimage' => 'required|array',
-                'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
-
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
@@ -191,7 +188,6 @@ class QuestionBanController extends Controller
 
                 return redirect()->route('question.index')->with('success', 'Question Update successfully.');
             }
-
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
