@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\Register;
+use App\Models\Question;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Services\DataTable;
 
 class TutorController extends Controller
 {
@@ -127,5 +129,30 @@ class TutorController extends Controller
 
     public function dashboard(){
         return view('tutor.dashboard');
+    }
+
+    public function getQuestionData(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $questions = Question::select(['id', 'code', 'difficulty', 'time'])->get();
+                return DataTables::of($questions)
+                    ->addIndexColumn()
+                    ->addColumn('code', function ($row) {
+                        return $row->code;
+                    })
+                    ->addColumn('difficulty', function ($row) {
+                        return $row->difficulty;
+                    })
+                    ->addColumn('time', function ($row) {
+                        return $row->time;
+                    })
+                    ->make(true);
+            }
+            return response()->json(['error' => 'Invalid request'], 400);
+        } catch (\Exception $e) {
+            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
+            return response()->json(['error' => 'Something went wrong!'], 500);
+        }
     }
 }

@@ -61,6 +61,9 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+// Tutor
+    Route::post('/question/data', [TutorController::class, 'getQuestionData'])->name('question.data');
+
     Route::middleware(['student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::get('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');

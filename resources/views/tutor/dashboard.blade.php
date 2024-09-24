@@ -35,10 +35,46 @@
         <section class="content m-2">
             <div class="card card-primary">
                 <div class="row m-3">
-                   <h1>Tutor Dashboard</h1>
+{{--                    <div class="col-12 d-flex justify-content-end mb-2">--}}
+{{--                        <a class="btn btn-primary" href="{{ route('create.tutor') }}">Add Tutor</a>--}}
+{{--                    </div>--}}
+                    <div class="col-sm-12">
+                        <table id="question-table" class="table table-bordered table-hover dataTable">
+                            <thead>
+                            <tr role="row">
+                                <th>No</th>
+                                <th>Code</th>
+                                <th>Difficulty</th>
+                                <th>Time</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
 @endsection
-
+@section('page-script')
+    <script>
+        $(document).ready(function () {
+            var baseUrl = '{{url('/')}}'+'/';
+            $('#question-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url:  baseUrl + 'question/data',
+                    type: "POST",
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'code', name: 'code'},
+                    {data: 'difficulty', name: 'difficulty'},
+                    {data: 'time', name: 'time'}
+                ]
+            });
+        });
+    </script>
+@endsection
