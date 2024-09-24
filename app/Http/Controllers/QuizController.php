@@ -14,8 +14,9 @@ use Yajra\DataTables\DataTables;
 class QuizController extends Controller
 {
 
-    public function startQuiz($target = 30)
+    public function startQuiz(Request $request)
     {
+        $target = $request->time ?? 30;
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
@@ -122,5 +123,8 @@ class QuizController extends Controller
         }
     }
 
+    public function addTime(){
+        return view('student.addtime');
+    }
 
 }
