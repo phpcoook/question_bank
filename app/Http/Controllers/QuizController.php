@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,8 +15,24 @@ use Yajra\DataTables\DataTables;
 class QuizController extends Controller
 {
 
-    public function startQuiz($target = 30)
+    public function startQuiz(Request $request)
     {
+
+        $currentDate = Carbon::now();
+        $endOfWeek = $currentDate->endOfWeek();
+        $endDate = $endOfWeek->toDateTimeString();
+        $currentDates = Carbon::now();
+        $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
+        $startDate = $startOfWeek->toDateTimeString();
+        $totalMinutes = Quiz::where('user_id', Auth::user()->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('time');
+        if($totalMinutes >= 30){
+            $validity = false;
+            $randomCombination =[];
+            return view('student.quiz', compact('randomCombination','validity'));
+        }
+        $target = $request->time ?? 30;
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
@@ -26,8 +43,8 @@ class QuizController extends Controller
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
         $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
-
-        return view('student.quiz', compact('randomCombination'));
+        $validity = true;
+        return view('student.quiz', compact('randomCombination','validity'));
     }
 
     private function findCombinations(
@@ -122,5 +139,8 @@ class QuizController extends Controller
         }
     }
 
+    public function addTime(){
+        return view('student.addtime');
+    }
 
 }

@@ -63,7 +63,13 @@
                     <div class="buttons" id="buttons"></div>
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
                 @else
+                    @if($validity)
                     <h3 class="m-5">Awesome! You answered all the questions!</h3>
+                    @else
+                        <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next week!</h3>
+                        <p>For unlimited quizzes, consider purchasing a paid plan!</p>
+
+                    @endif
                 @endif
             </div>
         </section>

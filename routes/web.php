@@ -66,9 +66,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
-        Route::get('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
+        Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
         Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
     });
+    Route::get('/student/start-quiz/time', [QuizController::class, 'addTime'])->name('student.start-quiz.addtime');
     Route::middleware(['tutor'])->group(function () {
         Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
     });
