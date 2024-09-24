@@ -52,8 +52,8 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>Dashboard</p>
                         </a>
-                        <a href="{{ route('student.start-quiz') }}"
-                           class="nav-link {{ request()->routeIs('student.start-quiz') ? 'active' : '' }}">
+                        <a href="{{ route('student.start-quiz.addtime') }}"
+                           class="nav-link {{ request()->routeIs('student.start-quiz.addtime') || request()->routeIs('student.start-quiz') ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Start Quiz</p>
                         </a>
