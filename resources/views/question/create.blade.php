@@ -38,12 +38,40 @@
                     @csrf
                     <div class="card-body">
                         <div class="form-group">
+                            <label for="topics">Topics</label>
+                            <select name="topics[]" id="topics" class="form-control select2"  multiple required>
+                                <option value="">Select Topics</option>
+                                @foreach($topics as $topic)
+                                    <option {{(old('topics'))? in_array($topic->id, old('topics'))?'selected':'' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                @endforeach
+                            </select>
+                            @error('topics')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_topics">Sub Topics</label>
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
+                                <option value="">Select Sub Topics</option>
+                            </select>
+                            @error('sub_topics')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label for="difficulty">Difficulty</label>
                             <select name="difficulty" class="form-control" required>
                                 <option value="">Select Difficulty</option>
-                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>Foundation</option>
-                                <option value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>Intermediate</option>
-                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>Challenging</option>
+                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
+                                    Foundation
+                                </option>
+                                <option value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
+                                    Intermediate
+                                </option>
+                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>
+                                    Challenging
+                                </option>
                             </select>
                             @error('difficulty')
                             <div class="text-danger">{{ $message }}</div>
@@ -58,22 +86,14 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
-{{--                        <div class="form-group">--}}
-{{--                            <label for="question">Question</label>--}}
-{{--                            <textarea class="form-control latex-editor" rows="3" name="question" placeholder="Enter ...">{{ old('question') }}</textarea>--}}
-{{--                            @error('question')--}}
-{{--                            <div class="text-danger">{{ $message }}</div>--}}
-{{--                            @enderror--}}
-{{--                        </div>--}}
-
-                    <!-- Question Image Upload -->
                         <div class="form-group">
                             <label for="questionimage">Question Image</label>
                             <div id="question-image-rows">
                                 <div class="input-group">
                                     <input type="file" class="form-control" name="questionimage[]">
-                                    <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
+                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
+                                        Image
+                                    </button>
                                 </div>
                             </div>
                             @error('questionimage')
@@ -87,7 +107,9 @@
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
-                                    <button type="button" class="btn btn-success add-answer-image-row">Add Answer Image</button>
+                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
+                                        Image
+                                    </button>
                                 </div>
                             </div>
                             @error('answerimage')
@@ -117,38 +139,55 @@
 
 @section('page-script')
     <!-- Place the first <script> tag in your HTML's <head> -->
-    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
-
-    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
-{{--    <script>--}}
-{{--        tinymce.init({--}}
-{{--            selector: 'textarea.latex-editor',--}}
-{{--            external_plugins: {--}}
-{{--                tiny_mce_wiris: '{{url('assets/js/math.js')}}',--}}
-{{--            },--}}
-{{--            draggable_modal: true,--}}
-{{--            extended_valid_elements: "*[.*]",--}}
-{{--            plugins: [--}}
-{{--                // Core editing features--}}
-{{--                'math', 'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',--}}
-{{--                // Your account includes a free trial of TinyMCE premium features--}}
-{{--                // Try the most popular premium features until Oct 1, 2024:--}}
-{{--                'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown',--}}
-{{--            ],--}}
-{{--            toolbar: 'tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',--}}
-{{--            tinycomments_mode: 'embedded',--}}
-{{--            tinycomments_author: 'Author name',--}}
-{{--            mergetags_list: [--}}
-{{--                { value: 'First.Name', title: 'First Name' },--}}
-{{--                { value: 'Email', title: 'Email' },--}}
-{{--            ],--}}
-{{--            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),--}}
-{{--        });--}}
-{{--    </script>--}}
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
+    <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
+            if($('#topics').val()){
+                $.ajax({
+                    url: "{{ url('getSubTopicData') }}",
+                    type: 'POST',
+                    data: {
+                        'topic_ids': $('#topics').val(), // Send as array
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(result) {
+                        $('#sub_topics').html(result.data)
+                        $('.select3').select2()
+                    },
+                    error: function(error) {
+                        alert('Something Went Wrong!');
+                    }
+                });
+            }
+            $('.select2').select2()
+            $('.select3').select2()
             // Handle adding new image input fields for question images
+
+            $('#topics').change(function() {
+                const selectedOptions = $(this).val(); // This should be an array
+                $.ajax({
+                    url: "{{ url('getSubTopicData') }}",
+                    type: 'POST',
+                    data: {
+                        'topic_ids': selectedOptions, // Send as array
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(result) {
+                        $('#sub_topics').html(result.data)
+                        $('.select3').select2()
+                    },
+                    error: function(error) {
+                        alert('Something Went Wrong!');
+                    }
+                });
+            });
+
+
+
             $(document).on('click', '.add-question-image-row', function () {
                 var newQuestionRow = `
                 <div class="input-group mt-3">
@@ -174,7 +213,6 @@
             });
         });
     </script>
-
     <script>
         $(document).ready(function () {
             $("#question-form").validate({
@@ -223,4 +261,11 @@
             });
         });
     </script>
+<style>
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #007bff !important;
+        border: 1px solid #007bff!important;
+        color: #ffffff!important;
+    }
+</style>
 @endsection

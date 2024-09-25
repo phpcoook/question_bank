@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Topic;
+use App\Rules\SubTopicsRequired;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\QuestionImage;
@@ -15,7 +16,8 @@ class QuestionBanController extends Controller
 {
     public function create()
     {
-        return view('question.create');
+        $topics = Topic::all();
+        return view('question.create',compact('topics'));
     }
 
     public function store(Request $request)
@@ -27,7 +29,14 @@ class QuestionBanController extends Controller
                 'time' => 'required|integer',
                 'questionimage' => 'required|array',
                 'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+                'topics' => 'required|array', // Ensure topics are required
+                'sub_topics' => [
+                    'required',
+                    'array',
+                    new SubTopicsRequired($request->input('topics')),
+                ],
             ]);
+
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
@@ -36,6 +45,8 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
+                $question->topic_id = json_encode($request->topics,1);
+                $question->subtopic_id = json_encode($request->sub_topics,1);
                 $question->save();
 
                 // Handle question images
@@ -111,9 +122,10 @@ class QuestionBanController extends Controller
     public function edit($id)
     {
         try {
+            $topics = Topic::all();
             $data = Question::find($id);
             $images = QuestionImage::where('question_id', $id)->get();
-            return view('question.edit', compact('data', 'images'));
+            return view('question.edit', compact('data', 'images','topics'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
@@ -127,6 +139,12 @@ class QuestionBanController extends Controller
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required',
                 'time' => 'required|integer',
+                'topics' => 'required|array', // Ensure topics are required
+                'sub_topics' => [
+                    'required',
+                    'array',
+                    new SubTopicsRequired($request->input('topics')),
+                ],
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -141,6 +159,8 @@ class QuestionBanController extends Controller
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
                 $question->time = $request->time;
+                $question->topic_id = json_encode($request->topics,1);
+                $question->subtopic_id = json_encode($request->sub_topics,1);
                 $question->save();
 
                 // Handle question images removal
@@ -151,9 +171,9 @@ class QuestionBanController extends Controller
                         if ($oldImage) {
                             $oldImagePath = storage_path('app/public/images/' . $oldImage->image_name);
                             if (file_exists($oldImagePath)) {
-                                unlink($oldImagePath); // Remove image from storage
+                                unlink($oldImagePath);
                             }
-                            $oldImage->delete(); // Remove image record from database
+                            $oldImage->delete();
                         }
                     }
                 }

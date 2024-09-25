@@ -50,6 +50,28 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="form-group">
+                            <label for="topics">Topics</label>
+                            <select name="topics[]" id="topics" class="form-control select2"  multiple required>
+                                <option value="">Select Topics</option>
+
+                                @foreach($topics as $topic)
+                                    <option {{(in_array($topic->id,json_decode($data->topic_id)))?'selected':''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                @endforeach
+                            </select>
+                            @error('topics')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="sub_topics">Sub Topics</label>
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
+                                <option value="">Select Sub Topics</option>
+                            </select>
+                            @error('sub_topics')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label for="difficulty">Difficulty</label>
                             <select name="difficulty" class="form-control" required>
                                 <option value="">Select Difficulty</option>
@@ -83,7 +105,7 @@
                             <div id="image-rows">
                                 <div class="input-group">
                                     <input type="file" class="form-control" name="questionimage[]">
-                                    <button type="button" class="btn btn-success add-question-image-row">Add Question Image</button>
+                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
@@ -113,7 +135,7 @@
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
-                                    <button type="button" class="btn btn-success add-answer-image-row">Add Answer Image</button>
+                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
@@ -157,6 +179,24 @@
 @section('page-script')
 <script>
     $(document).ready(function () {
+        if($('#topics').val()){
+            $.ajax({
+                url: "{{ url('getSelectedSubTopicData') }}",
+                type: 'POST',
+                data: {
+                    'topic_ids': $('#topics').val(),
+                    'selected' :'{{$data->subtopic_id}}',
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(result) {
+                    $('#sub_topics').html(result.data)
+                    $('.select3').select2()
+                },
+                error: function(error) {
+                    alert('Something Went Wrong!');
+                }
+            });
+        }
         // Handle adding new image input fields dynamically
         $(document).on('click', '.add-question-image-row', function () {
             var newRow = `
@@ -197,9 +237,32 @@
     <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
+    <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
+            $('.select2').select2()
+            $('.select3').select2()
+            // Handle adding new image input fields for question images
+
+            $('#topics').change(function() {
+                const selectedOptions = $(this).val(); // This should be an array
+                $.ajax({
+                    url: "{{ url('getSubTopicData') }}",
+                    type: 'POST',
+                    data: {
+                        'topic_ids': selectedOptions, // Send as array
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(result) {
+                        $('#sub_topics').html(result.data)
+                        $('.select3').select2()
+                    },
+                    error: function(error) {
+                        alert('Something Went Wrong!');
+                    }
+                });
+            });
             $("#question-edit").validate({
                 rules: {
                     difficulty: {
@@ -238,6 +301,13 @@
             });
         });
     </script>
+<style>
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #007bff !important;
+        border: 1px solid #007bff!important;
+        color: #ffffff!important;
+    }
+</style>
 @endsection
 
 

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\SubTopicController;
+use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionBanController;
 use App\Http\Controllers\StudentController;
@@ -32,7 +34,28 @@ Route::post('/login', [StudentController::class, 'login']);
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
-// question
+    // topic
+        Route::get('/create/topic', [TopicController::class, 'create'])->name('create.topic');
+        Route::Post('/topic/story', [TopicController::class, 'store'])->name('topic.story');
+        Route::get('/topics', [TopicController::class, 'index'])->name('topic.index');
+        Route::get('/topic/{id}/edit', [TopicController::class, 'edit'])->name('topic.edit');
+        Route::put('/topic/{id}', [TopicController::class, 'update'])->name('topic.update');
+        Route::delete('/topic/{id}', [TopicController::class, 'destroy'])->name('topic.destroy');
+        Route::get('topics/data', [TopicController::class, 'getData'])->name('topics.data');
+
+
+        // sub topic
+        Route::get('/create/sub-topic', [SubTopicController::class, 'create'])->name('create.sub-topic');
+        Route::Post('/sub-topic/story', [SubTopicController::class, 'store'])->name('sub-topic.story');
+        Route::get('/sub-topics', [SubTopicController::class, 'index'])->name('sub-topic.index');
+        Route::get('/sub-topic/{id}/edit', [SubTopicController::class, 'edit'])->name('sub-topic.edit');
+        Route::put('/sub-topic/{id}', [SubTopicController::class, 'update'])->name('sub-topic.update');
+        Route::delete('/sub-topic/{id}', [SubTopicController::class, 'destroy'])->name('sub-topic.destroy');
+        Route::get('sub-topics/data', [SubTopicController::class, 'getData'])->name('sub-topics.data');
+        Route::post('getSubTopicData', [SubTopicController::class, 'getDataByIds']);
+        Route::post('getSelectedSubTopicData', [SubTopicController::class, 'getSelectedDataByIds']);
+
+        // question
         Route::get('/create/question', [QuestionBanController::class, 'create'])->name('create.question');
         Route::Post('/question/story', [QuestionBanController::class, 'store'])->name('question.story');
         Route::get('/questions', [QuestionBanController::class, 'index'])->name('question.index');
