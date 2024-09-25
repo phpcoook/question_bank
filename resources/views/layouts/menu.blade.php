@@ -44,6 +44,12 @@
                         <i class="far fa-circle nav-icon"></i>
                         <p>Tutor List</p>
                     </a>
+
+                    <a href="{{ route('create.setting') }}"
+                       class="nav-link {{ request()->routeIs('create.setting') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Setting</p>
+                    </a>
                 @endif
 
                     @if(Auth::user()->role == 'student')

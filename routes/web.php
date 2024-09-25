@@ -6,6 +6,7 @@ use App\Http\Controllers\QuestionBanController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TutorController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/tutor/{id}', [TutorController::class, 'destroy'])->name('tutor.destroy');
         Route::get('/tutor/data', [TutorController::class, 'getTutorData'])->name('tutor.data');
 
+//setting
+        Route::get('/create/setting', [SettingController::class, 'create'])->name('create.setting');
+        Route::put('/setting/{id}', [SettingController::class, 'update'])->name('setting.update');
     });
 
 // Tutor
