@@ -21,6 +21,16 @@
                     <div class="col-sm-6">
                         <h1 class="m-0 text-dark">Question List</h1>
                     </div>
+                    <div class="col-sm-6 text-right">
+                        <select id="difficulty" class="form-control" required>
+                            <option value="">Filter By</option>
+                            <option value="reported" class="text-danger" >Reported</option>
+                            <option value="foundation" >Foundation</option>
+                            <option value="intermediate" >Intermediate</option>
+                            <option value="challenging">Challenging</option>
+                        </select>
+                        <h6 class="m-0 py-3 text-danger">No of reported question : {{$reported ?? 0}}</h6>
+                    </div>
                 </div>
             </div>
         </div>
@@ -75,10 +85,19 @@
 @section('page-script')
     <script>
         $(document).ready(function () {
+
+
             $('#Question-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('questions.data') }}",
+                pageLength: 10,
+                allowHTML: true,
+                ajax: {
+                    url:"{{ route('questions.data') }}",
+                    data: function (d) {
+                        d.filter = $('#difficulty').val();
+                    }
+                },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'code', name: 'code'},
@@ -88,6 +107,9 @@
             });
 
             // Handle delete button click
+            $('#difficulty').on('change',  function () {
+                $('#Question-table').DataTable().draw();
+            });
             $('#Question-table').on('click', '.delete-question', function () {
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {

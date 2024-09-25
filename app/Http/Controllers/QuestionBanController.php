@@ -76,18 +76,28 @@ class QuestionBanController extends Controller
 
     public function index()
     {
-        return view('question.index');
+        $reported = Question::where('reported', '1')->count();
+        return view('question.index',compact('reported'));
     }
 
-    public function getQuestionsData()
+    public function getQuestionsData(Request $request)
     {
         try {
-            $questions = Question::orderBy('created_at', 'desc')->get();
+            $questions = Question::orderBy('created_at', 'desc');
+            if(!empty($request->filter)){
+                if($request->filter == 'reported'){
+                    $questions->where('reported','1');
+                }else{
+                    $questions->where('difficulty',$request->filter);
+                }
+            }
+            $questions->get();
             return DataTables::of($questions)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($question) {
+                    $reported = ($question->reported)? "<span class='text-danger px-3 text-bold'>Reported</span>":'';
                     $editButton = '<a href="' . route('question.edit', $question->id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $question->id . '">Edit</a>';
-                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $question->id . '">Delete</button>';
+                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $question->id . '">Delete</button>'.$reported;
                     return $editButton . ' ' . $deleteButton;
                 })
                 ->rawColumns(['actions'])
