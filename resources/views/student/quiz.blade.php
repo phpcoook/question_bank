@@ -58,7 +58,7 @@
             <div class="card card-primary text-center">
                 @if(!empty($randomCombination))
                     <h3 class="mt-5">Try to Answer in given time!</h3>
-                    <div class="timer" id="timer">Time: <span id="time">0:00</span></div>
+                    <div class="timer" id="timer"><i class="fa fa-solid fa-stopwatch fa-2x"></i> Timer: <span id="time">0:00</span></div>
                     <div class="images" id="images"></div>
                     <div class="buttons" id="buttons"></div>
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
