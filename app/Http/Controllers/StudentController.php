@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Question;
+use App\Models\QuestionImage;
+use App\Models\Quiz;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,4 +195,17 @@ class StudentController extends Controller
     public function dashboard(){
         return view('student.dashboard');
     }
+
+    public function wrongQuestion()
+    {
+        try {
+            $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
+            $questions = Question::with('quizImage')->wherein('id', $wrong)->get()->toArray();
+            return view('student.wrongQuestion', compact('questions'));
+        } catch (\Exception $e) {
+            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
+            return response()->json(['error' => 'Something went wrong!'], 500);
+        }
+    }
+
 }

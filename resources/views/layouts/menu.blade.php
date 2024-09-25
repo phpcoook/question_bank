@@ -63,6 +63,13 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>Start Quiz</p>
                         </a>
+
+                        <a href="{{ route('student.wrong-question') }}"
+                           class="nav-link {{ request()->routeIs('student.wrong-question') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Wrong Question</p>
+                        </a>
+
                     @endif
 
                     @if(Auth::user()->role == 'tutor')
