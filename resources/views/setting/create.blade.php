@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="subscription_charge">Subscription charge</label>
+                            <label for="subscription_charge">Subscription charge per month ($)</label>
                             <input type="number" name="subscription_charge" id="subscription_charge" class="form-control"
                                    placeholder="Enter Subscription charge" value="{{ $setting['subscription_charge'] }}" required>
                             @error('subscription_charge')

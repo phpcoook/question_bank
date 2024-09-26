@@ -37,9 +37,9 @@ class QuizController extends Controller
                 return view('student.quiz', compact('randomCombination', 'validity'));
             }
             $target = $request->time ?? 30;
-            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
-                return redirect()->back()->with('error', 'Please select minimum 1 and maximum 5 topics');
-            }
+//            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
+//                return redirect()->back()->with('error', 'Please select minimum 1 and maximum 5 topics');
+//            }
             $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
             if ($attended->count() > 0) {
                 $notIn = $attended->pluck('question_id');
