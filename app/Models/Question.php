@@ -22,4 +22,14 @@ class Question extends Model
         return $this->hasMany(QuestionImage::class)->where('type', 'question');
     }
 
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
 }

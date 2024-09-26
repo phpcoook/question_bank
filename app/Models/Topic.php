@@ -10,4 +10,9 @@ class Topic extends Model
     use HasFactory;
 
     protected $table = 'topics';
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }
