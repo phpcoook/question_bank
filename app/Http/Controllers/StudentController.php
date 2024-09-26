@@ -82,6 +82,7 @@ class StudentController extends Controller
                 'password' => 'required|string|min:8',
                 'grade' => 'nullable|string|max:255',
                 'date_of_birth' => 'required|date',
+                'std' => 'required',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -92,6 +93,7 @@ class StudentController extends Controller
                 $user->email = $request->email;
                 $user->password = Hash::make($request->password);
                 $user->grade = $request->grade;
+                $user->std = $request->std;
                 $user->date_of_birth = $request->date_of_birth;
                 $user->email_verified_at = '2024-09-18';
                 $user->role = 'student';
@@ -152,6 +154,7 @@ class StudentController extends Controller
 //            'password' => 'required|string|min:8',
             'grad' => 'nullable|string|max:255',
             'date_of_birth' => 'required|date',
+            'std' => 'required',
         ]);
         if ($validator->fails()) {
             return back()->withInput()->withErrors($validator);
@@ -165,6 +168,7 @@ class StudentController extends Controller
             $student->last_name = $request->last_name;
             $student->email = $request->email;
             $student->grade = $request->grade;
+            $student->std = $request->std;
             $student->date_of_birth = $request->date_of_birth;
             if(!empty($request->password)){
                 $student->password = Hash::make($request->password);

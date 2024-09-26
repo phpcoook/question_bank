@@ -200,7 +200,7 @@
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
                 @else
                     @if($validity)
-                        <h3 class="m-5">Awesome! You answered all the questions!</h3>
+                        <h3 class="m-5">There are no further questions available on this topic.</h3>
                     @else
                         <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
                             week!</h3>
