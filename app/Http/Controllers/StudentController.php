@@ -80,7 +80,6 @@ class StudentController extends Controller
                 'last_name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8',
-                'grade' => 'nullable|string|max:255',
                 'date_of_birth' => 'required|date',
                 'std' => 'required',
             ]);
@@ -92,7 +91,6 @@ class StudentController extends Controller
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
                 $user->password = Hash::make($request->password);
-                $user->grade = $request->grade;
                 $user->std = $request->std;
                 $user->date_of_birth = $request->date_of_birth;
                 $user->email_verified_at = '2024-09-18';
@@ -152,7 +150,6 @@ class StudentController extends Controller
             'last_name' => 'required|string|max:255',
 //            'email' => 'required|email|unique:users,email,' . $id,
 //            'password' => 'required|string|min:8',
-            'grad' => 'nullable|string|max:255',
             'date_of_birth' => 'required|date',
             'std' => 'required',
         ]);
@@ -167,7 +164,6 @@ class StudentController extends Controller
             $student->first_name = $request->first_name;
             $student->last_name = $request->last_name;
             $student->email = $request->email;
-            $student->grade = $request->grade;
             $student->std = $request->std;
             $student->date_of_birth = $request->date_of_birth;
             if(!empty($request->password)){

@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="time">Time</label>
+                            <label for="time">Time (in minutes)</label>
                             <input type="number" name="time" id="time" class="form-control"
                                    placeholder="Enter Time" value="{{ old('time') }}" required>
                             @error('time')
