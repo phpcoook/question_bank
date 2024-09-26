@@ -1,5 +1,5 @@
 @extends('layouts.layoutMaster')
-@section('title',env('WEB_NAME').' | Question List')
+@section('title',env('WEB_NAME').' | Sub Topic List')
 @section('page-style')
     <style>
         .ellipsis {
@@ -7,7 +7,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .question-col, .answer-col {
+        .topic-col, .answer-col {
             max-width: 200px;
         }
     </style>
@@ -19,17 +19,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Question List</h1>
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        <select id="difficulty" class="form-control" required>
-                            <option value="">Filter By</option>
-                            <option value="reported" class="text-danger" >Reported</option>
-                            <option value="foundation" >Foundation</option>
-                            <option value="intermediate" >Intermediate</option>
-                            <option value="challenging">Challenging</option>
-                        </select>
-                        <h6 class="m-0 py-3 text-danger">No of reported question : {{$reported ?? 0}}</h6>
+                        <h1 class="m-0 text-dark">Sub Topic List</h1>
                     </div>
                 </div>
             </div>
@@ -59,16 +49,16 @@
             <div class="card card-primary">
                 <div class="row m-3">
                     <div class="col-12 d-flex justify-content-end mb-2">
-                        <a class="btn btn-primary" href="{{ route('create.question') }}">Add Question</a>
+                        <a class="btn btn-primary" href="{{ route('create.sub-topic') }}">Add Sub Topic</a>
                     </div>
                     <div class="col-sm-12">
-                        <table id="Question-table" class="table table-bordered table-hover dataTable" role="grid"
+                        <table id="Sub-topic-table" class="table table-bordered table-hover dataTable" role="grid"
                                aria-describedby="example2_info">
                             <thead>
                             <tr role="row">
                                 <th>No</th>
-                                <th>Code</th>
-                                <th>Difficulty</th>
+                                <th>Topic</th>
+                                <th>Title</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -87,40 +77,31 @@
         $(document).ready(function () {
 
 
-            $('#Question-table').DataTable({
+            $('#Sub-topic-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 10,
                 allowHTML: true,
-                ajax: {
-                    url:"{{ route('questions.data') }}",
-                    data: function (d) {
-                        d.filter = $('#difficulty').val();
-                    }
-                },
+                ajax: "{{ route('sub-topics.data') }}",
                 columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-                    {data: 'code', name: 'code'},
-                    {data: 'difficulty', name: 'difficulty'},
+                    {data: 'no', searchable: false},
+                    {data: 'topic'},
+                    {data: 'title'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });
-
-            // Handle delete button click
-            $('#difficulty').on('change',  function () {
-                $('#Question-table').DataTable().draw();
-            });
-            $('#Question-table').on('click', '.delete-question', function () {
+            
+            $('#Sub-topic-table').on('click', '.delete-sub-topic', function () {
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: "{{ route('question.destroy', ':id') }}".replace(':id', id),
+                        url: "{{ route('sub-topic.destroy', ':id') }}".replace(':id', id),
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
                         },
                         success: function (result) {
-                            $('#Question-table').DataTable().ajax.reload(); // Reload table data
+                            $('#Sub-topic-table').DataTable().ajax.reload(); // Reload table data
                         },
                         error: function (error) {
                             alert('Error deleting item!');

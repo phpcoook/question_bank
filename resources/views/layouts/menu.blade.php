@@ -27,6 +27,19 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 @if(Auth::user()->role == 'admin')
+
+                    <a href="{{ route('topic.index') }}"
+                       class="nav-link {{ request()->routeIs('topic.index') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Topic List</p>
+                    </a>
+
+                    <a href="{{ route('sub-topic.index') }}"
+                       class="nav-link {{ request()->routeIs('sub-topic.index') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>SubTopic List</p>
+                    </a>
+
                     <a href="{{ route('question.index') }}"
                        class="nav-link {{ request()->routeIs('question.index') ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>

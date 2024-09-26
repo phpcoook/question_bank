@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Setting;
+use App\Models\SubTopic;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +20,8 @@ class QuizController extends Controller
     public function startQuiz(Request $request)
     {
 
+        try {
+        $time = Setting::first();
         $currentDate = Carbon::now();
         $endOfWeek = $currentDate->endOfWeek();
         $endDate = $endOfWeek->toDateTimeString();
@@ -27,24 +31,54 @@ class QuizController extends Controller
         $totalMinutes = Quiz::where('user_id', Auth::user()->id)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->sum('time');
-        if($totalMinutes >= 30){
+        if($totalMinutes >= $time->no_of_questions){
             $validity = false;
             $randomCombination =[];
             return view('student.quiz', compact('randomCombination','validity'));
         }
         $target = $request->time ?? 30;
+        if(count($request->sub_topics) < 5){
+            return redirect()->back()->with('error','Please Select Minimum 5 topics');
+        }
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
-            $questions = Question::with('quizImage')->select('id', 'time')->whereNotIn('id', $notIn)->get()->toArray();
+            $questions = Question::with('quizImage')
+                ->select('id', 'time')
+                ->where('reported', '0')
+                ->whereNotIn('id', $notIn)
+                ->where(function($query) use ($request) {
+                    foreach ($request->sub_topics as $sub_topic) {
+                        $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                    }
+                })
+                ->get()
+                ->toArray();
         } else {
-            $questions = Question::with('quizImage')->select('id', 'time')->get()->toArray();
+                $questions = Question::with('quizImage')
+                ->select('id', 'time')
+                ->where('reported', '0')
+                ->where(function($query) use ($request) {
+                    foreach ($request->sub_topics as $sub_topic) {
+                        $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                    }
+                })
+                ->get()
+                ->toArray();
         }
         $result = [];
+
         $this->findCombinations($questions, $target, 0, [], $result);
+
         $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
         $validity = true;
         return view('student.quiz', compact('randomCombination','validity'));
+        }catch (\Exception $e){
+            Log::info($e->getMessage());
+            $randomCombination = [];
+            $validity = true;
+            return view('student.quiz', compact('randomCombination','validity'));
+        }
     }
 
     private function findCombinations(
@@ -54,21 +88,26 @@ class QuizController extends Controller
         array $currentCombination,
         array &$result
     ) {
-        if ($target >= 0) {
-            if ($target === 0) {
-                $result[] = $currentCombination;
-                return;
-            }
-            for ($i = $start; $i < count($questions); $i++) {
-                $time = $questions[$i]['time'];
-                if ($time <= $target) {
-                    $this->findCombinations($questions, $target - $time, $i + 1,
-                        array_merge($currentCombination, [$questions[$i]]), $result);
+        try {
+            if ($target >= 0) {
+                if ($target === 0) {
+                    $result[] = $currentCombination;
+                    return;
+                }
+                for ($i = $start; $i < count($questions); $i++) {
+                    $time = $questions[$i]['time'];
+                    if ($time <= $target) {
+                        $this->findCombinations($questions, $target - $time, $i + 1,
+                            array_merge($currentCombination, [$questions[$i]]), $result);
+                    }
+                }
+                if ($target > 0 && !empty($currentCombination)) {
+                    $result[] = $currentCombination;
                 }
             }
-            if ($target > 0 && !empty($currentCombination)) {
-                $result[] = $currentCombination;
-            }
+        }catch (\Exception $e){
+           Log::info($e->getMessage());
+            return [];
         }
     }
 
@@ -140,7 +179,10 @@ class QuizController extends Controller
     }
 
     public function addTime(){
-        return view('student.addtime');
+        $time = Setting::first();
+        $std = Auth::user()->std ?? 1;
+        $subTopics = SubTopic::select('sub_topics.title as title','sub_topics.id as id')->join('topics','topics.id','sub_topics.topic_id')->where('topics.std',$std)->get();
+        return view('student.addtime',compact("time","subTopics"));
     }
 
 }
