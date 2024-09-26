@@ -31,6 +31,7 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 //login
 Route::get('/login', [StudentController::class, 'loginView'])->name('login');
 Route::post('/login', [StudentController::class, 'login']);
+Route::post('getSubTopicDatas', [SubTopicController::class, 'getDataByIds']);
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
@@ -98,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
         Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
         Route::get('/student/wrong/question', [StudentController::class, 'wrongQuestion'])->name('student.wrong-question');
+        Route::get('/student/topic-list', [StudentController::class, 'topicList'])->name('student.topic-list');
     });
     Route::get('/student/start-quiz/time', [QuizController::class, 'addTime'])->name('student.start-quiz.addtime');
     Route::middleware(['tutor'])->group(function () {
