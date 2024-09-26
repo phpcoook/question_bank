@@ -53,9 +53,8 @@
                             <label for="topics">Topics</label>
                             <select name="topics[]" id="topics" class="form-control select2"  multiple required>
                                 <option value="">Select Topics</option>
-
                                 @foreach($topics as $topic)
-                                    <option {{(in_array($topic->id,json_decode($data->topic_id)))?'selected':''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                    <option {{(in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'selected' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
                                 @endforeach
                             </select>
                             @error('topics')

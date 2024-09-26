@@ -39,7 +39,7 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="no_of_question">No of Questions</label>
+                            <label for="no_of_question">No of minute per Week</label>
                             <input type="number" name="no_of_question" id="no_of_question" class="form-control"
                                    placeholder="Enter No of Questions" value="{{ $setting['no_of_questions'] }}" required>
                             @error('no_of_question')

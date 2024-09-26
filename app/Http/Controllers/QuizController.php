@@ -19,65 +19,65 @@ class QuizController extends Controller
 
     public function startQuiz(Request $request)
     {
-
         try {
-        $time = Setting::first();
-        $currentDate = Carbon::now();
-        $endOfWeek = $currentDate->endOfWeek();
-        $endDate = $endOfWeek->toDateTimeString();
-        $currentDates = Carbon::now();
-        $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
-        $startDate = $startOfWeek->toDateTimeString();
-        $totalMinutes = Quiz::where('user_id', Auth::user()->id)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->sum('time');
-        if($totalMinutes >= $time->no_of_questions){
-            $validity = false;
-            $randomCombination =[];
-            return view('student.quiz', compact('randomCombination','validity'));
-        }
-        $target = $request->time ?? 30;
-        if(count($request->sub_topics) < 5){
-            return redirect()->back()->with('error','Please Select Minimum 5 topics');
-        }
-        $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
-        if ($attended->count() > 0) {
-            $notIn = $attended->pluck('question_id');
-            $questions = Question::with('quizImage')
-                ->select('id', 'time')
-                ->where('reported', '0')
-                ->whereNotIn('id', $notIn)
-                ->where(function($query) use ($request) {
-                    foreach ($request->sub_topics as $sub_topic) {
-                        $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
-                    }
-                })
-                ->get()
-                ->toArray();
-        } else {
+
+            $time = Setting::first();
+            $currentDate = Carbon::now();
+            $endOfWeek = $currentDate->endOfWeek();
+            $endDate = $endOfWeek->toDateTimeString();
+            $currentDates = Carbon::now();
+            $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
+            $startDate = $startOfWeek->toDateTimeString();
+            $totalMinutes = Quiz::where('user_id', Auth::user()->id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->sum('time');
+            if ($totalMinutes >= $time->no_of_questions) {
+                $validity = false;
+                $randomCombination = [];
+                return view('student.quiz', compact('randomCombination', 'validity'));
+            }
+            $target = $request->time ?? 30;
+            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
+                return redirect()->back()->with('error', 'Please select minimum 1 and maximum 5 topics');
+            }
+            $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
+            if ($attended->count() > 0) {
+                $notIn = $attended->pluck('question_id');
                 $questions = Question::with('quizImage')
-                ->select('id', 'time')
-                ->where('reported', '0')
-                ->where(function($query) use ($request) {
-                    foreach ($request->sub_topics as $sub_topic) {
-                        $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
-                    }
-                })
-                ->get()
-                ->toArray();
-        }
-        $result = [];
+                    ->select('id', 'time')
+                    ->where('reported', '0')
+                    ->whereNotIn('id', $notIn)
+                    ->where(function ($query) use ($request) {
+                        foreach ($request->sub_topics as $sub_topic) {
+                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                        }
+                    })
+                    ->get()
+                    ->toArray();
+            } else {
+                $questions = Question::with('quizImage')
+                    ->select('id', 'time')
+                    ->where('reported', '0')
+                    ->where(function ($query) use ($request) {
+                        foreach ($request->sub_topics as $sub_topic) {
+                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                        }
+                    })
+                    ->get()
+                    ->toArray();
+            }
+            $result = [];
 
-        $this->findCombinations($questions, $target, 0, [], $result);
+            $this->findCombinations($questions, $target, 0, [], $result);
 
-        $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
-        $validity = true;
-        return view('student.quiz', compact('randomCombination','validity'));
-        }catch (\Exception $e){
+            $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
+            $validity = true;
+            return view('student.quiz', compact('randomCombination', 'validity'));
+        } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
-            return view('student.quiz', compact('randomCombination','validity'));
+            return view('student.quiz', compact('randomCombination', 'validity'));
         }
     }
 

@@ -43,7 +43,7 @@ class TopicController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     $editButton = '<a href="' . route('topic.edit', $row->id) . '" class="btn btn-primary btn-sm edit-student" data-id="' . $row->id . '">Edit</a>';
-                    $deleteButton = '<button class="btn btn-danger btn-sm delete-student" data-id="' . $row->id . '">Delete</button>';
+                    $deleteButton = '<button class="btn btn-danger btn-sm delete-topic" data-id="' . $row->id . '">Delete</button>';
                     return $editButton . ' ' . $deleteButton;
                 })
                 ->rawColumns(['no', 'std', 'title', 'actions'])
