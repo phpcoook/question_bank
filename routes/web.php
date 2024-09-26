@@ -52,7 +52,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/sub-topic/{id}', [SubTopicController::class, 'update'])->name('sub-topic.update');
         Route::delete('/sub-topic/{id}', [SubTopicController::class, 'destroy'])->name('sub-topic.destroy');
         Route::get('sub-topics/data', [SubTopicController::class, 'getData'])->name('sub-topics.data');
-        Route::post('getSubTopicData', [SubTopicController::class, 'getDataByIds']);
         Route::post('getSelectedSubTopicData', [SubTopicController::class, 'getSelectedDataByIds']);
 
         // question
@@ -87,6 +86,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/create/setting', [SettingController::class, 'create'])->name('create.setting');
         Route::put('/setting/{id}', [SettingController::class, 'update'])->name('setting.update');
     });
+
+//subtopic
+    Route::post('getSubTopicData', [SubTopicController::class, 'getDataByIds']);
 
 // Tutor
     Route::post('/question/data', [TutorController::class, 'getQuestionData'])->name('question.data');
