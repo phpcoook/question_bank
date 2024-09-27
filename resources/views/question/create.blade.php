@@ -37,13 +37,34 @@
                       enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
+
+                        <div class="form-group">
+                            <label for="std">Standard</label>
+                            <select name="std" id="std" class="form-control" required>
+                                <option value="">Select Standard</option>
+                                <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
+                                <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
+                                <option value="10" {{ (old('std') == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
+                                <option value="9" {{ (old('std') == 9) ? 'selected' : '' }}>9<sup>th</sup></option>
+                                <option value="8" {{ (old('std') == 8) ? 'selected' : '' }}>8<sup>th</sup></option>
+                                <option value="7" {{ (old('std') == 7) ? 'selected' : '' }}>7<sup>th</sup></option>
+                                <option value="6" {{ (old('std') == 6) ? 'selected' : '' }}>6<sup>th</sup></option>
+                                <option value="5" {{ (old('std') == 5) ? 'selected' : '' }}>5<sup>th</sup></option>
+                                <option value="4" {{ (old('std') == 4) ? 'selected' : '' }}>4<sup>th</sup></option>
+                                <option value="3" {{ (old('std') == 3) ? 'selected' : '' }}>3<sup>rd</sup></option>
+                                <option value="2" {{ (old('std') == 2) ? 'selected' : '' }}>2<sup>nd</sup></option>
+                                <option value="1" {{ (old('std') == 1) ? 'selected' : '' }}>1<sup>st</sup></option>
+                            </select>
+
+                            @error('std')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-group">
                             <label for="topics">Topics</label>
-                            <select name="topics[]" id="topics" class="form-control select2"  multiple required>
+                            <select name="topics[]" id="topics" class="form-control select2" multiple required>
                                 <option value="">Select Topics</option>
-                                @foreach($topics as $topic)
-                                    <option {{(old('topics'))? in_array($topic->id, old('topics'))?'selected':'' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
-                                @endforeach
                             </select>
                             @error('topics')
                             <div class="text-danger">{{ $message }}</div>
@@ -51,7 +72,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sub_topics">Sub Topics</label>
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required>
                                 <option value="">Select Sub Topics</option>
                             </select>
                             @error('sub_topics')
@@ -66,7 +87,8 @@
                                 <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
                                     Foundation
                                 </option>
-                                <option value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
+                                <option
+                                    value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
                                     Intermediate
                                 </option>
                                 <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>
@@ -146,7 +168,35 @@
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
-            if($('#topics').val()){
+
+            $('#std').change(function () {
+                let selectedStandard = $(this).val();
+                if (selectedStandard) {
+                    $.ajax({
+                        url: "{{ url('getTopics') }}",
+                        type: 'POST',
+                        data: {
+                            'std': selectedStandard,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (result) {
+                            $('#topics').html(result.data);
+                            $topics = $('#topics').val();
+                            if ($topics.length == 0) {
+                                $('#sub_topics').html('<option value="">Please select a topic first</option>');
+                            }
+                        },
+                        error: function (error) {
+                            alert('Something went wrong while fetching topics!');
+                        }
+                    });
+                } else {
+                    $('#topics').html('<option value="">Please select a topic first</option>');
+                    $('#sub_topics').html('<option value="">Please select a topic first</option>');
+                }
+            });
+
+            if ($('#topics').val()) {
                 $.ajax({
                     url: "{{ url('getSubTopicData') }}",
                     type: 'POST',
@@ -154,20 +204,19 @@
                         'topic_ids': $('#topics').val(), // Send as array
                         _token: '{{ csrf_token() }}'
                     },
-                    success: function(result) {
+                    success: function (result) {
                         $('#sub_topics').html(result.data)
                         $('.select3').select2()
                     },
-                    error: function(error) {
+                    error: function (error) {
                         alert('Something Went Wrong!');
                     }
                 });
             }
             $('.select2').select2()
             $('.select3').select2()
-            // Handle adding new image input fields for question images
 
-            $('#topics').change(function() {
+            $('#topics').change(function () {
                 const selectedOptions = $(this).val(); // This should be an array
                 $.ajax({
                     url: "{{ url('getSubTopicData') }}",
@@ -176,17 +225,15 @@
                         'topic_ids': selectedOptions, // Send as array
                         _token: '{{ csrf_token() }}'
                     },
-                    success: function(result) {
+                    success: function (result) {
                         $('#sub_topics').html(result.data)
                         $('.select3').select2()
                     },
-                    error: function(error) {
+                    error: function (error) {
                         alert('Something Went Wrong!');
                     }
                 });
             });
-
-
 
             $(document).on('click', '.add-question-image-row', function () {
                 var newQuestionRow = `
@@ -213,6 +260,7 @@
             });
         });
     </script>
+
     <script>
         $(document).ready(function () {
             $("#question-form").validate({
@@ -261,11 +309,11 @@
             });
         });
     </script>
-<style>
-    .select2-container--default .select2-selection--multiple .select2-selection__choice {
-        background-color: #007bff !important;
-        border: 1px solid #007bff!important;
-        color: #ffffff!important;
-    }
-</style>
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff !important;
+            border: 1px solid #007bff !important;
+            color: #ffffff !important;
+        }
+    </style>
 @endsection

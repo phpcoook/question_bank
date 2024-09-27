@@ -37,14 +37,24 @@
                 <div class="row m-3">
                     <div class="col-md-6 m-auto">
                         <p class="text-center">
-                            <strong>Covered Topic</strong>
+                            <strong>Questions done / Topic</strong>
                         </p>
                         @foreach($topicData as $topicItem)
                             <div class="progress-group">
                                 {{$topicItem['title']}}
-                                <span class="float-right"><b>{{$topicItem['attempted_questions']}}</b>/{{$topicItem['total_questions']}}</span>
+                                <span class="float-right">
+                                    <b>{{$topicItem['attempted_questions']}}</b>/
+                                        {{$topicItem['total_questions']}}
+                                </span>
                                 <div class="progress progress-md">
-                                    <div class="progress-bar bg-success" style="width:{{($topicItem['attempted_questions']/$topicItem['total_questions'])*100}}%"></div>
+                                    @if($topicItem['total_questions'] > 0)
+                                        <div class="progress-bar bg-success"
+                                             style="width:{{ ($topicItem['attempted_questions'] / $topicItem['total_questions']) * 100 }}%">
+                                        </div>
+                                    @else
+                                        <div class="progress-bar bg-success" style="width:0%">
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

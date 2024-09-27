@@ -65,6 +65,23 @@ class SubTopicController extends Controller
         }
     }
 
+    public function getTopics(Request $request)
+    {
+        try {
+            $data = Topic::where('std',$request->std)->get();
+            $html = '<option value=""> Select SubTopics</option>';
+            if ($data->count()) {
+                foreach ($data as $Topic) {
+                    $html .= '<option value="' . $Topic->id . '"> ' . $Topic->title . '</option>';
+                }
+            }
+            return response()->json(['data' => $html]);
+        } catch (\Exception $e) {
+            Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
+            return redirect()->back()->with('error', 'An error occurred. Please try again.');
+        }
+    }
+
     public function getSelectedDataByIds(Request $request) {
         try {
             $topicIds = is_array($request->topic_ids) ? $request->topic_ids : [$request->topic_ids];
