@@ -7,6 +7,7 @@ use App\Models\Quiz;
 use App\Models\Reported;
 use App\Models\Setting;
 use App\Models\SubTopic;
+use App\Models\Topic;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,6 @@ class QuizController extends Controller
     public function startQuiz(Request $request)
     {
         try {
-
             $time = Setting::first();
             $currentDate = Carbon::now();
             $endOfWeek = $currentDate->endOfWeek();
@@ -47,6 +47,7 @@ class QuizController extends Controller
                 $questions = Question::with('quizImage')
                     ->select('id', 'time')
                     ->where('reported', '0')
+                    ->where('difficulty', $request->difficulty)
                     ->whereNotIn('id', $notIn)
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
@@ -59,6 +60,7 @@ class QuizController extends Controller
                 $questions = Question::with('quizImage')
                     ->select('id', 'time')
                     ->where('reported', '0')
+                    ->where('difficulty', $request->difficulty)
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
@@ -68,7 +70,6 @@ class QuizController extends Controller
                     ->toArray();
             }
             $result = [];
-
             $this->findCombinations($questions, $target, 0, [], $result);
 
             $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
@@ -181,9 +182,8 @@ class QuizController extends Controller
 
     public function addTime(){
         $time = Setting::first();
-        $std = Auth::user()->std ?? 1;
-        $subTopics = SubTopic::select('sub_topics.title as title','sub_topics.id as id')->join('topics','topics.id','sub_topics.topic_id')->where('topics.std',$std)->get();
-        return view('student.addtime',compact("time","subTopics"));
+        $topics = Topic::all();
+        return view('student.addtime',compact("time","topics"));
     }
 
     public function reportQuestion(Request $request)

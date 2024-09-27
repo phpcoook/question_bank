@@ -125,6 +125,9 @@
         .steps ul li:first-child::before, .steps ul li:first-child::after {
             display: none;
         }
+        .displayNone{
+            display: none;
+        }
     </style>
 
 @endsection
@@ -175,7 +178,7 @@
                         </div>
 
                     </div>
-                    <h3 class="mt-5">Try to Answer in given time!</h3>
+                    <h3 class="mt-5" id="try-answer">Try to Answer in given time!</h3>
                     <div class="timer" id="timer">
                         <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
                              xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -382,6 +385,10 @@
             document.getElementById('buttons').innerHTML = '';
             document.getElementById('time').innerText = '0:00'; // Reset time display after quiz completion
             document.getElementById('images').innerHTML = '';
+
+            document.getElementById('try-answer').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('li-steps').style.display = 'none';
         }
 
         window.onload = loadQuestion;
