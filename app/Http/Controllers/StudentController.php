@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
-use App\Models\QuestionImage;
 use App\Models\Quiz;
 use App\Models\Topic;
 use App\Models\User;
@@ -193,37 +192,21 @@ class StudentController extends Controller
         }
     }
 
-    public function dashboard(){
-        return view('student.dashboard');
-    }
-
-    public function wrongQuestion()
-    {
-        try {
-            $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
-            $questions = Question::with('quizImage')->wherein('id', $wrong)->get()->toArray();
-            return view('student.wrongQuestion', compact('questions'));
-        } catch (\Exception $e) {
-            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
-            return response()->json(['error' => 'Something went wrong!'], 500);
-        }
-    }
-
-    public function topicList()
+    public function dashboard()
     {
         $std = Auth::user()->std ?? 1;
         $userId = Auth::user()->id;
         $topics = Topic::where('std', $std)->get();
         $questions = Question::where(function ($query) use ($topics) {
             foreach ($topics as $topic) {
-                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)]);
+                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)]);
             }
         })->pluck('id');
         $topicData = $topics->map(function ($topic) use ($questions, $userId) {
-            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)])->count();
+            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->count();
             $attemptedQuestions = Quiz::whereIn('question_id', $questions)
                 ->where('user_id', $userId)
-                ->whereIn('question_id', Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)])->pluck('id'))
+                ->whereIn('question_id', Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->pluck('id'))
                 ->count();
 
             return [
@@ -233,7 +216,19 @@ class StudentController extends Controller
                 'attempted_questions' => $attemptedQuestions,
             ];
         });
-        return view('student.topic-list',compact('topicData'));
+        return view('student.dashboard', compact('topicData'));
+    }
+
+    public function wrongQuestion()
+    {
+        try {
+            $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
+            $questions = Question::with('quizImage')->whereIn('id', $wrong)->paginate(1);
+            return view('student.wrongQuestion', compact('questions'));
+        } catch (\Exception $e) {
+            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
+            return response()->json(['error' => 'Something went wrong!'], 500);
+        }
     }
 
 }

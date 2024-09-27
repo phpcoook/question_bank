@@ -7,7 +7,7 @@
             margin-right: 12px;
         }
         .input_image {
-            max-width: -webkit-fill-available;
+            max-width: 100%;
         }
     </style>
 @endsection
@@ -34,7 +34,7 @@
         @endif
 
         @if (session('error'))
-            <div class="alert  alert-danger alert-dismissible mx-3">
+            <div class="alert alert-danger alert-dismissible mx-3">
                 <div class="d-flex gap-2">
                     <h5><i class="icon fas fa-ban"></i></h5>
                     {{ session('error') }}
@@ -46,25 +46,32 @@
         <section class="content m-2">
             <div class="card card-primary p-4">
                 <div class="col-sm-12">
-                    @if(!empty($questions))
+                    @if($questions->isNotEmpty())
                         @foreach ($questions as $question)
-                            <div class="question">
-                                <h4>Question Code: {{ $question['code'] }}</h4>
-                                <p>Difficulty: {{ $question['difficulty'] }}</p>
-                                <p>Time: {{ $question['time'] }} minute</p>
+                            <div class="question mb-4">
+                                <h4>Question Code: {{ $question->code }}</h4>
+                                <p>Difficulty: {{ $question->difficulty }}</p>
+                                <p>Time: {{ $question->time }} minute</p>
                                 <h5>Images:</h5>
-                                <div class="images d-flex flex-wrap ">
-
-                                    @foreach ($question['quiz_image'] as $image)
-                                        <div class="input_image_div">
-                                            <img src="{{ asset('storage/images/' . $image['image_name']) }}" alt="image"
-                                                 class="input_image">
-                                        </div>
-                                    @endforeach
+                                <div class="images d-flex flex-wrap">
+                                    @if($question->quizImage->isNotEmpty())
+                                        @foreach ($question->quizImage as $image)
+                                            <div class="input_image_div">
+                                                <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image"
+                                                     class="input_image">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>No images available for this question.</p>
+                                    @endif
                                 </div>
                             </div>
                             <hr>
                         @endforeach
+
+                        <div class="d-flex justify-content-center">
+                        {{ $questions->links() }}
+                        </div>
                     @else
                         <div class="d-flex justify-content-center">
                             <h4>No Wrong questions found.</h4>
