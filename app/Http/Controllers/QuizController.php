@@ -35,7 +35,8 @@ class QuizController extends Controller
             if ($totalMinutes >= $time->no_of_questions) {
                 $validity = false;
                 $randomCombination = [];
-                return view('student.quiz', compact('randomCombination', 'validity'));
+                $quiz_id = date('Ymdhis').rand(0,1000);
+                return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
             }
             $target = $request->time ?? 30;
 //            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
@@ -74,12 +75,14 @@ class QuizController extends Controller
 
             $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
             $validity = true;
-            return view('student.quiz', compact('randomCombination', 'validity'));
+            $quiz_id = date('Ymdhis').rand(0,1000);
+            return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
-            return view('student.quiz', compact('randomCombination', 'validity'));
+            $quiz_id = date('Ymdhis').rand(0,1000);
+            return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
         }
     }
 
@@ -160,8 +163,9 @@ class QuizController extends Controller
                 [
                     'answer' => $request->response,
                     'time' => $request->time_taken,
-                     'user_id' => Auth::user()->id,
-                    'question_id' => $request->question_id
+                    'user_id' => Auth::user()->id,
+                    'question_id' => $request->question_id,
+                    'quiz_id' => $request->quiz_id
                 ],
                 [
                     'user_id' => Auth::user()->id,

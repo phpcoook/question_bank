@@ -8,6 +8,7 @@ use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
@@ -21,6 +22,7 @@ class StudentController extends Controller
     {
         return view('login');
     }
+
 
     public function login(Request $request)
     {
@@ -43,12 +45,12 @@ class StudentController extends Controller
 
             if ($user && $user->email_verified_at !== null) {
                 if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
-                    $role = User::where('email',$request->email)->get();
-                    if($role[0]['role'] == 'student'){
+                    $role = User::where('email', $request->email)->get();
+                    if ($role[0]['role'] == 'student') {
                         return redirect()->route('student.dashboard');
-                    }elseif ($role[0]['role'] == 'tutor'){
+                    } elseif ($role[0]['role'] == 'tutor') {
                         return redirect()->route('tutor.dashboard');
-                    }else{
+                    } else {
                         return redirect()->route('admin.login');
                     }
                 } else {
@@ -98,7 +100,7 @@ class StudentController extends Controller
                 $user->save();
 
                 // Send the registration email
-                Mail::to($user->email)->send(new Register($user,$request->password));
+                Mail::to($user->email)->send(new Register($user, $request->password));
 
                 return redirect()->route('student.index')->with('success', 'Student created successfully.');
             }
@@ -120,7 +122,8 @@ class StudentController extends Controller
             return DataTables::of($student)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($student) {
-                    $editButton = '<a href="' . route('student.edit', $student->id) . '" class="btn btn-primary btn-sm edit-student" data-id="' . $student->id . '">Edit</a>';
+                    $editButton = '<a href="' . route('student.edit',
+                            $student->id) . '" class="btn btn-primary btn-sm edit-student" data-id="' . $student->id . '">Edit</a>';
                     $deleteButton = '<button class="btn btn-danger btn-sm delete-student" data-id="' . $student->id . '">Delete</button>';
                     return $editButton . ' ' . $deleteButton;
                 })
@@ -166,7 +169,7 @@ class StudentController extends Controller
             $student->email = $request->email;
             $student->std = $request->std;
             $student->date_of_birth = $request->date_of_birth;
-            if(!empty($request->password)){
+            if (!empty($request->password)) {
                 $student->password = Hash::make($request->password);
             }
             $student->save();
@@ -203,10 +206,12 @@ class StudentController extends Controller
             }
         })->pluck('id');
         $topicData = $topics->map(function ($topic) use ($questions, $userId) {
-            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->count();
+            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)',
+                [json_encode((string)$topic->id)])->count();
             $attemptedQuestions = Quiz::whereIn('question_id', $questions)
                 ->where('user_id', $userId)
-                ->whereIn('question_id', Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->pluck('id'))
+                ->whereIn('question_id',
+                    Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->pluck('id'))
                 ->count();
 
             return [
@@ -219,15 +224,91 @@ class StudentController extends Controller
         return view('student.dashboard', compact('topicData'));
     }
 
-    public function wrongQuestion()
+    public function wrongQuestion(Request $request)
     {
         try {
-            $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
+            $all = Quiz::select('quiz_id', DB::raw('count(*) as count'))
+                ->where('answer', 'wrong')
+                ->groupBy('quiz_id')
+                ->get();
+            if (!empty($request->quiz_id)) {
+                $wrong = Quiz::where('user_id', Auth::user()->id)->where('quiz_id',$request->quiz_id)->where('answer', 'wrong')->pluck('question_id');
+
+            } else {
+                $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
+            }
             $questions = Question::with('quizImage')->whereIn('id', $wrong)->paginate(1);
-            return view('student.wrongQuestion', compact('questions'));
+            return view('student.wrongQuestion', compact('questions', 'all'));
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
             return response()->json(['error' => 'Something went wrong!'], 500);
+        }
+    }
+
+    public function previousQuiz(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $Topic = Quiz::select('quiz_id',
+                    DB::raw('COUNT(*) as total_answers'),
+                    DB::raw('SUM(CASE WHEN answer = "wrong" THEN 1 ELSE 0 END) as wrong_answers'),
+                    DB::raw('SUM(CASE WHEN answer = "correct" THEN 1 ELSE 0 END) as correct_answers'),
+                    DB::raw('ROUND((SUM(CASE WHEN answer = "correct" THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) as correct_percentage'),
+                    DB::raw('DATE_FORMAT(MIN(created_at), "%Y-%m-%d") as created_at') // Use MIN to get the earliest date
+                )
+                    ->groupBy('quiz_id') // Only group by quiz_id
+                    ->get();
+
+
+                $Topic->each(function ($item, $index) {
+                    $item->index = $index + 1;
+                });
+                return Datatables::of($Topic)
+                    ->addColumn('no', function ($row) {
+                        return $row->index;
+                    })
+                    ->addColumn('quiz_id', function ($row) {
+                        return $row->quiz_id;
+                    })
+                    ->addColumn('total_question', function ($row) {
+                        return $row->total_answers;
+                    })
+                    ->addColumn('correct_answers', function ($row) {
+                        return $row->correct_answers;
+                    })
+                    ->addColumn('wrong_answers', function ($row) {
+                        return $row->wrong_answers;
+                    })
+                    ->addColumn('percentage', function ($row) {
+                        return $row->correct_percentage . '%';
+                    })
+                    ->addColumn('quiz_date', function ($row) {
+                        return date('jS M-Y', strtotime($row->created_at));
+                    })
+                    ->addColumn('quiz_date', function ($row) {
+                        return date('jS M-Y', strtotime($row->created_at));
+                    })
+                    ->addColumn('actions', function ($row) {
+                        return " <a class='btn btn-sm btn-info' href='" . url('student/wrong/question') . '/' . $row->quiz_id . "'><i class='fa fa-eye me-1'></i>  Wrong Ans</a>
+                             ";
+                    })
+                    ->rawColumns([
+                        'no',
+                        'quiz_id',
+                        'quiz_date',
+                        'total_question',
+                        'correct_answers',
+                        'wrong_answers',
+                        'percentage',
+                        'actions'
+                    ])
+                    ->make(true);
+            } else {
+                return view('student.previous-quiz');
+            }
+        } catch (\Exception $e) {
+            Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
+            return redirect()->back()->with('error', 'An error occurred. Please try again.');
         }
     }
 

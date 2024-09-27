@@ -19,6 +19,14 @@
                     <div class="col-sm-6">
                         <h1 class="m-0 text-dark">Wrong Question List</h1>
                     </div>
+                    <div class="col-sm-6 text-right">
+                        <select id="quiz_id" class="form-control" required>
+                            <option value="">Filter By Quiz</option>
+                            @foreach($all as $single)
+                            <option value="{{$single->quiz_id}}" >{{$single->quiz_id}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,7 +53,7 @@
 
         <section class="content m-2">
             <div class="card card-primary p-4">
-                <div class="col-sm-12">
+                <div class="col-sm-12" id="byQuiz">
                     @if($questions->isNotEmpty())
                         @foreach ($questions as $question)
                             <div class="question mb-4">
@@ -81,4 +89,18 @@
             </div>
         </section>
     </div>
+@endsection
+@section('page-script')
+    <script>
+        $(window).on('load', function() {
+            var url = window.location.href;
+            var idPart = url.substring(url.lastIndexOf('/') + 1).split('?')[0];
+            $('#quiz_id').val(idPart);
+        });
+
+        $('#quiz_id').on('change', function () {
+            window.location.href = '{{ url('student/wrong/question/') }}' + '/' + this.value;
+        });
+
+    </script>
 @endsection

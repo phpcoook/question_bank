@@ -328,7 +328,8 @@
                 const payload = {
                     user_id: user_id,
                     question_id: questionData.id,
-                    time_taken: timeTaken
+                    time_taken: timeTaken,
+                    quiz_id: '{{$quiz_id}}'
                 };
 
                 fetch('{{url('student/save-quiz')}}', {

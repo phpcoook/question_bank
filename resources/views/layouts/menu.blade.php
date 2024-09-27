@@ -88,6 +88,11 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>Wrong Question</p>
                         </a>
+                        <a href="{{ url('/student/previous-quiz') }}"
+                           class="nav-link {{ request()->is('/student/previous-quiz') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Previous Quiz</p>
+                        </a>
                     @endif
 
                     @if(Auth::user()->role == 'tutor')
