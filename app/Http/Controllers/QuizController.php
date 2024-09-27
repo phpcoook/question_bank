@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Reported;
 use App\Models\Setting;
 use App\Models\SubTopic;
 use Carbon\Carbon;
@@ -183,6 +184,33 @@ class QuizController extends Controller
         $std = Auth::user()->std ?? 1;
         $subTopics = SubTopic::select('sub_topics.title as title','sub_topics.id as id')->join('topics','topics.id','sub_topics.topic_id')->where('topics.std',$std)->get();
         return view('student.addtime',compact("time","subTopics"));
+    }
+
+    public function reportQuestion(Request $request)
+    {
+        try {
+
+            $report = Reported::upsert(
+                [
+                    'report_text' => $request->report_text,
+                    'user_id' => Auth::user()->id,
+                    'question_id' => $request->question_id
+                ],
+                [
+                    'user_id' => Auth::user()->id,
+                    'question_id' => $request->question_id
+                ]
+
+            );
+            if ($report) {
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false]);
+            }
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            return response()->json(['success' => false]);
+        }
     }
 
 }

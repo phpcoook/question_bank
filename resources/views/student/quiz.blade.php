@@ -32,11 +32,13 @@
             overflow: hidden;
 
         }
+
         .steps ul {
             margin: 0;
             padding: 0;
             list-style: none;
         }
+
         .steps ul li {
             float: left;
             color: #fff;
@@ -51,20 +53,24 @@
 
 
         }
+
         .steps ul li:hover, .steps ul li.active {
             color: #007bff;
         }
-         .steps ul li.active span {
+
+        .steps ul li.active span {
             background: #007bff;
             color: #fff;
             border-radius: 17px;
             top: 3px;
 
         }
-         .steps ul li.active::after {
+
+        .steps ul li.active::after {
             background: #007bff;
             width: 100%;
         }
+
         .steps ul li::before, .steps ul li::after {
             content: "";
             position: absolute;
@@ -84,9 +90,11 @@
             -otransform: translateY(-50%);
             transform: translateY(-50%);
         }
+
         .steps ul li::after {
             width: 0;
         }
+
         .steps ul li span {
 
             display: block;
@@ -94,7 +102,7 @@
             width: 35px;
             height: 35px;
             text-align: center;
-            background:#F4F6F9;
+            background: #F4F6F9;
             font-size: 18px;
             line-height: 35px;
             font-weight: 300;
@@ -113,6 +121,7 @@
             border-radius: 17px;
             top: 3px;
         }
+
         .steps ul li:first-child::before, .steps ul li:first-child::after {
             display: none;
         }
@@ -194,7 +203,7 @@
                                 </g>
                             </g>
                             </svg>
-                       <br> Timer: <span id="time">0:00</span></div>
+                        <br> Timer: <span id="time">0:00</span></div>
                     <div class="images" id="images"></div>
                     <div class="buttons" id="buttons"></div>
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
@@ -264,8 +273,6 @@
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
-<!--            <button class="btn btn-success" onclick="handleAnswer('correct')">Correct</button>-->
-<!--            <button class="btn btn-danger mx-2" onclick="handleAnswer('wrong')">Wrong</button>-->
 <div class="d-flex justify-content-center gap-4 align-items-center">
            <div onclick="handleAnswer('correct')" class="d-flex align-items-center" style="cursor: pointer;margin-right: 15px;">
     <i class="fas fa-check" style="color: green; margin-right: 5px; font-size: 1.5em;"></i>Correct
@@ -281,15 +288,37 @@
             startTimer(questionData.time); // Start the timer for the current question
         }
 
-        function handleAnswer(response) {
-            if (response === 'report') {
-                console.log("Response is 'report'");
-                if (confirm('Are you sure for reporting this question?')) {
-                    toastr.error(`Question has been reported.`);
-                    nextQuestion();
+        function sendReport() {
+            const questionData = questions[currentQuestionIndex];
+            let qid = questionData.id
+            let report_text = $('#report_text').val()
+            $.ajax({
+                url: "{{ url('question-report') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    'question_id': qid,
+                    'report_text': report_text
+                },
+                success: function (result) {
+                    if (result?.success == true) {
+                        toastr.success(`Question has been reported.`);
+                    } else {
+                        toastr.error(`Not Reported! Something went Wrong.`);
+                    }
+                },
+                error: function (error) {
+                    toastr.error(`Not Reported! Something went Wrong.`);
                 }
+            });
+        }
+
+        function handleAnswer(response) {
+            const questionData = questions[currentQuestionIndex];
+            if (response === 'report') {
+                $('#reportModal').modal('show');
             } else {
-                const questionData = questions[currentQuestionIndex];
+
                 const timeTaken = (questionData.time * 60) - remainingTime; // Calculate time taken
                 totalTime += timeTaken; // Update total time
 
@@ -324,10 +353,11 @@
                     });
             }
         }
+
         function updateActiveStep() {
             const steps = document.querySelectorAll('.steps li');
             if (currentQuestionIndex < steps.length) {
-                steps[currentQuestionIndex-1].classList.add('active');
+                steps[currentQuestionIndex - 1].classList.add('active');
             }
         }
 
@@ -360,4 +390,27 @@
     <link rel="stylesheet" href="{{url('assets/plugins/toastr/toastr.css')}}">
     <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
 
+
+    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Detail!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <textarea placeholder="Add More Detail For Reporting" class="form-control" id="report_text" name="report_text"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" onclick="sendReport();" class="btn btn-primary" data-dismiss="modal">Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
