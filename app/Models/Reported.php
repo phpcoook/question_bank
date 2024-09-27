@@ -12,11 +12,11 @@ class Reported extends Model
 
     public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class,'user_id','id');
     }
 
     public function question()
     {
-        return $this->hasMany(Question::class);
+        return $this->belongsTo(Question::class);
     }
 }
