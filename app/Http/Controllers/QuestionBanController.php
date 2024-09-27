@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Reported;
 use App\Models\Topic;
 use App\Rules\SubTopicsRequired;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ class QuestionBanController extends Controller
     public function create()
     {
         $topics = Topic::all();
-        return view('question.create',compact('topics'));
+        return view('question.create', compact('topics'));
     }
 
     public function store(Request $request)
@@ -45,8 +46,8 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics,1);
-                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->topic_id = json_encode($request->topics, 1);
+                $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->save();
 
                 // Handle question images
@@ -88,27 +89,27 @@ class QuestionBanController extends Controller
     public function index()
     {
         $reported = Question::where('reported', '1')->count();
-        return view('question.index',compact('reported'));
+        return view('question.index', compact('reported'));
     }
 
     public function getQuestionsData(Request $request)
     {
         try {
             $questions = Question::orderBy('created_at', 'desc');
-            if(!empty($request->filter)){
-                if($request->filter == 'reported'){
-                    $questions->where('reported','1');
-                }else{
-                    $questions->where('difficulty',$request->filter);
+            if (!empty($request->filter)) {
+                if ($request->filter == 'reported') {
+                    $questions->where('reported', '1');
+                } else {
+                    $questions->where('difficulty', $request->filter);
                 }
             }
             $questions->get();
             return DataTables::of($questions)
                 ->addIndexColumn()
                 ->addColumn('actions', function ($question) {
-                    $reported = ($question->reported)? "<span class='text-danger px-3 text-bold'>Reported</span>":'';
+                    $reported = ($question->reported) ? "<span class='text-danger px-3 text-bold'>Reported</span>" : '';
                     $editButton = '<a href="' . route('question.edit', $question->id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $question->id . '">Edit</a>';
-                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $question->id . '">Delete</button>'.$reported;
+                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $question->id . '">Delete</button>' . $reported;
                     return $editButton . ' ' . $deleteButton;
                 })
                 ->rawColumns(['actions'])
@@ -125,7 +126,7 @@ class QuestionBanController extends Controller
             $topics = Topic::all();
             $data = Question::find($id);
             $images = QuestionImage::where('question_id', $id)->get();
-            return view('question.edit', compact('data', 'images','topics'));
+            return view('question.edit', compact('data', 'images', 'topics'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
@@ -159,8 +160,8 @@ class QuestionBanController extends Controller
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics,1);
-                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->topic_id = json_encode($request->topics, 1);
+                $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->save();
 
                 // Handle question images removal
@@ -233,7 +234,7 @@ class QuestionBanController extends Controller
     public function destroy($id)
     {
         try {
-            $quizRecords = Quiz::where('question_id',$id)->get();
+            $quizRecords = Quiz::where('question_id', $id)->get();
             foreach ($quizRecords as $quiz) {
                 $quiz->delete();
             }
@@ -252,6 +253,34 @@ class QuestionBanController extends Controller
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
             return response()->json(['error' => 'Something went wrong!'], 500);
+        }
+    }
+
+    public function report(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $report = Reported::with('user')->get();
+
+                return DataTables::of($report)
+                    ->addIndexColumn()
+                    ->addColumn('user_name', function ($report) {
+                        return $report->user->first_name.' '.$report->user->last_name;
+                    })
+                    ->addColumn('actions', function ($report) {
+                        $editButton = '<a href="' . route('question.edit', $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>';
+                        return $editButton;
+                    })
+                    ->rawColumns(['actions'])
+                    ->make(true);
+            } else {
+                return view('question.report');
+            }
+
+
+        } catch (\Exception $e) {
+            Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
+            return redirect()->back()->with('error', 'An error occurred. Please try again.');
         }
     }
 }

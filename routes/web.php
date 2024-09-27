@@ -65,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/question/{id}', [QuestionBanController::class, 'destroy'])->name('question.destroy');
         Route::get('questions/data', [QuestionBanController::class, 'getQuestionsData'])->name('questions.data');
 
+        Route::get('questions/report', [QuestionBanController::class, 'report'])->name('report');
 
 // student
         Route::get('/create/student', [StudentController::class, 'create'])->name('create.student');
