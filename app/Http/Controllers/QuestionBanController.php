@@ -36,6 +36,7 @@ class QuestionBanController extends Controller
                     'array',
                     new SubTopicsRequired($request->input('topics')),
                 ],
+                'std' => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -46,8 +47,9 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics, 1);
-                $question->subtopic_id = json_encode($request->sub_topics, 1);
+                $question->topic_id = json_encode($request->topics,1);
+                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->std = $request->std;
                 $question->save();
 
                 // Handle question images
@@ -146,6 +148,7 @@ class QuestionBanController extends Controller
                     'array',
                     new SubTopicsRequired($request->input('topics')),
                 ],
+                'std' => 'required',
             ]);
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
@@ -160,8 +163,9 @@ class QuestionBanController extends Controller
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics, 1);
-                $question->subtopic_id = json_encode($request->sub_topics, 1);
+                $question->topic_id = json_encode($request->topics,1);
+                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->std = $request->std;
                 $question->save();
 
                 // Handle question images removal

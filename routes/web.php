@@ -92,6 +92,8 @@ Route::middleware(['auth'])->group(function () {
 
 //subtopic
     Route::post('getSubTopicData', [SubTopicController::class, 'getDataByIds']);
+    Route::post('/getTopics', [SubTopicController::class, 'getTopics'])->name('getTopics');
+
 
 // Tutor
     Route::post('/question/data', [TutorController::class, 'getQuestionData'])->name('question.data');
