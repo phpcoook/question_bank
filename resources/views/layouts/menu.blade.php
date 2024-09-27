@@ -81,13 +81,6 @@
                             <i class="far fa-circle nav-icon"></i>
                             <p>Wrong Question</p>
                         </a>
-
-                        <a href="{{ route('student.topic-list') }}"
-                           class="nav-link {{ request()->routeIs('student.topic-list') ? 'active' : '' }}">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Topic List</p>
-                        </a>
-
                     @endif
 
                     @if(Auth::user()->role == 'tutor')

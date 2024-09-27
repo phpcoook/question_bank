@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
-use App\Models\QuestionImage;
 use App\Models\Quiz;
 use App\Models\Topic;
 use App\Models\User;
@@ -193,8 +192,31 @@ class StudentController extends Controller
         }
     }
 
-    public function dashboard(){
-        return view('student.dashboard');
+    public function dashboard()
+    {
+        $std = Auth::user()->std ?? 1;
+        $userId = Auth::user()->id;
+        $topics = Topic::where('std', $std)->get();
+        $questions = Question::where(function ($query) use ($topics) {
+            foreach ($topics as $topic) {
+                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)]);
+            }
+        })->pluck('id');
+        $topicData = $topics->map(function ($topic) use ($questions, $userId) {
+            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->count();
+            $attemptedQuestions = Quiz::whereIn('question_id', $questions)
+                ->where('user_id', $userId)
+                ->whereIn('question_id', Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->pluck('id'))
+                ->count();
+
+            return [
+                'id' => $topic->id,
+                'title' => $topic->title,
+                'total_questions' => $totalQuestions,
+                'attempted_questions' => $attemptedQuestions,
+            ];
+        });
+        return view('student.dashboard', compact('topicData'));
     }
 
     public function wrongQuestion()
@@ -207,33 +229,6 @@ class StudentController extends Controller
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
             return response()->json(['error' => 'Something went wrong!'], 500);
         }
-    }
-
-    public function topicList()
-    {
-        $std = Auth::user()->std ?? 1;
-        $userId = Auth::user()->id;
-        $topics = Topic::where('std', $std)->get();
-        $questions = Question::where(function ($query) use ($topics) {
-            foreach ($topics as $topic) {
-                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)]);
-            }
-        })->pluck('id');
-        $topicData = $topics->map(function ($topic) use ($questions, $userId) {
-            $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)])->count();
-            $attemptedQuestions = Quiz::whereIn('question_id', $questions)
-                ->where('user_id', $userId)
-                ->whereIn('question_id', Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string) $topic->id)])->pluck('id'))
-                ->count();
-
-            return [
-                'id' => $topic->id,
-                'title' => $topic->title,
-                'total_questions' => $totalQuestions,
-                'attempted_questions' => $attemptedQuestions,
-            ];
-        });
-        return view('student.topic-list',compact('topicData'));
     }
 
 }

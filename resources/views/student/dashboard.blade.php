@@ -35,7 +35,21 @@
         <section class="content m-2">
             <div class="card card-primary">
                 <div class="row m-3">
-                   <h1>Student Dashboard</h1>
+                    <div class="col-md-6 m-auto">
+                        <p class="text-center">
+                            <strong>Covered Topic</strong>
+                        </p>
+                        @foreach($topicData as $topicItem)
+                            <div class="progress-group">
+                                {{$topicItem['title']}}
+                                <span class="float-right"><b>{{$topicItem['attempted_questions']}}</b>/{{$topicItem['total_questions']}}</span>
+                                <div class="progress progress-md">
+                                    <div class="progress-bar bg-success" style="width:{{($topicItem['attempted_questions']/$topicItem['total_questions'])*100}}%"></div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                    </div>
                 </div>
             </div>
         </section>
