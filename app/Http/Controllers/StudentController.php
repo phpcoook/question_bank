@@ -201,7 +201,7 @@ class StudentController extends Controller
     {
         try {
             $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
-            $questions = Question::with('quizImage')->wherein('id', $wrong)->get()->toArray();
+            $questions = Question::with('quizImage')->whereIn('id', $wrong)->paginate(1);
             return view('student.wrongQuestion', compact('questions'));
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
