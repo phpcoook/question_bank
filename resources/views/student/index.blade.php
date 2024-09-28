@@ -46,7 +46,6 @@
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
-                                <th>Grade</th>
                                 <th>Standard</th>
                                 <th>Birth of date</th>
                                 <th>Actions</th> <!-- Add Actions column header -->
@@ -74,8 +73,7 @@
                     {data: 'first_name', name: 'first_name'},
                     {data: 'last_name', name: 'last_name'},
                     {data: 'email', name: 'email'},
-                    {data: 'grade', name: 'grade'},
-                    {data: 'std', name: 'standard'},
+                    {data: 'std', name: 'std'},
                     {data: 'date_of_birth', name: 'date_of_birth'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
