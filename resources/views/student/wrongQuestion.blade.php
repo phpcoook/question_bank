@@ -94,13 +94,19 @@
     <script>
         $(window).on('load', function() {
             var url = window.location.href;
-            var idPart = url.substring(url.lastIndexOf('/') + 1).split('?')[0];
-            $('#quiz_id').val(idPart);
+            var idPart = url.split('/').pop();
+            if (idPart !== 'question' && !isNaN(idPart)) {
+                $('#quiz_id').val(idPart);
+            }
         });
 
         $('#quiz_id').on('change', function () {
-            window.location.href = '{{ url('student/wrong/question/') }}' + '/' + this.value;
+            var selectedValue = this.value;
+            if (selectedValue) {
+                window.location.href = '{{ url('student/wrong/question') }}' + '/' + selectedValue;
+            } else {
+                window.location.href = '{{ url('student/wrong/question') }}';
+            }
         });
-
     </script>
 @endsection
