@@ -49,6 +49,7 @@ class QuizController extends Controller
                     ->select('id', 'time')
                     ->where('reported', '0')
                     ->where('difficulty', $request->difficulty)
+                    ->where('std', Auth::user()->std)
                     ->whereNotIn('id', $notIn)
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
@@ -62,6 +63,7 @@ class QuizController extends Controller
                     ->select('id', 'time')
                     ->where('reported', '0')
                     ->where('difficulty', $request->difficulty)
+                    ->where('std', Auth::user()->std)
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);

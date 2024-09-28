@@ -67,6 +67,9 @@
                             <thead>
                             <tr role="row">
                                 <th>No</th>
+                                <th>Standard</th>
+                                <th>Topic</th>
+                                <th>Subtopic</th>
                                 <th>Code</th>
                                 <th>Difficulty</th>
                                 <th>Actions</th>
@@ -100,6 +103,9 @@
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'std', name: 'std'},
+                    {data: 'topic_name', name: 'topic_name'},
+                    {data: 'subtopic_name', name: 'subtopic_name'},
                     {data: 'code', name: 'code'},
                     {data: 'difficulty', name: 'difficulty'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}

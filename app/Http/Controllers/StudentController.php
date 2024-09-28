@@ -254,9 +254,10 @@ class StudentController extends Controller
                     DB::raw('SUM(CASE WHEN answer = "wrong" THEN 1 ELSE 0 END) as wrong_answers'),
                     DB::raw('SUM(CASE WHEN answer = "correct" THEN 1 ELSE 0 END) as correct_answers'),
                     DB::raw('ROUND((SUM(CASE WHEN answer = "correct" THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) as correct_percentage'),
-                    DB::raw('DATE_FORMAT(MIN(created_at), "%Y-%m-%d") as created_at') // Use MIN to get the earliest date
+                    DB::raw('DATE_FORMAT(MIN(created_at), "%Y-%m-%d") as created_at')
                 )
-                    ->groupBy('quiz_id') // Only group by quiz_id
+                    ->where('user_id',Auth::user()->id)
+                    ->groupBy('quiz_id')
                     ->get();
 
 

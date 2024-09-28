@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Reported;
+use App\Models\SubTopic;
 use App\Models\Topic;
 use App\Rules\SubTopicsRequired;
 use Illuminate\Http\Request;
@@ -47,8 +48,8 @@ class QuestionBanController extends Controller
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics,1);
-                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->topic_id = json_encode($request->topics, 1);
+                $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->std = $request->std;
                 $question->save();
 
@@ -97,7 +98,17 @@ class QuestionBanController extends Controller
     public function getQuestionsData(Request $request)
     {
         try {
-            $questions = Question::orderBy('created_at', 'desc');
+
+            $questions = Question::select(
+                'id',
+                'code',
+                'difficulty',
+                'time',
+                'reported',
+                'std',
+                'subtopic_id',
+                'topic_id'
+            );
             if (!empty($request->filter)) {
                 if ($request->filter == 'reported') {
                     $questions->where('reported', '1');
@@ -105,16 +116,63 @@ class QuestionBanController extends Controller
                     $questions->where('difficulty', $request->filter);
                 }
             }
-            $questions->get();
+            $questions = $questions->get()->toArray();
+            $subtopicIds = [];
+            $topicIds = [];
+            foreach ($questions as $question) {
+                $subtopicIds = array_merge($subtopicIds, json_decode($question['subtopic_id'], true));
+                $topicIds = array_merge($topicIds, json_decode($question['topic_id'], true));
+            }
+            $subtopicIds = array_unique($subtopicIds);
+            $topicIds = array_unique($topicIds);
+            $subtopics = SubTopic::whereIn('id', $subtopicIds)->pluck('title', 'id')->toArray();
+            $topics = Topic::whereIn('id', $topicIds)->pluck('title', 'id')->toArray();
+            foreach ($questions as &$question) {
+                $subtopicArray = json_decode($question['subtopic_id'], true);
+                $topicArray = json_decode($question['topic_id'], true);
+
+                $question['subtopic_name'] = array_map(function ($id) use ($subtopics) {
+                    return !empty($subtopics[$id]) ? '<small class="badge badge-primary" >' . $subtopics[$id] . '</small>' : null;
+                }, $subtopicArray);
+
+                $question['topic_name'] = array_map(function ($id) use ($topics) {
+                    return !empty($topics[$id]) ? '<small class="badge badge-primary" >' . $topics[$id] . '</small>' : null;
+                }, $topicArray);
+            }
+
             return DataTables::of($questions)
                 ->addIndexColumn()
-                ->addColumn('actions', function ($question) {
-                    $reported = ($question->reported) ? "<span class='text-danger px-3 text-bold'>Reported</span>" : '';
-                    $editButton = '<a href="' . route('question.edit', $question->id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $question->id . '">Edit</a>';
-                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $question->id . '">Delete</button>' . $reported;
+                ->addColumn('code', function ($row) {
+                    return $row['code'];
+                })
+                ->addColumn('difficulty', function ($row) {
+                    return $row['difficulty'];
+                })
+                ->addColumn('std', function ($row) {
+                    return $row['std'];
+                })
+                ->addColumn('subtopic_name', function ($row) {
+                    $sub_html = "";
+                    foreach ($row['subtopic_name'] as $items) {
+                        $sub_html .= $items . " ";
+                    }
+                    return trim($sub_html);
+                })
+                ->addColumn('topic_name', function ($row) {
+                    $html = "";
+                    foreach ($row['topic_name'] as $item) {
+                        $html .= $item . " ";
+                    }
+                    return trim($html);
+                })
+                ->addColumn('actions', function ($row) {
+                    $reported = ($row['reported']) ? "<span class='text-danger px-3 text-bold'>Reported</span>" : '';
+                    $editButton = '<a href="' . route('question.edit',
+                            $row['id']) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $row['id'] . '">Edit</a>';
+                    $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $row['id'] . '">Delete</button>' . $reported;
                     return $editButton . ' ' . $deleteButton;
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'code', 'difficulty', 'std', 'subtopic_name', 'topic_name'])
                 ->make(true);
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -163,8 +221,8 @@ class QuestionBanController extends Controller
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
                 $question->time = $request->time;
-                $question->topic_id = json_encode($request->topics,1);
-                $question->subtopic_id = json_encode($request->sub_topics,1);
+                $question->topic_id = json_encode($request->topics, 1);
+                $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->std = $request->std;
                 $question->save();
 
@@ -269,10 +327,11 @@ class QuestionBanController extends Controller
                 return DataTables::of($report)
                     ->addIndexColumn()
                     ->addColumn('user_name', function ($report) {
-                        return $report->user->first_name.' '.$report->user->last_name;
+                        return $report->user->first_name . ' ' . $report->user->last_name;
                     })
                     ->addColumn('actions', function ($report) {
-                        $editButton = '<a href="' . route('question.edit', $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>';
+                        $editButton = '<a href="' . route('question.edit',
+                                $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>';
                         return $editButton;
                     })
                     ->rawColumns(['actions'])
