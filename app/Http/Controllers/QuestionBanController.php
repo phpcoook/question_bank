@@ -120,8 +120,8 @@ class QuestionBanController extends Controller
             $subtopicIds = [];
             $topicIds = [];
             foreach ($questions as $question) {
-                $subtopicIds = array_merge($subtopicIds, json_decode($question['subtopic_id'], true));
-                $topicIds = array_merge($topicIds, json_decode($question['topic_id'], true));
+                $subtopicIds = array_merge($subtopicIds, json_decode($question['subtopic_id'] ?? '[]', true));
+                $topicIds = array_merge($topicIds, json_decode($question['topic_id'] ?? '[]', true));
             }
             $subtopicIds = array_unique($subtopicIds);
             $topicIds = array_unique($topicIds);
@@ -131,14 +131,23 @@ class QuestionBanController extends Controller
                 $subtopicArray = json_decode($question['subtopic_id'], true);
                 $topicArray = json_decode($question['topic_id'], true);
 
-                $question['subtopic_name'] = array_map(function ($id) use ($subtopics) {
-                    return !empty($subtopics[$id]) ? '<small class="badge badge-primary" >' . $subtopics[$id] . '</small>' : null;
-                }, $subtopicArray);
+                if (is_array($subtopicArray)) {
+                    $question['subtopic_name'] = array_map(function ($id) use ($subtopics) {
+                        return !empty($subtopics[$id]) ? '<small class="badge badge-primary" >' . $subtopics[$id] . '</small>' : null;
+                    }, $subtopicArray);
+                } else {
+                    $question['subtopic_name'] = ['name' => '<span class="badge badge-secondary">N/A</span>'];
+                }
 
-                $question['topic_name'] = array_map(function ($id) use ($topics) {
-                    return !empty($topics[$id]) ? '<small class="badge badge-primary" >' . $topics[$id] . '</small>' : null;
-                }, $topicArray);
+                if (is_array($topicArray)) {
+                    $question['topic_name'] = array_map(function ($id) use ($topics) {
+                        return !empty($topics[$id]) ? '<small class="badge badge-primary" >' . $topics[$id] . '</small>' : null;
+                    }, $topicArray);
+                } else {
+                    $question['topic_name'] = ['name' => '<span class="badge badge-secondary">N/A</span>'];
+                }
             }
+
 
             return DataTables::of($questions)
                 ->addIndexColumn()
