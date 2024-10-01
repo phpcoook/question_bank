@@ -93,7 +93,7 @@
                             $('#Student-table').DataTable().ajax.reload();
                         },
                         error: function (error) {
-                            alert('Error deleting item!');
+                            alert('Unable to delete post due to foreign key constraint');
                         }
                     });
                 }
