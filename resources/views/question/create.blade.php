@@ -173,7 +173,7 @@
                 let selectedStandard = $(this).val();
                 if (selectedStandard) {
                     $.ajax({
-                        url: "{{ url('getTopics') }}",
+                        url: '{{env('AJAX_URL')}}'+'getTopics',
                         type: 'POST',
                         data: {
                             'std': selectedStandard,
@@ -198,7 +198,7 @@
 
             if ($('#topics').val()) {
                 $.ajax({
-                    url: "{{ url('getSubTopicData') }}",
+                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': $('#topics').val(), // Send as array
@@ -219,7 +219,7 @@
             $('#topics').change(function () {
                 const selectedOptions = $(this).val(); // This should be an array
                 $.ajax({
-                    url: "{{ url('getSubTopicData') }}",
+                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': selectedOptions, // Send as array

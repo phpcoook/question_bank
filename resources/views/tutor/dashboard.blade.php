@@ -65,7 +65,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url:  baseUrl + 'question/data',
+                    url:  '{{env('AJAX_URL')}}'+'question/data',
                     type: "POST",
                 },
                 columns: [

@@ -67,7 +67,7 @@
             $('#Student-table').DataTable({
                 processing: true,
                 serverSide: true,
-                    ajax: "{{ route('student.data') }}",
+                    ajax: '{{env('AJAX_URL')}}'+'student/data',
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'first_name', name: 'first_name'},
@@ -84,7 +84,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: "{{ route('student.destroy', ':id') }}".replace(':id', id),
+                        url: '{{env('AJAX_URL')}}'+'student/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
