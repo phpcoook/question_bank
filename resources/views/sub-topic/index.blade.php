@@ -82,7 +82,7 @@
                 serverSide: true,
                 pageLength: 10,
                 allowHTML: true,
-                ajax: "{{ route('sub-topics.data') }}",
+                ajax: '{{env('AJAX_URL')}}'+'sub-topics/data',
                 columns: [
                     {data: 'no', searchable: false},
                     {data: 'topic'},
@@ -95,7 +95,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: "{{ route('sub-topic.destroy', ':id') }}".replace(':id', id),
+                        url: '{{env('AJAX_URL')}}'+'sub-topic/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

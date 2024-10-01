@@ -66,7 +66,7 @@
             $('#Tutor-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('tutor.data') }}",
+                ajax: '{{env('AJAX_URL')}}'+"tutor/data",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'first_name', name: 'first_name'},
@@ -82,7 +82,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: "{{ route('tutor.destroy', ':id') }}".replace(':id', id),
+                        url: '{{env('AJAX_URL')}}'+'tutor/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

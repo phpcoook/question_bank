@@ -296,7 +296,7 @@
             let qid = questionData.id
             let report_text = $('#report_text').val()
             $.ajax({
-                url: "{{ url('question-report') }}",
+                url: '{{env('AJAX_URL')}}'+'question-report',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

@@ -96,7 +96,7 @@
                 pageLength: 10,
                 allowHTML: true,
                 ajax: {
-                    url:"{{ route('questions.data') }}",
+                    url: '{{env('AJAX_URL')}}'+'questions/data',
                     data: function (d) {
                         d.filter = $('#difficulty').val();
                     }
@@ -120,7 +120,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: "{{ route('question.destroy', ':id') }}".replace(':id', id),
+                        url: '{{env('AJAX_URL')}}'+'question/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
