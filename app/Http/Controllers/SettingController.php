@@ -6,6 +6,9 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Stripe\Stripe;
+use Stripe\Product;
+use Stripe\Price;
 
 class SettingController extends Controller
 {
@@ -25,9 +28,25 @@ class SettingController extends Controller
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
+                Stripe::setApiKey(env('STRIPE_SECRET'));
+
+                $product = Product::create([
+                    'name' => 'Paid',
+                ]);
+
+                $price = Price::create([
+                    'product' => $product->id,
+                    'unit_amount' => $request->input('subscription_charge') * 100, // Amount in cents
+                    'currency' => 'usd',
+                    'recurring' => [
+                        'interval' => 'month',
+                    ],
+                ]);
+
                 $setting = Setting::find($id);
                 $setting->no_of_questions = $request->input('no_of_question');
                 $setting->subscription_charge = $request->input('subscription_charge');
+                $setting->stripe_price_id = $price->id;
                 $setting->save();
 
                 return redirect()->route('create.setting')->with('success', 'Setting Update successfully.');

@@ -63,6 +63,16 @@
                         <p>Reported Question</p>
                     </a>
 
+                    <a href="{{ url('subscribers') }}"
+                       class="nav-link {{ request()->is('subscribers') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Subscribers</p>
+                    </a>
+                    <a href="{{ url('payment_history') }}"
+                       class="nav-link {{ request()->is('payment_history') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Payment History</p>
+                    </a>
                     <a href="{{ route('create.setting') }}"
                        class="nav-link {{ request()->routeIs('create.setting') ? 'active' : '' }}">
                         <i class="far fa-circle nav-icon"></i>
@@ -92,6 +102,11 @@
                            class="nav-link {{ request()->is('/student/previous-quiz') ? 'active' : '' }}">
                             <i class="far fa-circle nav-icon"></i>
                             <p>Previous Quiz</p>
+                        </a>
+                        <a href="{{ url('payment_history') }}"
+                           class="nav-link {{ request()->is('payment_history') ? 'active' : '' }}">
+                            <i class="far fa-circle nav-icon"></i>
+                            <p>Payment History</p>
                         </a>
                     @endif
 

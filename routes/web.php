@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PricingController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SubTopicController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Support\Facades\Route;
@@ -35,7 +38,7 @@ Route::post('getSubTopicDatas', [SubTopicController::class, 'getDataByIds']);
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
-    // topic
+        // topic
         Route::get('/create/topic', [TopicController::class, 'create'])->name('create.topic');
         Route::Post('/topic/story', [TopicController::class, 'store'])->name('topic.story');
         Route::get('/topics', [TopicController::class, 'index'])->name('topic.index');
@@ -97,12 +100,33 @@ Route::middleware(['auth'])->group(function () {
 
 // Tutor
     Route::post('/question/data', [TutorController::class, 'getQuestionData'])->name('question.data');
+//Payment
+    Route::get('/payment_history', [PaymentController::class, 'index']);
+    Route::post('/payment_history', [PaymentController::class, 'index']);
+
+
+//Subscriber
+    Route::get('/subscribers', [SubscriberController::class, 'index']);
+    Route::post('/subscribers', [SubscriberController::class, 'index']);
 
     Route::middleware(['student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
-        Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
-        Route::get('/student/wrong/question/{quiz_id?}', [StudentController::class, 'wrongQuestion'])->name('student.wrong-question');
+        Route::post('/student/save-quiz',
+            [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
+
+
+        Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+        Route::post('/webhook', [WebhookController::class, 'handleWebhook']);
+
+
+        Route::get('/payment', [PaymentController::class, 'index']);
+        Route::post('/payment', [PaymentController::class, 'processPayment'])->name('payment.process');
+
+        Route::post('/student/save-quiz',
+            [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+        Route::get('/student/wrong/question/{quiz_id?}',
+            [StudentController::class, 'wrongQuestion'])->name('student.wrong-question');
         Route::post('/question-report', [QuizController::class, 'reportQuestion']);
         Route::get('/student/topic-list', [StudentController::class, 'topicList'])->name('student.topic-list');
 
@@ -113,4 +137,14 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['tutor'])->group(function () {
         Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
     });
+
+    // question
+    Route::get('/create/pricing', [PricingController::class, 'create'])->name('create.pricing');
+    Route::Post('/pricing/story', [PricingController::class, 'store'])->name('pricing.story');
+    Route::get('/pricing', [PricingController::class, 'index'])->name('pricing.index');
+    Route::get('/pricing/{id}/edit', [PricingController::class, 'edit'])->name('pricing.edit');
+    Route::put('/pricing/{id}', [PricingController::class, 'update'])->name('pricing.update');
+    Route::delete('/pricing/{id}', [PricingController::class, 'destroy'])->name('pricing.destroy');
+    Route::get('pricing/data', [PricingController::class, 'getPricingData'])->name('pricing.data');
+
 });

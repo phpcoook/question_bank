@@ -22,6 +22,11 @@ class Question extends Model
         return $this->hasMany(QuestionImage::class)->where('type', 'question');
     }
 
+    public function ansImage()
+    {
+        return $this->hasMany(QuestionImage::class)->where('type', 'answer');
+    }
+
     public function topic()
     {
         return $this->belongsTo(Topic::class);
