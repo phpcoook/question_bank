@@ -125,7 +125,8 @@
         .steps ul li:first-child::before, .steps ul li:first-child::after {
             display: none;
         }
-        .displayNone{
+
+        .displayNone {
             display: none;
         }
     </style>
@@ -210,6 +211,24 @@
                     <div class="images" id="images"></div>
                     <div class="buttons" id="buttons"></div>
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
+                    @if(!empty($question['ans_image']))
+                        <div id="accordion" class="p-4">
+                            <div class="card card-success">
+                                <div class="card-header bg-success">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
+                                           See Answers
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                    <div class="card-body images" id="ans_images">
+                                      No Answer Available for this Question
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @else
                     @if($validity)
                         <h3 class="m-5">There are no further questions available on this topic.</h3>
@@ -223,6 +242,7 @@
             </div>
         </section>
     </div>
+
 @endsection
 
 @section('page-script')
@@ -234,7 +254,9 @@
             {
                 id: {{ $question['id'] }},
                 time: {{ $question['time'] }},
-                images: {!! json_encode($question['quiz_image']) !!} },
+                images: {!! json_encode($question['quiz_image']) !!},
+                ansimages: {!! !empty($question['ans_image'])?json_encode($question['ans_image']):json_encode([]) !!}
+            },
             @endforeach
         ];
 
@@ -288,6 +310,14 @@
 </div>
 </div>
         `;
+            @if(!empty($question['ans_image']))
+            var ansImagesHtml = '<div class="row col-md-12">';
+            $.each(questionData.ansimages, function (imgIndex, image) {
+                ansImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+            });
+            ansImagesHtml += '</div>';
+            document.getElementById('ans_images').innerHTML = ansImagesHtml;
+            @endif
             startTimer(questionData.time); // Start the timer for the current question
         }
 
@@ -296,7 +326,7 @@
             let qid = questionData.id
             let report_text = $('#report_text').val()
             $.ajax({
-                url: '{{env('AJAX_URL')}}'+'question-report',
+                url: '{{env('AJAX_URL')}}' + 'question-report',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -411,7 +441,8 @@
                 </div>
 
                 <div class="modal-body">
-                    <textarea placeholder="Add More Detail For Reporting" class="form-control" id="report_text" name="report_text"></textarea>
+                    <textarea placeholder="Add More Detail For Reporting" class="form-control" id="report_text"
+                              name="report_text"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

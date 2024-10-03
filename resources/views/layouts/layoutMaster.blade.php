@@ -34,6 +34,10 @@
         .main-header{
             visibility: hidden;
         }
+        .pricing ul {
+            padding-left: 0;
+            list-style: none;
+        }
     </style>
     @yield('page-style')
 </head>
@@ -99,6 +103,8 @@
 <script src="{{url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <!-- jquery validation -->
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
 @yield('page-script')
+
 </body>
 </html>

@@ -6,6 +6,7 @@ use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\Reported;
 use App\Models\Setting;
+use App\Models\Subscription;
 use App\Models\SubTopic;
 use App\Models\Topic;
 use Carbon\Carbon;
@@ -22,21 +23,26 @@ class QuizController extends Controller
     public function startQuiz(Request $request)
     {
         try {
-            $time = Setting::first();
-            $currentDate = Carbon::now();
-            $endOfWeek = $currentDate->endOfWeek();
-            $endDate = $endOfWeek->toDateTimeString();
-            $currentDates = Carbon::now();
-            $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
-            $startDate = $startOfWeek->toDateTimeString();
-            $totalMinutes = Quiz::where('user_id', Auth::user()->id)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->sum('time');
-            if ($totalMinutes >= $time->no_of_questions) {
-                $validity = false;
-                $randomCombination = [];
-                $quiz_id = date('Ymdhis').rand(0,1000);
-                return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
+
+            $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
+            if (empty($subscription)) {
+                $time = Setting::first();
+                $currentDate = Carbon::now();
+                $endOfWeek = $currentDate->endOfWeek();
+                $endDate = $endOfWeek->toDateTimeString();
+                $currentDates = Carbon::now();
+                $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
+                $startDate = $startOfWeek->toDateTimeString();
+                $totalMinutes = Quiz::where('user_id', Auth::user()->id)
+                    ->whereBetween('quiz.created_at', [$startDate, $endDate])
+                    ->join('question','question.id','quiz.question_id')
+                    ->sum('question.time');
+                if ($totalMinutes >= $time->no_of_questions) {
+                    $validity = false;
+                    $randomCombination = [];
+                    $quiz_id = date('Ymdhis') . rand(0, 1000);
+                    return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+                }
             }
             $target = $request->time ?? 30;
 //            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
@@ -55,9 +61,8 @@ class QuizController extends Controller
                         foreach ($request->sub_topics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
-                    })
-                    ->get()
-                    ->toArray();
+                    });
+
             } else {
                 $questions = Question::with('quizImage')
                     ->select('id', 'time')
@@ -68,23 +73,28 @@ class QuizController extends Controller
                         foreach ($request->sub_topics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
-                    })
-                    ->get()
-                    ->toArray();
+                    });
             }
             $result = [];
-            $this->findCombinations($questions, $target, 0, [], $result);
+
+            $subscription = Subscription::where('user_id',Auth::user()->id)->whereDate('end_date', '>', now())->count();
+            if($subscription){
+                $questions->with('ansImage');
+            }
+
+            $this->findCombinations($questions->get()->toArray(), $target, 0, [], $result);
 
             $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
             $validity = true;
-            $quiz_id = date('Ymdhis').rand(0,1000);
-            return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
+            $quiz_id = date('Ymdhis') . rand(0, 1000);
+
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
-            $quiz_id = date('Ymdhis').rand(0,1000);
-            return view('student.quiz', compact('randomCombination', 'validity','quiz_id'));
+            $quiz_id = date('Ymdhis') . rand(0, 1000);
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
         }
     }
 
@@ -112,14 +122,11 @@ class QuizController extends Controller
                     $result[] = $currentCombination;
                 }
             }
-        }catch (\Exception $e){
-           Log::info($e->getMessage());
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
             return [];
         }
     }
-
-
-
 
 
     public function startQuizq($target = 30)
@@ -127,9 +134,10 @@ class QuizController extends Controller
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
-            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->orderBy('time','ASC')->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->whereNotIn('id', $notIn)->orderBy('time',
+                'ASC')->get()->toArray();
         } else {
-            $questions = Question::select('id', 'question', 'time')->orderBy('time','ASC')->get()->toArray();
+            $questions = Question::select('id', 'question', 'time')->orderBy('time', 'ASC')->get()->toArray();
         }
         $result = [];
         $this->findCombinations($questions, $target, 0, [], $result);
@@ -186,10 +194,11 @@ class QuizController extends Controller
         }
     }
 
-    public function addTime(){
+    public function addTime()
+    {
         $time = Setting::first();
         $topics = Topic::all();
-        return view('student.addtime',compact("time","topics"));
+        return view('student.addtime', compact("time", "topics"));
     }
 
     public function reportQuestion(Request $request)

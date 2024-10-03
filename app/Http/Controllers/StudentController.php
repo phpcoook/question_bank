@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Setting;
 use App\Models\Topic;
+use App\Models\Pricing;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -204,10 +207,10 @@ class StudentController extends Controller
             foreach ($topics as $topic) {
                 $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)]);
             }
-        })->pluck('id');
+        })->where('reported', '0')->pluck('id');
         $topicData = $topics->map(function ($topic) use ($questions, $userId) {
             $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)',
-                [json_encode((string)$topic->id)])->count();
+                [json_encode((string)$topic->id)])->where('reported', '0')->count();
             $attemptedQuestions = Quiz::whereIn('question_id', $questions)
                 ->where('user_id', $userId)
                 ->whereIn('question_id',
@@ -221,7 +224,9 @@ class StudentController extends Controller
                 'attempted_questions' => $attemptedQuestions,
             ];
         });
-        return view('student.dashboard', compact('topicData'));
+        $subscription = Subscription::where('user_id',Auth::user()->id)->whereDate('end_date', '>', now())->first();
+        $setting = Setting::find(1);
+        return view('student.dashboard', compact('topicData','subscription','setting'));
     }
 
     public function wrongQuestion(Request $request)
@@ -229,6 +234,7 @@ class StudentController extends Controller
         try {
             $all = Quiz::select('quiz_id', DB::raw('count(*) as count'))
                 ->where('answer', 'wrong')
+                ->where('user_id', Auth::user()->id)
                 ->groupBy('quiz_id')
                 ->get();
             if (!empty($request->quiz_id)) {
