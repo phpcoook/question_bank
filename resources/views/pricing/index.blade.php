@@ -92,7 +92,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '/pricing/' + id,
+                        url: '{{env('AJAX_URL')}}' +'pricing/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
