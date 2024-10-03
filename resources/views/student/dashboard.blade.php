@@ -64,11 +64,7 @@
                             <div class="card mb-4 box-shadow">
                                 <div class="card-header">
                                     <h4 class="my-0 font-weight-normal">Paid Plan</h4>
-                                    @if(!empty($subscription))
-                                    <p><strong>Your Plan Renewal On
-                                            : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
-                                    </p>
-                                        @endif
+
                                 </div>
                                 <div class="card-body pricing">
                                     <h1 class="card-title pricing-card-title w-100 text-bold">
@@ -101,7 +97,12 @@
 
 
                     <div class="col-md-6">
-                        <h4 class="mb-5">Questions done / Topic</h4>
+                        <h4 class="mb-1">Questions done / Topic</h4>
+                        @if(!empty($subscription))
+                            <p class="mb-3"><strong>Your Plan Renewal On
+                                    : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
+                            </p>
+                        @endif
                         <div class="card p-3 box-shadow">
                             @foreach($topicData as $topicItem)
                                 <div class="progress-group">
@@ -378,7 +379,7 @@
                         $('#payment-result').text(error.message);
                     } else {
                         $.ajax({
-                            url: '{{ route('payment.process') }}',
+                            url: '{{env('AJAX_URL')}}' +'payment',
                             type: 'POST',
                             data: {
                                 payment_method_id: paymentMethod.id,
