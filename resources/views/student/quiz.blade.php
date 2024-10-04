@@ -416,7 +416,7 @@
             document.getElementById('buttons').innerHTML = '';
             document.getElementById('time').innerText = '0:00'; // Reset time display after quiz completion
             document.getElementById('images').innerHTML = '';
-
+            document.getElementById('accordion').style.display = 'none';
             document.getElementById('try-answer').style.display = 'none';
             document.getElementById('timer').style.display = 'none';
             document.getElementById('li-steps').style.display = 'none';

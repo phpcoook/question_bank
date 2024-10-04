@@ -367,8 +367,13 @@
             }
 
             $(document).ready(function () {
-                $('#submitPay').click(async (event) => {
 
+                $("#submitPay").click(function() {
+                    $(this).html(
+                        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;&nbsp; Processing...`
+                    );
+                });
+                $('#submitPay').click(async (event) => {
                     // event.preventDefault();
                     const {paymentMethod, error} = await stripe.createPaymentMethod({
                         type: 'card',
@@ -389,6 +394,9 @@
                                 if (response.success) {
                                     $("#paymentModal").modal('hide');
                                     $("#success_tic").modal('show');
+                                    setTimeout(function () {
+                                        location.reload();
+                                    },4000)
                                 } else {
                                     $('#payment-result').text(response.message);
                                 }
