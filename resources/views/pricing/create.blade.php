@@ -93,7 +93,7 @@
             $(document).on('click', '.add-answer-image-row', function () {
                 var newAnswerRow = `
                 <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="answerimage[]">
+                    <input type="file" class="form-control" name="solutionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
                 $('#answer-image-rows').append(newAnswerRow);

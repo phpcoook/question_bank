@@ -96,7 +96,7 @@
                 },
                 messages: {
                     std: {
-                        required: "Please select the Standard"
+                        required: "Please select the Year"
                     },
                     title: {
                         required: "Please enter a Title"

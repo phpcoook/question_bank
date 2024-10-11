@@ -33,9 +33,9 @@
         @endif
 
         <section class="content m-2">
-            <div class="card card-primary">
+            <div class="card card-primary ">
                 <div class="row m-3">
-                    <div class="col-md-{{empty($subscription)?'6':'6 d-none'}}">
+                    <div class="col-md-{{empty($subscription)?'12':'12 d-none'}}">
                         <h4>Subscription Plan</h4>
                         <div class="card-deck mb-3 text-center">
                             <div class="card mb-4 box-shadow">
@@ -54,6 +54,8 @@
                                         </li>
                                         <li><i class="fa fa-times text-danger"></i> Unable to look at full working out
                                             for questions
+                                        </li>
+                                        <li><i class="fa fa-times text-danger"></i> Solution not displayed during the test
                                         </li>
                                     </ul>
                                     <button disabled type="button" class="btn btn-lg btn-block btn-primary">
@@ -94,14 +96,20 @@
 
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="card card-primary mt-3 mb-5">
+                <div class="row m-3">
 
-
-                    <div class="col-md-6">
+                    <div class="col-md-6 m-auto">
                         <h4 class="mb-1">Questions done / Topic</h4>
                         @if(!empty($subscription))
-                            <p class="mb-3"><strong>Your Plan Renewal On
+                            <p class="mb-3" ><strong>Your Plan Renewal On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
                             </p>
+                            @if(!$subscriptionStatus)
+                                <p class="mb-3 text-danger" ><strong>Your Subscription Disable by Owner</strong></p>
+                            @endif
                         @endif
                         <div class="card p-3 box-shadow">
                             @foreach($topicData as $topicItem)
@@ -128,6 +136,7 @@
                     </div>
                 </div>
             </div>
+
         </section>
     </div>
 
@@ -337,13 +346,7 @@
 
     </style>
     @if(auth()->check() && auth()->user()->role == 'student')
-        <script>
-            @if(empty($subscription))
-            $(document).ready(function () {
-                $("#priceModal").modal('show');
-            });
-            @endif
-        </script>
+
 
         <script src="https://js.stripe.com/v3/"></script>
         <script>

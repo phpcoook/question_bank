@@ -57,7 +57,7 @@
                             <thead>
                             <tr role="row">
                                 <th>No</th>
-                                <th>Standard</th>
+                                <th>Year</th>
                                 <th>Title</th>
                                 <th>Actions</th>
                             </tr>
@@ -85,7 +85,7 @@
                 ajax: '{{env('AJAX_URL')}}'+'topics/data',
                 columns: [
                     {data: 'no',  orderable: false},
-                    {data: 'std', name: 'Standard'},
+                    {data: 'std', name: 'Year'},
                     {data: 'title'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]

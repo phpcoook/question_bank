@@ -24,17 +24,18 @@ use App\Http\Controllers\SettingController;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
-});
-Route::get('/admin/login', [UserController::class, 'loginView'])->name('admin.login');
-Route::post('/admin/login', [UserController::class, 'login']);
+
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 //login
-Route::get('/login', [StudentController::class, 'loginView'])->name('login');
-Route::post('/login', [StudentController::class, 'login']);
+Route::get('/', [UserController::class, 'login']);
+Route::get('/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/forgot-password', [UserController::class, 'resetPassword']);
+Route::get('/login', [UserController::class, 'login'])->name('login');
+Route::post('/login', [UserController::class, 'loginProcess']);
 Route::post('getSubTopicDatas', [SubTopicController::class, 'getDataByIds']);
+Route::post('change-password', [UserController::class, 'changePassword']);
+Route::get('reset-password/{id}', [UserController::class, 'resetPasswordProcess']);
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['admin'])->group(function () {
@@ -78,6 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/student/{id}', [StudentController::class, 'update'])->name('student.update');
         Route::delete('/student/{id}', [StudentController::class, 'destroy'])->name('student.destroy');
         Route::get('/student/data', [StudentController::class, 'getStudentData'])->name('student.data');
+        Route::get('/student/subscription/{id}', [StudentController::class, 'updateSubscription']);
 
 // Tutor
         Route::get('/create/tutor', [TutorController::class, 'create'])->name('create.tutor');
@@ -91,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
 //setting
         Route::get('/create/setting', [SettingController::class, 'create'])->name('create.setting');
         Route::put('/setting/{id}', [SettingController::class, 'update'])->name('setting.update');
+
+        Route::get('/admin/update/profile', [UserController::class, 'profile']);
+        Route::post('/admin/update/profile', [UserController::class, 'updateAdminProfile']);
+        Route::post('/admin/update/password', [UserController::class, 'updatePassword']);
     });
 
 //subtopic
@@ -132,6 +138,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/student/previous-quiz', [StudentController::class, 'previousQuiz']);
         Route::post('/student/previous-quiz', [StudentController::class, 'previousQuiz']);
+
+        Route::get('/student/update/profile', [UserController::class, 'profile']);
+        Route::post('/student/update/profile', [UserController::class, 'updateProfile']);
+        Route::post('/student/update/password', [UserController::class, 'updatePassword']);
+
     });
     Route::get('/student/start-quiz/time', [QuizController::class, 'addTime'])->name('student.start-quiz.addtime');
     Route::middleware(['tutor'])->group(function () {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AdminLTE 3 | Log in</title>
+    <title>Forgot Password</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -20,12 +20,18 @@
     <style>
         #toggle-password {
             border-left: none;
+            border-color: #ced4da;
+        }
+
+        #toggle-password:focus {
+            border-left: none;
+            border-color: #ced4da !important;
         }
     </style>
     <script>
         setTimeout(function () {
             $('.alert').fadeOut();
-        },800)
+        },3000)
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -50,55 +56,45 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <span><b>Admin</b>Quiz</span>
+        <span>Forgot Password</span>
     </div>
     <!-- /.login-logo -->
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+            <p class="login-box-msg">You forgot your password? Here you can easily set a new password.</p>
 
-            <form action="{{ route('admin.login') }}" method="POST">
+            <form action="{{ url('forgot-password') }}" method="POST">
                 @csrf
-
-                @if (session('status'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('status') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required tabindex="1">
+                    <input type="email" name="email" class="form-control" placeholder="Email"  tabindex="1">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope"></span>
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="password" id="password-field" name="password" class="form-control" placeholder="Password" required tabindex="2">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="toggle-password">
-                            <span class="fas fa-eye" id="toggle-icon"></span>
-                        </button>
-                    </div>
-                </div>
-
+                @error('email')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
                 <div class="row d-flex justify-content-center">
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block" tabindex="3">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block" tabindex="3">Sent</button>
                     </div>
                 </div>
             </form>

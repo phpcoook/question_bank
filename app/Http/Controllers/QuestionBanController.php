@@ -67,6 +67,20 @@ class QuestionBanController extends Controller
                     }
                 }
 
+                // Handle solution images
+                if ($request->hasFile('solutionimage')) {
+                    foreach ($request->file('solutionimage') as $image) {
+                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $image->storeAs('public/images', $imageName);
+
+                        $questionImage = new QuestionImage();
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->type = 'solution'; // Mark it as an answer image
+                        $questionImage->save();
+                    }
+                }
+
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     foreach ($request->file('answerimage') as $image) {
@@ -76,7 +90,7 @@ class QuestionBanController extends Controller
                         $questionImage = new QuestionImage();
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
-                        $questionImage->type = 'answer'; // Mark it as an answer image
+                        $questionImage->type = 'answer';
                         $questionImage->save();
                     }
                 }
@@ -251,6 +265,21 @@ class QuestionBanController extends Controller
                 }
 
 
+                // Handle solution images removal
+                if ($request->remove_solution_images) {
+                    $removeImages = explode(',', $request->remove_solution_images);
+                    foreach ($removeImages as $imageId) {
+                        $oldImage = QuestionImage::find($imageId);
+                        if ($oldImage) {
+                            $oldImagePath = storage_path('app/public/images/' . $oldImage->image_name);
+                            if (file_exists($oldImagePath)) {
+                                unlink($oldImagePath); // Remove image from storage
+                            }
+                            $oldImage->delete(); // Remove image record from database
+                        }
+                    }
+                }
+
                 // Handle answer images removal
                 if ($request->remove_answer_images) {
                     $removeImages = explode(',', $request->remove_answer_images);
@@ -281,6 +310,20 @@ class QuestionBanController extends Controller
                 }
 
                 // Handle answer images
+                if ($request->hasFile('solutionimage')) {
+                    foreach ($request->file('solutionimage') as $image) {
+                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $image->storeAs('public/images', $imageName);
+
+                        $questionImage = new QuestionImage();
+                        $questionImage->question_id = $question->id;
+                        $questionImage->image_name = $imageName;
+                        $questionImage->type = 'solution'; // Mark it as an answer image
+                        $questionImage->save();
+                    }
+                }
+
+                // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     foreach ($request->file('answerimage') as $image) {
                         $imageName = time() . '_' . $image->getClientOriginalName();
@@ -289,7 +332,7 @@ class QuestionBanController extends Controller
                         $questionImage = new QuestionImage();
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
-                        $questionImage->type = 'answer'; // Mark it as an answer image
+                        $questionImage->type = 'answer';
                         $questionImage->save();
                     }
                 }

@@ -9,6 +9,7 @@ use App\Models\Topic;
 use App\Models\Pricing;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\CustomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,56 +22,6 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
-    public function loginView()
-    {
-        return view('login');
-    }
-
-
-    public function login(Request $request)
-    {
-        try {
-
-            // Validate the login form data
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
-                'password' => 'required|min:8',
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            // Check if the user exists and email is verified
-            $user = User::where('email', $request->input('email'))->first();
-
-            if ($user && $user->email_verified_at !== null) {
-                if (Auth::attempt(['email' => $request->input('email'), 'password' => $request->input('password')])) {
-                    $role = User::where('email', $request->email)->get();
-                    if ($role[0]['role'] == 'student') {
-                        return redirect()->route('student.dashboard');
-                    } elseif ($role[0]['role'] == 'tutor') {
-                        return redirect()->route('tutor.dashboard');
-                    } else {
-                        return redirect()->route('admin.login');
-                    }
-                } else {
-                    return redirect()->back()
-                        ->withErrors(['password' => 'Invalid credentials'])
-                        ->withInput();
-                }
-            } else {
-                return redirect()->back()
-                    ->withErrors(['email' => 'Email not verified or does not exist'])
-                    ->withInput();
-            }
-        } catch (\Exception $e) {
-            Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
-            return redirect()->back()->with('error', 'An error occurred. Please try again.');
-        }
-    }
 
     public function create()
     {
@@ -130,7 +81,14 @@ class StudentController extends Controller
                     $deleteButton = '<button class="btn btn-danger btn-sm delete-student" data-id="' . $student->id . '">Delete</button>';
                     return $editButton . ' ' . $deleteButton;
                 })
-                ->rawColumns(['actions'])
+                ->addColumn('subscription', function ($student) {
+                    $checked = $student->subscription_status ? 'checked' : '';
+                    return ' <div class="custom-control custom-switch">
+                        <input ' . $checked . ' type="checkbox" data-id="' . $student->id . '" class="custom-control-input " id="customSwitch' . $student->id . '">
+                        <label class="custom-control-label" for="customSwitch' . $student->id . '"></label>
+                        </div>';
+                })
+                ->rawColumns(['actions', 'subscription'])
                 ->make(true);
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -224,9 +182,10 @@ class StudentController extends Controller
                 'attempted_questions' => $attemptedQuestions,
             ];
         });
-        $subscription = Subscription::where('user_id',Auth::user()->id)->whereDate('end_date', '>', now())->first();
+        $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
         $setting = Setting::find(1);
-        return view('student.dashboard', compact('topicData','subscription','setting'));
+        $subscriptionStatus = CustomService::checkSubscription();
+        return view('student.dashboard', compact('topicData', 'subscription', 'setting','subscriptionStatus'));
     }
 
     public function wrongQuestion(Request $request)
@@ -238,7 +197,8 @@ class StudentController extends Controller
                 ->groupBy('quiz_id')
                 ->get();
             if (!empty($request->quiz_id)) {
-                $wrong = Quiz::where('user_id', Auth::user()->id)->where('quiz_id',$request->quiz_id)->where('answer', 'wrong')->pluck('question_id');
+                $wrong = Quiz::where('user_id', Auth::user()->id)->where('quiz_id', $request->quiz_id)->where('answer',
+                    'wrong')->pluck('question_id');
 
             } else {
                 $wrong = Quiz::where('user_id', Auth::user()->id)->where('answer', 'wrong')->pluck('question_id');
@@ -262,7 +222,7 @@ class StudentController extends Controller
                     DB::raw('ROUND((SUM(CASE WHEN answer = "correct" THEN 1 ELSE 0 END) / COUNT(*)) * 100, 0) as correct_percentage'),
                     DB::raw('DATE_FORMAT(MIN(created_at), "%Y-%m-%d") as created_at')
                 )
-                    ->where('user_id',Auth::user()->id)
+                    ->where('user_id', Auth::user()->id)
                     ->groupBy('quiz_id')
                     ->get();
 
@@ -317,6 +277,19 @@ class StudentController extends Controller
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
         }
+    }
+
+    public function updateSubscription($id)
+    {
+        $user = User::where('id', $id)->first();
+        $data = '1';
+        if ($user->subscription_status) {
+            $data = '0';
+        }
+        $student = User::findOrFail($id);
+        $student->subscription_status = $data;
+        $student->save();
+        return true;
     }
 
 }

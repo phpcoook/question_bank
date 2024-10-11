@@ -7,15 +7,12 @@ use App\Models\Quiz;
 use App\Models\Reported;
 use App\Models\Setting;
 use App\Models\Subscription;
-use App\Models\SubTopic;
 use App\Models\Topic;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use App\Models\QuestionImage;
-use Yajra\DataTables\DataTables;
+use App\Services\CustomService;
 
 class QuizController extends Controller
 {
@@ -23,9 +20,7 @@ class QuizController extends Controller
     public function startQuiz(Request $request)
     {
         try {
-
-            $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
-            if (empty($subscription)) {
+            if (!CustomService::checkSubscription()) {
                 $time = Setting::first();
                 $currentDate = Carbon::now();
                 $endOfWeek = $currentDate->endOfWeek();
@@ -45,9 +40,7 @@ class QuizController extends Controller
                 }
             }
             $target = $request->time ?? 30;
-//            if (count($request->sub_topics) !== 0 && count($request->sub_topics) > 5) {
-//                return redirect()->back()->with('error', 'Please select minimum 1 and maximum 5 topics');
-//            }
+
             $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
             if ($attended->count() > 0) {
                 $notIn = $attended->pluck('question_id');
@@ -75,16 +68,13 @@ class QuizController extends Controller
                         }
                     });
             }
-            $result = [];
-
-            $subscription = Subscription::where('user_id',Auth::user()->id)->whereDate('end_date', '>', now())->count();
-            if($subscription){
-                $questions->with('ansImage');
+            if(CustomService::checkSubscription()){
+                $questions->with('solutionImage');
             }
-
-            $this->findCombinations($questions->get()->toArray(), $target, 0, [], $result);
-
-            $randomCombination = !empty($result) ? $result[array_rand($result)] : [];
+            $questions->with('answerImage');
+            Log::info($questions->get()->toArray());
+            $result = $this->findCombinations($questions->get()->toArray(), $target);
+            $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
 
@@ -99,29 +89,54 @@ class QuizController extends Controller
     }
 
     private function findCombinations(
-        array $questions,
-        int $target,
-        int $start,
-        array $currentCombination,
-        array &$result
+        array $data,
+        int $target
     ) {
         try {
-            if ($target >= 0) {
-                if ($target === 0) {
-                    $result[] = $currentCombination;
-                    return;
-                }
-                for ($i = $start; $i < count($questions); $i++) {
-                    $time = $questions[$i]['time'];
-                    if ($time <= $target) {
-                        $this->findCombinations($questions, $target - $time, $i + 1,
-                            array_merge($currentCombination, [$questions[$i]]), $result);
+            $totalTime = 0;
+            $selectedQuizzes = [];
+            $uniqueQuestions = [];
+
+
+            foreach ($data as $quiz) {
+                if ($totalTime + $quiz['time'] <= $target) {
+                    $totalTime += $quiz['time'];
+                    $selectedQuizzes[] = $quiz;
+                    foreach ($quiz['quiz_image'] as $image) {
+                        $uniqueQuestions[$image['question_id']] = $image;
                     }
                 }
-                if ($target > 0 && !empty($currentCombination)) {
-                    $result[] = $currentCombination;
+            }
+
+            if ($totalTime < $target) {
+                $availableQuestions = array_keys($uniqueQuestions);
+                $allQuestions = [];
+                foreach ($data as $quiz) {
+                    foreach ($quiz['quiz_image'] as $image) {
+                        $allQuestions[$image['question_id']] = $image;
+                    }
+                }
+                $allQuestions = array_diff_key($allQuestions, $uniqueQuestions);
+                if (count($allQuestions) > 0) {
+                    $randomKey = array_rand($allQuestions);
+                    $additionalQuestion = $allQuestions[$randomKey];
+                    foreach ($data as $quiz) {
+                        if (array_search($additionalQuestion, $quiz['quiz_image']) !== false) {
+                            $selectedQuizzes[] = $quiz;
+                            break;
+                        }
+                    }
                 }
             }
+
+//            $result = [
+//                'total_time' => $totalTime,
+//                'quizzes' => $selectedQuizzes,
+//            ];
+
+            return $selectedQuizzes;
+
+
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             return [];

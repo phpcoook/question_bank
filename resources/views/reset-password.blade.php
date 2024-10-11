@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Log in</title>
+    <title>Update Password</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -49,6 +49,22 @@
                 toggleIcon.classList.remove('fa-eye', 'fa-eye-slash');
                 toggleIcon.classList.add(iconClass);
             });
+
+
+            const passwordFields = document.getElementById('password-field-2');
+            const togglePasswords = document.getElementById('toggle-password-2');
+            const toggleIcons = document.getElementById('toggle-icon-2');
+
+            togglePasswords.addEventListener('click', function () {
+                // Toggle the input type
+                const type = passwordFields.type === 'password' ? 'text' : 'password';
+                passwordFields.type = type;
+
+                // Toggle the icon
+                const iconClass = type === 'password' ? 'fa-eye' : 'fa-eye-slash';
+                toggleIcons.classList.remove('fa-eye', 'fa-eye-slash');
+                toggleIcons.classList.add(iconClass);
+            });
         });
     </script>
 
@@ -56,12 +72,12 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <span>Login</span>
+        <span>Update Password</span>
     </div>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">Sign in to start your session</p>
+            <p class="login-box-msg">Setup A New Password</p>
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
@@ -79,7 +95,8 @@
                 </div>
             @endif
 
-            <form action="{{ url('login') }}" method="POST">
+            <form action="{{ url('change-password') }}" method="POST">
+                <input type="hidden" name="user_id" value="{{$userId}}">
                 @csrf
 
                 @if (session('status'))
@@ -100,30 +117,25 @@
                         </ul>
                     </div>
                 @endif
-
                 <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required tabindex="1">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-group mb-3">
-                    <input type="password" id="password-field" name="password" class="form-control" placeholder="Password" required tabindex="2">
+                    <input type="password" id="password-field" name="password" class="form-control" placeholder="Password" required tabindex="1">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" id="toggle-password">
                             <span class="fas fa-eye" id="toggle-icon"></span>
                         </button>
                     </div>
                 </div>
-                <p class="mb-3 text-right">
-                    <a href="{{url('forgot-password')}}">I forgot my password</a>
-                </p>
-
+                <div class="input-group mb-3">
+                    <input type="password" id="password-field-2" name="confirm_password" class="form-control" placeholder="Confirm Password" required tabindex="2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="toggle-password-2">
+                            <span class="fas fa-eye" id="toggle-icon-2"></span>
+                        </button>
+                    </div>
+                </div>
                 <div class="row d-flex justify-content-center">
                     <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block" tabindex="3">Sign In</button>
+                        <button type="submit" class="btn btn-primary btn-block" tabindex="3">Update</button>
                     </div>
                 </div>
             </form>

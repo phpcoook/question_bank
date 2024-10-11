@@ -39,9 +39,9 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="std">Standard</label>
+                            <label for="std">Year</label>
                             <select name="std" class="form-control" required>
-                                <option value="">Select Standard</option>
+                                <option value="">Select Year</option>
                                 <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
                                 <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
                                 <option value="10" {{ ($data->std == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
@@ -172,7 +172,7 @@
                         date: "Please enter a valid date"
                     },
                     std: {
-                        required: "Please select the Standard"
+                        required: "Please select the Year"
                     }
                 },
                 errorElement: 'div',

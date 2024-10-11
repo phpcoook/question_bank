@@ -28,10 +28,12 @@
     <link rel="stylesheet" href="{{url('assets/plugins/summernote/summernote-bs4.css')}}">
     <!-- DataTables -->
     <link rel="stylesheet" href="{{url('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
+
+    <link rel="stylesheet" href="{{url('assets/plugins/toastr/toastr.css')}}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <style>
-        .main-header{
+        .main-header-data{
             visibility: hidden;
         }
         .pricing ul {
@@ -103,7 +105,7 @@
 <script src="{{url('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <!-- jquery validation -->
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-
+<script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
 @yield('page-script')
 
 </body>

@@ -179,7 +179,7 @@
                         </div>
 
                     </div>
-                    <h3 class="mt-5" id="try-answer">Try to Answer in given time!</h3>
+                    <h3 class="mt-5" id="try-solution">Try to find Solution in given time!</h3>
                     <div class="timer" id="timer">
                         <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
                              xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -211,19 +211,19 @@
                     <div class="images" id="images"></div>
                     <div class="buttons" id="buttons"></div>
                     <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
-                    @if(!empty($question['ans_image']))
+                    @if(!empty($question['solution_image']))
                         <div id="accordion" class="p-4">
                             <div class="card card-success">
                                 <div class="card-header bg-success">
                                     <h4 class="card-title w-100">
                                         <a class="d-block w-100 text-white collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
-                                           See Answers
+                                           See Solution
                                         </a>
                                     </h4>
                                 </div>
                                 <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                    <div class="card-body images" id="ans_images">
-                                      No Answer Available for this Question
+                                    <div class="card-body images" id="solution_images">
+                                      No Solution Available for this Question
                                     </div>
                                 </div>
                             </div>
@@ -239,6 +239,24 @@
 
                     @endif
                 @endif
+                    @if(!empty($question['answer_image']))
+                        <div id="accordions" class="p-4">
+                            <div class="card card-success">
+                                <div class="card-header bg-success">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse" href="#collapseThrees" aria-expanded="false">
+                                            See Answer
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
+                                    <div class="card-body images" id="answer_images">
+                                        No Answer Available for this Question
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
             </div>
         </section>
     </div>
@@ -255,7 +273,8 @@
                 id: {{ $question['id'] }},
                 time: {{ $question['time'] }},
                 images: {!! json_encode($question['quiz_image']) !!},
-                ansimages: {!! !empty($question['ans_image'])?json_encode($question['ans_image']):json_encode([]) !!}
+                solutionImages: {!! !empty($question['solution_image'])?json_encode($question['solution_image']):json_encode([]) !!},
+                answerImages: {!! !empty($question['answer_image'])?json_encode($question['answer_image']):json_encode([]) !!}
             },
             @endforeach
         ];
@@ -310,13 +329,22 @@
 </div>
 </div>
         `;
-            @if(!empty($question['ans_image']))
-            var ansImagesHtml = '<div class="row col-md-12">';
-            $.each(questionData.ansimages, function (imgIndex, image) {
-                ansImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+            @if(!empty($question['solution_image']))
+            var solutionImagesHtml = '<div class="row col-md-12">';
+            $.each(questionData.solutionImages, function (imgIndex, image) {
+                solutionImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
             });
-            ansImagesHtml += '</div>';
-            document.getElementById('ans_images').innerHTML = ansImagesHtml;
+            solutionImagesHtml += '</div>';
+            document.getElementById('solution_images').innerHTML = solutionImagesHtml;
+            @endif
+
+            @if(!empty($question['answer_image']))
+            var AnswerImagesHtml = '<div class="row col-md-12">';
+            $.each(questionData.answerImages, function (imgIndex, image) {
+                AnswerImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+            });
+            AnswerImagesHtml += '</div>';
+            document.getElementById('answer_images').innerHTML = AnswerImagesHtml;
             @endif
             startTimer(questionData.time); // Start the timer for the current question
         }
@@ -414,10 +442,14 @@
             }
             document.getElementById('totalTime').innerHTML = `Thank you for participating in the quiz! Total time taken: ${totalMinutes} minutes and ${totalSeconds} seconds.`;
             document.getElementById('buttons').innerHTML = '';
-            document.getElementById('time').innerText = '0:00'; // Reset time display after quiz completion
+            document.getElementById('time').innerText = '0:00';
             document.getElementById('images').innerHTML = '';
-            document.getElementById('accordion').style.display = 'none';
-            document.getElementById('try-answer').style.display = 'none';
+            if ($('#accordion').length) {
+                $('#accordion').css('display', 'none');
+            }
+            if ($('#accordions').length) {
+                $('#accordions').css('display', 'none');
+            }
             document.getElementById('timer').style.display = 'none';
             document.getElementById('li-steps').style.display = 'none';
         }

@@ -1,12 +1,12 @@
 @extends('layouts.layoutMaster')
-@section('title',env('WEB_NAME').' | Student Create')
+@section('title',env('WEB_NAME').' | Update Profile')
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Student Create</h1>
+                        <h1 class="m-0 text-dark">Update Profile</h1>
                     </div>
                 </div>
             </div>
@@ -31,78 +31,48 @@
             </div>
         @endif
 
-        <section class="content m-2">
+        <section class="content m-2 ">
             <div class="card card-primary">
-                <form id="student-create" action="{{route('store.student')}}" method="POST"
+                <form id="student-create" action="{{url(Auth::user()->role.'/update/profile')}}" method="POST"
                       enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
-
                         <div class="form-group">
-                            <label for="std">Year</label>
-                            <select name="std" class="form-control" required>
-                                <option value="">Select Year</option>
-                                <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
-                                <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
-                                <option value="10" {{ (old('std') == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
-                                <option value="9" {{ (old('std') == 9) ? 'selected' : '' }}>9<sup>th</sup></option>
-                                <option value="8" {{ (old('std') == 8) ? 'selected' : '' }}>8<sup>th</sup></option>
-                                <option value="7" {{ (old('std') == 7) ? 'selected' : '' }}>7<sup>th</sup></option>
-                                <option value="6" {{ (old('std') == 6) ? 'selected' : '' }}>6<sup>th</sup></option>
-                                <option value="5" {{ (old('std') == 5) ? 'selected' : '' }}>5<sup>th</sup></option>
-                                <option value="4" {{ (old('std') == 4) ? 'selected' : '' }}>4<sup>th</sup></option>
-                                <option value="3" {{ (old('std') == 3) ? 'selected' : '' }}>3<sup>rd</sup></option>
-                                <option value="2" {{ (old('std') == 2) ? 'selected' : '' }}>2<sup>nd</sup></option>
-                                <option value="1" {{ (old('std') == 1) ? 'selected' : '' }}>1<sup>st</sup></option>
-                            </select>
-
-                            @error('std')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="first_name">First Name</label>
+                            <div class="controls">
+                                <input type="text" name="first_name" value="{{Auth::user()->first_name}}"
+                                       class="form-control">
+                                @error('first_name')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input type="text" name="first_name" id="first_name" class="form-control"
-                                   placeholder="Enter First Name" value="{{ old('first_name') }}" required>
-                            @error('first_name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="last_name">Last Name</label>
+                            <div class="controls">
+                                <input type="text" name="last_name" class="form-control"
+                                       value="{{Auth::user()->last_name}}">
+                                @error('last_name')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
                         </div>
-
+                        @if(Auth::user()->role != 'admin')
                         <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" class="form-control"
-                                   placeholder="Enter Last Name" value="{{ old('last_name') }}" required>
-                            @error('last_name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="date_of_birth">Birth Date</label>
+                            <div class="controls">
+                                <input type="date" id="txtDate" name="date_of_birth" class="form-control"
+                                       value="{{Auth::user()->date_of_birth}}">
+                                @error('date_of_birth')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
                         </div>
-
+                        @endif
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Enter Email"
-                                   value="{{ old('email') }}" required>
-                            @error('email')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" name="password" id="password" class="form-control"
-                                   placeholder="Enter Password" value="{{ old('password') }}" required>
-                            @error('password')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="date_of_birth">Date of Birth</label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ old('date_of_birth') }}" required>
-                            @error('date_of_birth')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label" for="field-3">Email</label>
+                            <div class="controls">
+                                <input type="text" {{(Auth::user()->role != 'admin')? 'readonly':''}} name="email" class="form-control" value="{{Auth::user()->email}}">
+                                @error('email')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
                         </div>
 
                     </div>
@@ -113,11 +83,75 @@
                 </form>
             </div>
         </section>
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">Update Password</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content m-2 mb-5">
+            <div class="card card-primary">
+                <form id="student-create" action="{{url('student/update/password')}}" method="POST"
+                      enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label" for="old_password">Old Password</label>
+                            <div class="controls">
+                                <input type="password" name="old_password" class="form-control">
+                                @error('old_password')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="new_password">New Password</label>
+                            <div class="controls">
+                                <input type="password" name="new_password" class="form-control">
+                                @error('new_password')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="confirm_password">Confirm password</label>
+                            <div class="controls">
+                                <input type="password" name="confirm_password" class="form-control">
+                                @error('confirm_password')
+                                <div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
     </div>
 @endsection
 
 @section('page-script')
     <script>
+        $(function(){
+            var dtToday = new Date();
+
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+
+            if(month < 10)
+                month = '0' + month.toString();
+            if(day < 10)
+                day = '0' + day.toString();
+
+            var maxDate = year + '-' + month + '-' + day;
+            $('#txtDate').attr('max', maxDate);
+        });
         $(document).ready(function () {
             $("#student-create").validate({
                 rules: {

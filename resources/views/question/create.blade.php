@@ -39,9 +39,9 @@
                     <div class="card-body">
 
                         <div class="form-group">
-                            <label for="std">Standard</label>
+                            <label for="std">Year</label>
                             <select name="std" id="std" class="form-control" required>
-                                <option value="">Select Standard</option>
+                                <option value="">Select Year</option>
                                 <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
                                 <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
                                 <option value="10" {{ (old('std') == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
@@ -123,9 +123,25 @@
                             @enderror
                         </div>
 
+
+                        <div class="form-group">
+                            <label for="solutionimage">Solution</label>
+                            <div id="solution-image-rows">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="solutionimage[]">
+                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
+                                        Image
+                                    </button>
+                                </div>
+                            </div>
+                            @error('solutionimage')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <!-- Answer Image Upload -->
                         <div class="form-group">
-                            <label for="answerimage">Solution</label>
+                            <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
@@ -246,12 +262,22 @@
 
             // Handle adding new image input fields for answer images
             $(document).on('click', '.add-answer-image-row', function () {
-                var newAnswerRow = `
+                var newanswerRow = `
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="answerimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
-                $('#answer-image-rows').append(newAnswerRow);
+                $('#answer-image-rows').append(newanswerRow);
+            });
+
+            // Handle adding new image input fields for solution images
+            $(document).on('click', '.add-solution-image-row', function () {
+                var newSolutionRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="solutionimage[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+                $('#solution-image-rows').append(newSolutionRow);
             });
 
             // Handle removing an image row for both question and answer images

@@ -16,22 +16,21 @@ class SubscriberController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $subscription = Subscription::with('user')->orderBy('created_at', 'desc');
-                    if (!empty($request->filter)) {
-                        if ($request->filter == 'active') {
-                            $subscription->whereDate('end_date','>', now());
-                        } else {
-                            $subscription->whereDate('end_date','<', now());
-                        }
+                $subscription = Subscription::with('user');
+                if (!empty($request->filter)) {
+                    if ($request->filter == 'active') {
+                        $subscription->whereDate('end_date', '>', now());
+                    } else {
+                        $subscription->whereDate('end_date', '<', now());
                     }
-                $subscription->get();
-
-                $subscription->each(function ($item, $index) {
+                }
+                $data = $subscription->orderBy('created_at', 'desc')->get();
+                $data->each(function ($item, $index) {
                     $item->index = $index + 1;
                 });
-                return Datatables::of($subscription)
+                return Datatables::of($data)
                     ->addColumn('no', function ($row) {
-                        return $row->index+1;
+                        return $row->index;
                     })
                     ->addColumn('subscriber', function ($row) {
                         return $row->user->email;

@@ -50,9 +50,9 @@
                     @method('PUT')
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="std">Standard</label>
+                            <label for="std">Year</label>
                             <select name="std" id="std" class="form-control" required>
-                                <option value="">Select Standard</option>
+                                <option value="">Select Year</option>
                                 <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
                                 <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
                                 <option value="10" {{ ($data->std == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
@@ -149,9 +149,35 @@
                         </div>
 
 
+                        <!-- Solution Images (Fixed part) -->
+                        <div class="form-group">
+                            <label for="solutionimage">Solution</label>
+                            <div id="solution-image-rows">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="solutionimage[]">
+                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution Image</button>
+                                </div>
+                                @if(!empty($images))
+                                    @foreach($images as $image)
+                                        @if(!empty($image->type) && $image->type == 'solution')
+                                            <div class="input-group mb-3">
+                                                <div class="input_image_div">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                </div>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </div>
+                            <input type="hidden" name="remove_solution_images" id="remove_solution_images" value="">
+                        </div>
+
                         <!-- Answer Images (Fixed part) -->
                         <div class="form-group">
-                            <label for="answerimage">Solution</label>
+                            <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]">
@@ -257,18 +283,28 @@
 
         // Handle adding new image input fields for answer images
         $(document).on('click', '.add-answer-image-row', function () {
-            var newAnswerRow = `
+            var newanswerRow = `
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="answerimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
-            $('#answer-image-rows').append(newAnswerRow);
+            $('#answer-image-rows').append(newanswerRow);
+        });
+
+        // Handle adding new image input fields for solution images
+        $(document).on('click', '.add-solution-image-row', function () {
+            var newSolutionRow = `
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="solutionimage[]">
+                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                </div>`;
+            $('#solution-image-rows').append(newSolutionRow);
         });
 
         // Handle removing an image row
         $(document).on('click', '.remove-image-row', function () {
             var imageId = $(this).data('image-id');
-            var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_answer_images';
+            var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_solution_images';
             if (imageId) {
                 const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
                 if (!currentValue.includes(imageId.toString())) {

@@ -77,7 +77,7 @@
                     }
                 },
                 columns: [
-                    {data: 'no', searchable: false},
+                    {data: 'no'},
                     {data: 'subscriber'},
                     {data: 'plan_start_date'},
                     {data: 'plan_end_date'},

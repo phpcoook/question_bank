@@ -7,7 +7,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .question-col, .answer-col {
+        .question-col, .solution-col {
             max-width: 200px;
         }
     </style>
@@ -67,7 +67,7 @@
                             <thead>
                             <tr role="row">
                                 <th>No</th>
-                                <th>Standard</th>
+                                <th>Year</th>
                                 <th>Topic</th>
                                 <th>Subtopic</th>
                                 <th>Code</th>
