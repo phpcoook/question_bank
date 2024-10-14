@@ -11,6 +11,14 @@ class PaymentHistory extends Model
 
     protected $table = 'payment_history';
 
+    protected $fillable = [
+        'user_id',
+        'stripe_subscription_id',
+        'payment_status',
+        'amount',
+        'start_date',
+        'end_date',
+    ];
 
     public function user()
     {

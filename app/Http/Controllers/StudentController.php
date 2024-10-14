@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use App\Mail\Register;
@@ -185,7 +186,9 @@ class StudentController extends Controller
         $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
         $setting = Setting::find(1);
         $subscriptionStatus = CustomService::checkSubscription();
-        return view('student.dashboard', compact('topicData', 'subscription', 'setting','subscriptionStatus'));
+
+        return view('student.dashboard',
+            compact('topicData', 'subscription', 'setting', 'subscriptionStatus'));
     }
 
     public function wrongQuestion(Request $request)

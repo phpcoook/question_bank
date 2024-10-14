@@ -7,14 +7,26 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Stripe\Checkout\Session;
+use Stripe\Exception\ExceptionInterface;
 use Stripe\Stripe;
 use Stripe\Customer;
 use Stripe\Subscription;
+use Stripe\Webhook;
 use Yajra\DataTables\DataTables;
 
 
 class PaymentController extends Controller
 {
+    protected $paymentId;
+
+    public function __construct()
+    {
+        $this->paymentId = Setting::find(1);
+        if (empty($this->paymentId)) {
+            return redirect()->back()->with('error','Monthly Plan not Found');
+        }
+    }
 
     public function index(Request $request)
     {
@@ -149,61 +161,111 @@ class PaymentController extends Controller
     }
 
 
-    public function processPayment(Request $request)
-    {
-        $request->validate([
-            'payment_method_id' => 'required|string',
-        ]);
+    //New redirect Method
 
+    public function createCheckoutSession(Request $request)
+    {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
-            $paymentId = Setting::find(1);
-            if (empty($paymentId)) {
-                return response()->json(['success' => false, 'message' => 'Monthly Plan not Found'], 200);
-            }
-            $customer = Customer::create([
-                'payment_method' => $request->payment_method_id,
-                'email' => auth()->user()->email,
-                'invoice_settings' => [
-                    'default_payment_method' => $request->payment_method_id,
-                ],
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price' => $this->paymentId->stripe_price_id,
+                    'quantity' => 1,
+                ]],
+                'mode' => 'subscription',
+                'success_url' => route('payment.success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+                'cancel_url' => route('payment.cancel'),
             ]);
 
-            $subscription = Subscription::create([
-                'customer' => $customer->id,
-                'items' => [['price' => $paymentId->stripe_price_id]],
-                'expand' => ['latest_invoice.payment_intent'],
-            ]);
 
-            $currentPeriodEnd = $subscription->current_period_end;
-            $currentPeriodStart = $subscription->current_period_start;
-            $formattedEnd = date('Y-m-d H:i:s', $currentPeriodEnd);
-            $formattedStart = date('Y-m-d H:i:s', $currentPeriodStart);
+            \Illuminate\Support\Facades\Session::put('CHECKOUT_SESSION_ID' ,$session->id);
 
-            $localSubscription = new \App\Models\Subscription;
-            $localSubscription->user_id = auth()->user()->id;
-            $localSubscription->payment_status = 1;
-            $localSubscription->amount = $paymentId->subscription_charge;
-            $localSubscription->customer_response = json_encode([$customer], JSON_PRETTY_PRINT);
-            $localSubscription->payment_response = json_encode([$subscription], JSON_PRETTY_PRINT);
-            $localSubscription->start_date = $formattedStart;
-            $localSubscription->end_date = $formattedEnd;
-            $localSubscription->save();
-
-            $localSubscription = new PaymentHistory();
-            $localSubscription->user_id = auth()->user()->id;
-            $localSubscription->payment_status = 1;
-            $localSubscription->amount = $paymentId->subscription_charge;
-            $localSubscription->customer_response = json_encode([$customer], JSON_PRETTY_PRINT);
-            $localSubscription->payment_response = json_encode([$subscription], JSON_PRETTY_PRINT);
-            $localSubscription->start_date = $formattedStart;
-            $localSubscription->end_date = $formattedEnd;
-            $localSubscription->save();
-
-            return response()->json(['success' => true, 'subscription' => $subscription]);
+            return redirect($session->url);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            Log::error('Error creating Checkout Session: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred while creating the checkout session.'], 500);
         }
     }
+
+
+
+    public function success(Request $request)
+    {
+
+        $sessionId =  \Illuminate\Support\Facades\Session::get('CHECKOUT_SESSION_ID');
+        if (!$sessionId) {
+            return response()->json(['success' => false, 'message' => 'Session ID not found.'], 400);
+        }
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        try {
+
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            if (!$session || $session->mode !== 'subscription') {
+                return response()->json(['success' => false, 'message' => 'Invalid session.'], 404);
+            }
+
+            $subscriptionId = $session->subscription;
+            $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+
+            $localSubscription = new \App\Models\Subscription();
+            $localSubscription->user_id = auth()->user()->id;
+            $localSubscription->stripe_subscription_id = $subscriptionId;
+            $localSubscription->payment_status = '1';
+            $localSubscription->amount = $subscription->plan->amount / 100;
+            $localSubscription->start_date = date('Y-m-d H:i:s', $subscription->current_period_start);
+            $localSubscription->end_date = date('Y-m-d H:i:s', $subscription->current_period_end);
+            $localSubscription->save();
+
+            // Save payment history
+            $paymentHistory = new \App\Models\PaymentHistory();
+            $paymentHistory->user_id = auth()->user()->id;
+            $paymentHistory->stripe_subscription_id = $subscriptionId;
+            $paymentHistory->payment_status = '1';
+            $paymentHistory->amount = $subscription->plan->amount / 100;
+            $paymentHistory->start_date = date('Y-m-d H:i:s', $subscription->current_period_start);
+            $paymentHistory->end_date = date('Y-m-d H:i:s', $subscription->current_period_end);
+            $paymentHistory->save();
+            \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');
+            \Illuminate\Support\Facades\Session::put('status' ,'success');
+            return redirect('student/dashboard');
+        } catch (\Stripe\Exception\InvalidRequestException $exception) {
+            \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');
+            Log::error('Error processing subscription: ' . $exception->getMessage());
+            \Illuminate\Support\Facades\Session::put('status' ,'failed');
+            return redirect('student/dashboard');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');
+            Log::error('Error processing subscription: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Session::put('status' ,'failed');
+            return redirect('student/dashboard');
+        }
+    }
+
+
+    public function cancel()
+    {
+        \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');
+        \Illuminate\Support\Facades\Session::put('status' ,'failed');
+        return redirect('student/dashboard');
+    }
+
+    public function cancelSubscription()
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        try {
+            $subscriptions = \App\Models\Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
+            $subscription = Subscription::retrieve($subscriptions->stripe_subscription_id);
+            $subscription->cancel();
+            $subscriptions->status = 'cancel';
+            $subscriptions->save();
+            \Illuminate\Support\Facades\Session::put('status' ,'cancel');
+            return redirect('student/dashboard');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Session::put('status' ,'cancel');
+            return redirect('student/dashboard');
+        }
+    }
+
 }

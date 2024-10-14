@@ -118,16 +118,14 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
-        Route::post('/student/save-quiz',
-            [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
-
-
-        Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
-        Route::post('/webhook', [WebhookController::class, 'handleWebhook']);
-
+        Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
 
         Route::get('/payment', [PaymentController::class, 'index']);
-        Route::post('/payment', [PaymentController::class, 'processPayment'])->name('payment.process');
+        Route::get('/payment/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->name('payment.createCheckoutSession');
+        Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+        Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+        Route::get('/cancel-subscription', [PaymentController::class, 'cancelSubscription']);
+
 
         Route::post('/student/save-quiz',
             [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);

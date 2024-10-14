@@ -235,11 +235,6 @@ class QuestionBanController extends Controller
                 return back()->withInput()->withErrors($validator);
             } else {
 
-                if (!$request->hasFile('questionimage') && empty($request->existing_question_images)) {
-                    $validator->errors()->add('question_images', 'At least one question image is required!');
-                    return redirect()->back()->withErrors($validator)->withInput();
-                }
-
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;

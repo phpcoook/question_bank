@@ -52,7 +52,7 @@ class SubTopicController extends Controller
             $topicIds = is_array($request->topic_ids) ? $request->topic_ids : [$request->topic_ids];
             $topicIds = array_unique(array_map('intval', $topicIds));
             $subTopics = SubTopic::whereIn('topic_id', $topicIds)->get();
-            $html = '<option value=""> Select SubTopics</option>';
+            $html = '<option disabled value=""> Select SubTopics</option>';
             if ($subTopics->count()) {
                 foreach ($subTopics as $subTopic) {
                     $html .= '<option value="' . $subTopic->id . '"> ' . $subTopic->title . '</option>';
@@ -69,7 +69,7 @@ class SubTopicController extends Controller
     {
         try {
             $data = Topic::where('std',$request->std)->get();
-            $html = '<option value=""> Select SubTopics</option>';
+            $html = '<option disabled value=""> Select SubTopics</option>';
             if ($data->count()) {
                 foreach ($data as $Topic) {
                     $html .= '<option value="' . $Topic->id . '"> ' . $Topic->title . '</option>';
@@ -87,7 +87,7 @@ class SubTopicController extends Controller
             $topicIds = is_array($request->topic_ids) ? $request->topic_ids : [$request->topic_ids];
             $topicIds = array_unique(array_map('intval', $topicIds));
             $subTopics = SubTopic::whereIn('topic_id', $topicIds)->get();
-            $html = '<option value=""> Select SubTopics</option>';
+            $html = '<option disabled value=""> Select SubTopics</option>';
 
             $array = json_decode(html_entity_decode($request->selected), true);
 

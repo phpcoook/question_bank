@@ -32,8 +32,8 @@
             </div>
         @endif
 
-        <section class="content m-2">
-            <div class="card card-primary ">
+        <section class="content m-2 ">
+            <div class="card card-primary {{empty($subscription)?'':' d-none'}}">
                 <div class="row m-3">
                     <div class="col-md-{{empty($subscription)?'12':'12 d-none'}}">
                         <h4>Subscription Plan</h4>
@@ -55,7 +55,8 @@
                                         <li><i class="fa fa-times text-danger"></i> Unable to look at full working out
                                             for questions
                                         </li>
-                                        <li><i class="fa fa-times text-danger"></i> Solution not displayed during the test
+                                        <li><i class="fa fa-times text-danger"></i> Solution not displayed during the
+                                            test
                                         </li>
                                     </ul>
                                     <button disabled type="button" class="btn btn-lg btn-block btn-primary">
@@ -85,12 +86,11 @@
                                         <li><i class="fa fa-check text-success"></i> Recurring subscription via Stripe
                                         </li>
                                     </ul>
-                                    <button type="button"
-                                            {{ !empty($subscription) ? 'disabled':0 }}
-                                            {{ $setting->subscription_charge ? "onclick=payMethod('".$setting->subscription_charge."')" : 'disabled' }}
-                                            class="btn btn-lg btn-block btn-primary">
+                                    <a target="_blank" href=" {{url('payment/create-checkout-session/')}}"
+                                       {{ !empty($subscription) ? 'disabled':'' }}
+                                       class="btn btn-lg btn-block btn-primary">
                                         {{ !empty($subscription) ? 'Plan Purchased':'Buy' }}
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
 
@@ -104,11 +104,11 @@
                     <div class="col-md-6 m-auto">
                         <h4 class="mb-1">Questions done / Topic</h4>
                         @if(!empty($subscription))
-                            <p class="mb-3" ><strong>Your Plan Renewal On
+                            <p class="mb-3"><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}}  On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
                             </p>
                             @if(!$subscriptionStatus)
-                                <p class="mb-3 text-danger" ><strong>Your Subscription Disable by Owner</strong></p>
+                                <p class="mb-3 text-danger"><strong>Your Subscription Disable by Owner</strong></p>
                             @endif
                         @endif
                         <div class="card p-3 box-shadow">
@@ -143,77 +143,31 @@
 @endsection
 @section('page-script')
     <style>
-        /* Style for the payment modal */
-        #paymentModal {
-            padding: 20px;
+        .modal-content {
+            border-radius: 10px;
         }
 
-        /* Card element container */
-        #card-element {
-            padding: 10px;
-            border: 1px solid #ced4da; /* Light gray border */
-            border-radius: 5px; /* Rounded corners */
-            background-color: #f8f9fa; /* Light background */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            transition: border-color 0.2s; /* Smooth transition for border color */
-            margin: 10px auto;
-        }
-
-        #card-element div {
-            width: 300px;
-            height: 50px;
-            margin: 0 auto;
-
-        }
-
-        /* Focus state for card element */
-        #card-element:focus {
-            border-color: #007bff; /* Bootstrap primary color */
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Light blue glow */
-        }
-
-        /* Button styles */
-        #submitPay {
-            width: 100%; /* Full width */
-            padding: 10px; /* Padding for the button */
-            background-color: #007bff; /* Bootstrap primary color */
-            color: #fff; /* White text */
-            border: none; /* No border */
-            border-radius: 5px; /* Rounded corners */
-            font-size: 16px; /* Font size */
-            transition: background-color 0.2s; /* Smooth transition for background color */
-        }
-
-        #submitPay:hover {
-            background-color: #0056b3; /* Darker blue on hover */
-        }
-
-        #payment-result {
-            margin-top: 15px; /* Space above result message */
-            font-weight: bold; /* Bold text for messages */
-        }
-
-        /*success model*/
-        #success_tic .page-body {
-            max-width: 300px;
+        .success_tic .page-body {
+            max-width: 320px;
             background-color: #FFFFFF;
             margin: 10% auto;
         }
 
-        #success_tic .page-body .head {
+        .success_tic .head {
             text-align: center;
+            color: #1ab394;
         }
 
-        #success_tic .close {
+        .success_tic .close {
             opacity: 1;
             position: absolute;
-            right: 0px;
+            right: 10px;
+            top: 10px;
             font-size: 30px;
-            padding: 3px 15px;
-            margin-bottom: 10px;
+            color: #1ab394;
         }
 
-        #success_tic .checkmark-circle {
+        .success_tic .checkmark-circle {
             width: 150px;
             height: 150px;
             position: relative;
@@ -221,7 +175,7 @@
             vertical-align: top;
         }
 
-        .checkmark-circle .background {
+        .success_tic .checkmark-circle .background {
             width: 150px;
             height: 150px;
             border-radius: 50%;
@@ -229,95 +183,26 @@
             position: absolute;
         }
 
-        #success_tic .checkmark-circle .checkmark {
+        .success_tic .checkmark-circle .checkmark {
             border-radius: 5px;
         }
 
-        #success_tic .checkmark-circle .checkmark.draw:after {
-            -webkit-animation-delay: 300ms;
-            -moz-animation-delay: 300ms;
-            animation-delay: 300ms;
-            -webkit-animation-duration: 1s;
-            -moz-animation-duration: 1s;
-            animation-duration: 1s;
-            -webkit-animation-timing-function: ease;
-            -moz-animation-timing-function: ease;
-            animation-timing-function: ease;
-            -webkit-animation-name: checkmark;
-            -moz-animation-name: checkmark;
-            animation-name: checkmark;
-            -webkit-transform: scaleX(-1) rotate(135deg);
-            -moz-transform: scaleX(-1) rotate(135deg);
-            -ms-transform: scaleX(-1) rotate(135deg);
-            -o-transform: scaleX(-1) rotate(135deg);
+        .success_tic .checkmark-circle .checkmark.draw:after {
+            animation: checkmark 1s ease forwards;
             transform: scaleX(-1) rotate(135deg);
-            -webkit-animation-fill-mode: forwards;
-            -moz-animation-fill-mode: forwards;
-            animation-fill-mode: forwards;
         }
 
-        #success_tic .checkmark-circle .checkmark:after {
+        .success_tic .checkmark-circle .checkmark:after {
             opacity: 1;
             height: 75px;
             width: 37.5px;
-            -webkit-transform-origin: left top;
-            -moz-transform-origin: left top;
-            -ms-transform-origin: left top;
-            -o-transform-origin: left top;
             transform-origin: left top;
             border-right: 15px solid #fff;
             border-top: 15px solid #fff;
-            border-radius: 2.5px !important;
             content: '';
             left: 35px;
             top: 80px;
             position: absolute;
-        }
-
-        @-webkit-keyframes checkmark {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 1;
-            }
-            20% {
-                height: 0;
-                width: 37.5px;
-                opacity: 1;
-            }
-            40% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            100% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-        }
-
-        @-moz-keyframes checkmark {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 1;
-            }
-            20% {
-                height: 0;
-                width: 37.5px;
-                opacity: 1;
-            }
-            40% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            100% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
         }
 
         @keyframes checkmark {
@@ -343,185 +228,153 @@
             }
         }
 
+        .failed_tic .page-body {
+            max-width: 380px;
+            margin: 10% auto;
+        }
+
+        .failed_tic .head {
+            text-align: center;
+            color: #c9302c;
+        }
+
+
+        .failed_tic .checkmark-circle {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .failed_tic .checkmark-circle .background {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #f8d7da; /* Light background for contrast */
+            position: absolute;
+        }
+
+        .failed_tic .x-mark {
+            position: relative;
+            width: 70px; /* Adjust width */
+            height: 70px; /* Adjust height */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .failed_tic .x-mark .line {
+            position: absolute;
+            height: 7px;
+            width: 100%;
+            background-color: #c9302c; /* Color of the "X" */
+        }
+
+        .failed_tic .x-mark .line.line1 {
+            transform: rotate(45deg);
+            top: 50%;
+        }
+
+        .failed_tic .x-mark .line.line2 {
+            transform: rotate(-45deg);
+            top: 50%;
+        }
 
     </style>
+
     @if(auth()->check() && auth()->user()->role == 'student')
-
-
-        <script src="https://js.stripe.com/v3/"></script>
         <script>
-            const appearance = {
-                theme: 'flat'
-            };
-            const stripe = Stripe('{{ env('STRIPE_KEY') }}');
-            // const elements = stripe.elements();
-            const elements = stripe.elements({stripe, appearance});
-            let cardElement;
-
-            function payMethod(payId) {
-                $("#priceModal").modal('hide');
-                $("#paymentModal").modal('show');
-                initializeCardElement();
-            }
-
-            function initializeCardElement() {
-                cardElement = elements.create('card');
-                cardElement.mount('#card-element');
-            }
-
             $(document).ready(function () {
-
-                $("#submitPay").click(function() {
+                $("#submitPay").click(function () {
                     $(this).html(
                         `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;&nbsp; Processing...`
                     );
                 });
-                $('#submitPay').click(async (event) => {
-                    // event.preventDefault();
-                    const {paymentMethod, error} = await stripe.createPaymentMethod({
-                        type: 'card',
-                        card: cardElement,
-                    });
-
-                    if (error) {
-                        $('#payment-result').text(error.message);
-                    } else {
-                        $.ajax({
-                            url: '{{env('AJAX_URL')}}' +'payment',
-                            type: 'POST',
-                            data: {
-                                payment_method_id: paymentMethod.id,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    $("#paymentModal").modal('hide');
-                                    $("#success_tic").modal('show');
-                                    setTimeout(function () {
-                                        location.reload();
-                                    },4000)
-                                } else {
-                                    $('#payment-result').text(response.message);
-                                }
-                            },
-                            error: function (xhr) {
-                                $('#payment-result').text(xhr.responseJSON.message || 'Payment failed.');
-                            }
-                        });
-                    }
-                });
+                @if(session('status'))
+                    @if(session('status') == 'success')
+                        $('#success_tic').modal('show');
+                    @elseif(session('status') == 'failed')
+                        $('#failed_tic').modal('show');
+                    @else
+                        $('#cancel_tic').modal('show');
+                    @endif
+                {{ session()->forget('status') }}
+                @endif
             });
         </script>
-
-        <!-- Pricing Modal -->
-        <div id="priceModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Pricing</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card-deck mb-3 text-center">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-header">
-                                    <h4 class="my-0 font-weight-normal">Free PLan</h4>
-                                </div>
-                                <div class="card-body pricing">
-                                    <h1 class="card-title pricing-card-title w-100 text-bold">$0</h1>
-                                    <br>
-                                    <ul>
-                                        <li><i class="fa fa-check text-success"></i> One {{$setting->no_of_questions}}
-                                            minute exam once a week
-                                        </li>
-                                        <li><i class="fa fa-times text-danger"></i> Unable to see previous correct
-                                            answers
-                                        </li>
-                                        <li><i class="fa fa-times text-danger"></i> Unable to look at full working out
-                                            for questions
-                                        </li>
-                                    </ul>
-                                    <button disabled type="button" class="btn btn-lg btn-block btn-primary">
-                                        Purchased
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-header">
-                                    <h4 class="my-0 font-weight-normal">Paid Plan</h4>
-                                </div>
-                                <div class="card-body pricing">
-                                    <h1 class="card-title pricing-card-title w-100 text-bold">
-                                        ${{ ucfirst($setting->subscription_charge) }}</h1>
-                                    <br>
-                                    <ul>
-                                        <li><i class="fa fa-check text-success"></i> Unlimited Exam Generations that are
-                                            all {{$setting->no_of_questions}} minute long
-                                        </li>
-                                        <li><i class="fa fa-check text-success"></i> Able to see previous correct
-                                            answers
-                                        </li>
-                                        <li><i class="fa fa-check text-success"></i> Able to look at full working out
-                                            for questions
-                                        </li>
-                                        <li><i class="fa fa-check text-success"></i> Recurring subscription via Stripe
-                                        </li>
-                                    </ul>
-                                    <button type="button"
-                                            {{ $setting->subscription_charge ? "onclick=payMethod('".$setting->subscription_charge."')" : 'disabled' }}
-                                            class="btn btn-lg btn-block btn-primary">
-                                        Buy
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Modal -->
-        <div id="paymentModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Payment</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card-deck mb-3 text-center">
-                            <div id="card-element"></div> <!-- Card input will be mounted here -->
-                            <button id="submitPay" class="btn btn-primary mt-3">Pay</button>
-                            <div id="payment-result" class="mt-3"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="success_tic" class="modal fade" role="dialog">
+        <div id="success_tic" class="modal fade success_tic" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <a class="close" href="#" data-dismiss="modal">&times;</a>
-                    <div class="page-body page-body text-center">
+                    <div class="page-body text-center">
                         <div class="head">
-                            <h3 style="margin-top:5px;">Payment Done!</h3>
+                            <h3>Payment Successful!</h3>
                         </div>
-                        <h1 style="text-align:center;">
+                        <h1>
                             <div class="checkmark-circle">
                                 <div class="background"></div>
                                 <div class="checkmark draw"></div>
                             </div>
                         </h1>
                         <br>
-                        <h4>Subscription successful.</h4>
-                        <h4>Thank you!!</h4>
+                        <h4>Your subscription is now active.</h4>
+                        <h4>Thank you for choosing us!</h4>
                     </div>
                 </div>
             </div>
-
         </div>
+        <!-- Your Failure Modal -->
+        <div id="failed_tic" class="modal fade failed_tic" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <a class="close" href="#" data-dismiss="modal" aria-label="Close"
+                       style=" text-align: end; margin-right: 17px; margin-top: 10px; ">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+                    <div class="page-body text-center">
+                        <div class="head">
+                            <h3>Payment Failed!</h3>
+                        </div>
+                        <h1>
+                            <div class="checkmark-circle">
+                                <div class="background"></div>
+                                <div class="x-mark">
+                                    <div class="line line1"></div>
+                                    <div class="line line2"></div>
+                                </div>
+                            </div>
+                        </h1>
+                        <br>
+                        <h4>Your subscription was not completed.</h4>
+                        <h4>Please try again later.</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="cancel_tic" class="modal fade success_tic" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <a class="close" href="#" data-dismiss="modal">&times;</a>
+                    <div class="page-body text-center">
+                        <div class="head">
+                            <h3>Renewal Cancel Successful!</h3>
+                        </div>
+                        <h1>
+                            <div class="checkmark-circle">
+                                <div class="background"></div>
+                                <div class="checkmark draw"></div>
+                            </div>
+                        </h1>
+                        <br>
+                        <h4>Your subscription is Deactivate After Plan End.</h4>
+                        <h4>Thank you!</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 
     @endif
 

@@ -71,9 +71,9 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="topics">Topics</label>
+                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"> Select All
                             <select name="topics[]" id="topics" class="form-control select2"  multiple required>
-                                <option value="">Select Topics</option>
+                                <option disabled value="">Select Topics</option>
                                 @foreach($topics as $topic)
                                     <option {{(in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'selected' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
                                 @endforeach
@@ -83,9 +83,9 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
-                                <option value="">Select Sub Topics</option>
+                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox" id="sub_topic_select_box"> Select All
+                            <select  name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
+                                <option disabled value="">Select Sub Topics</option>
                             </select>
                             @error('sub_topics')
                             <div class="text-danger">{{ $message }}</div>
@@ -225,6 +225,31 @@
 @section('page-script')
 <script>
     $(document).ready(function () {
+
+        $("#topic_select_box").click(function() {
+            if ($("#topic_select_box").is(':checked')) {
+                $("#topics > option").each(function() {
+                    if (!$(this).is(':disabled')) {
+                        $(this).prop("selected", true);
+                    }
+                });
+            } else {
+                $("#topics > option").prop("selected", false);
+            }
+            $("#topics").trigger("change");
+        });
+        $("#sub_topic_select_box").click(function() {
+            if ($("#sub_topic_select_box").is(':checked')) {
+                $("#sub_topics > option").each(function() {
+                    if (!$(this).is(':disabled')) {
+                        $(this).prop("selected", true);
+                    }
+                });
+            } else {
+                $("#sub_topics > option").prop("selected", false);
+            }
+            $("#sub_topics").trigger("change");
+        });
 
         $('#std').change(function () {
             let selectedStandard = $(this).val();
