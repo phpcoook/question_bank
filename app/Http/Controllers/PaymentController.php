@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PaymentHistory;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\WebHookLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -234,6 +235,11 @@ class PaymentController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->headers->get('Stripe-Signature');
+        $webHookData = new WebHookLog();
+        $webHookData->payload = json_encode([$payload], JSON_PRETTY_PRINT);
+        $webHookData->sign_header = json_encode([$sigHeader], JSON_PRETTY_PRINT);
+        $webHookData->save();
+
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $this->endpointSecret);
         } catch (\UnexpectedValueException $e) {
