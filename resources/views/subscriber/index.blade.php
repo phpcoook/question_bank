@@ -50,6 +50,7 @@
                                     <th>End Date</th>
                                     <th>Status</th>
                                     <th>Paid</th>
+                                    <th>Stripe Subscription Id</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,6 +84,7 @@
                     {data: 'plan_end_date'},
                     {data: 'status'},
                     {data: 'amount'},
+                    {data: 'stripe_id'},
                 ]
             });
             $('#status').on('change', function () {

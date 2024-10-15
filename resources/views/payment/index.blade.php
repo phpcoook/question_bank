@@ -4,16 +4,26 @@
     <div class="content-wrapper">
         <div class="content-header">
             <div class="row mb-2 p-2">
-                <div class="col-sm-6">
+                <div class="col-sm-12 col-md-4">
                     <h1 class="m-0 text-dark">Payment History List</h1>
                 </div>
-                <div class="col-sm-6 text-right">
-                    <select id="status" class="form-control" required>
-                        <option value="">Filter By Status</option>
-                        <option value="active" class="text-success">Active</option>
-                        <option value="expired" class="text-danger">Expired</option>
-                    </select>
-                </div>
+                @if(auth()->user()->role == 'admin')
+                    <div class="col-sm-12 col-md-4 form-group">
+                        <select id="user" class="text-left form-control select2">
+                            <option value="">Filter By User</option>
+                            @foreach($users as $user)
+                                <option value="{{$user->user->id}}">{{$user->user->email}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-4 text-right">
+                        <select id="status" class="form-control">
+                            <option value="">Filter By Status</option>
+                            <option value="active" class="text-success">Active</option>
+                            <option value="expired" class="text-danger">Expired</option>
+                        </select>
+                    </div>
+                @endif
             </div>
         </div>
         @if (session('success'))
@@ -43,17 +53,17 @@
                         <table id="Subscriber-table" class="table table-bordered table-hover dataTable" role="grid"
                                aria-describedby="example2_info">
                             <thead>
-                                <tr role="row">
-                                    <th>No</th>
-                                    <th>Subscriber</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    @if(auth()->user()->role == 'admin')
-                                    <th>Response</th>
-                                    @endif
-                                </tr>
+                            <tr role="row">
+                                <th>No</th>
+                                <th>Subscriber</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                @if(auth()->user()->role == 'admin')
+                                    <th>Stripe Subscription Id</th>
+                                @endif
+                            </tr>
                             </thead>
                             <tbody>
                             </tbody>
@@ -66,8 +76,11 @@
 @endsection
 
 @section('page-script')
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
+    <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
+            $('.select2').select2()
             $('#Subscriber-table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -77,6 +90,7 @@
                     url: '{{env('AJAX_URL')}}' + 'payment_history',
                     data: function (d) {
                         d.filter = $('#status').val();
+                        d.user = ('{{auth()->user()->role == 'admin'}}')? $('#user').val():0
                     }
                 },
                 columns: [
@@ -86,12 +100,14 @@
                     {data: 'plan_end_date'},
                     {data: 'amount'},
                     {data: 'status'},
-                    @if(auth()->user()->role == 'admin')
-                    {data: 'response', name: 'response', orderable: false, searchable: false}
+                        @if(auth()->user()->role == 'admin')
+                    {
+                        data: 'stripe_id', name: 'stripe_id'
+                    }
                     @endif
                 ],
                 "initComplete": function (settings, json) {
-                    $('.show-response').on('click', function(event) {
+                    $('.show-response').on('click', function (event) {
                         const dataId = $(this).data('id');
                         const decodedValue = atob(dataId);
                         $('#modal-body').html(decodedValue);
@@ -100,6 +116,9 @@
                 }
             });
             $('#status').on('change', function () {
+                $('#Subscriber-table').DataTable().draw();
+            });
+            $('#user').on('change', function () {
                 $('#Subscriber-table').DataTable().draw();
             });
             // Handle delete button click
@@ -123,8 +142,8 @@
             });
         });
 
-        $(document).ready(function() {
-            $('.show-response').on('click', function(event) {
+        $(document).ready(function () {
+            $('.show-response').on('click', function (event) {
                 const dataId = $(this).data('id');
                 const decodedValue = atob(dataId);
                 $('#modal-body').text(decodedValue);
@@ -152,4 +171,12 @@
             </div>
         </div>
     </div>
+    <style>
+        .select2-container--default .select2-selection--single {
+            padding: 5px;
+            height: 35px;
+            margin-top: 2px;
+            border: 1px solid #ced4da;
+        }
+    </style>
 @endsection

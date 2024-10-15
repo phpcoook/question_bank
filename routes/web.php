@@ -125,7 +125,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
         Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
         Route::get('/cancel-subscription', [PaymentController::class, 'cancelSubscription']);
-
+        Route::post('/webhook', [PaymentController::class, 'handleWebHook']);
 
         Route::post('/student/save-quiz',
             [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);

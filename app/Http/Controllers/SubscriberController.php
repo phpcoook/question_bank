@@ -48,7 +48,10 @@ class SubscriberController extends Controller
                         $currentDate = now();
                         return $row->end_date < $currentDate ? '<span class="text-danger">Expired</span>' : '<span class="text-success">Active</span>';
                     })
-                    ->rawColumns(['no', 'subscriber', 'plan_start_date','plan_end_date','status','amount'])
+                    ->addColumn('stripe_id', function ($row) {
+                        return $row->stripe_subscription_id;
+                    })
+                    ->rawColumns(['no', 'subscriber', 'plan_start_date','plan_end_date','status','amount','stripe_id'])
                     ->make(true);
 
             } else {
