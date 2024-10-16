@@ -340,6 +340,64 @@
             // Remove the image row from the DOM
             $(this).closest('.input-group').remove();
         });
+
+        const fileInputs = [
+            ...document.querySelectorAll('input[type="file"]')
+        ];
+
+        let currentInputIndex = 0;
+
+        // Handle paste event for images
+        window.addEventListener('paste', function(event) {
+            const items = event.clipboardData.items;
+            const dataTransfer = new DataTransfer();
+            let imagesPasted = false;
+
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+
+                // Check if the pasted item is an image
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    dataTransfer.items.add(file);
+                    imagesPasted = true;
+                }
+            }
+
+            // If images are found in the clipboard, add them to the current file input
+            if (imagesPasted) {
+                const currentInput = fileInputs[currentInputIndex];
+                const existingFiles = Array.from(currentInput.files);
+                existingFiles.forEach(file => dataTransfer.items.add(file));
+                currentInput.files = dataTransfer.files;
+
+                alert(`Images pasted into input ${currentInputIndex + 1}!`);
+
+                // Move to the next file input if the current one has files
+                if (currentInput.files.length > 0) {
+                    currentInputIndex++;
+                    // Stop if we've processed all inputs
+                    if (currentInputIndex >= fileInputs.length) {
+                        currentInputIndex = fileInputs.length - 1; // Stay on the last input
+                        alert('All inputs are filled!');
+                    }
+                }
+            }
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            fileInputs.forEach((input, index) => {
+                const files = input.files;
+                if (files.length > 0) {
+                    console.log(`Files uploaded from input ${index + 1}:`, Array.from(files).map(file => file.name));
+                } else {
+                    console.log(`No files selected in input ${index + 1}.`);
+                }
+            });
+        });
+
     });
 </script>
 <!-- Place the first <script> tag in your HTML's <head> -->

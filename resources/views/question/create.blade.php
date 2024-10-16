@@ -112,10 +112,7 @@
                             <label for="questionimage">Question Image</label>
                             <div id="question-image-rows">
                                 <div class="input-group">
-                                    <input type="file" class="form-control" name="questionimage[]">
-                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="questionimage[]" id="questionimage">
                                 </div>
                             </div>
                             @error('questionimage')
@@ -128,10 +125,7 @@
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]">
-                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="solutionimage[]" id="solutionimage">
                                 </div>
                             </div>
                             @error('solutionimage')
@@ -144,10 +138,7 @@
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]">
-                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="answerimage[]" id="answerimage">
                                 </div>
                             </div>
                             @error('answerimage')
@@ -275,38 +266,63 @@
                 });
             });
 
-            $(document).on('click', '.add-question-image-row', function () {
-                var newQuestionRow = `
-                <div class="input-group mt-3">
-                    <input type="file" class="form-control" name="questionimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#question-image-rows').append(newQuestionRow);
+            const fileInputs = [
+                document.getElementById('questionimage'),
+                document.getElementById('solutionimage'),
+                document.getElementById('answerimage')
+            ];
+
+            let currentInputIndex = 0;
+
+            // Handle paste event for images
+            window.addEventListener('paste', function(event) {
+                const items = event.clipboardData.items;
+                const dataTransfer = new DataTransfer();
+                let imagesPasted = false;
+
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+
+                    // Check if the pasted item is an image
+                    if (item.type.startsWith('image/')) {
+                        const file = item.getAsFile();
+                        dataTransfer.items.add(file);
+                        imagesPasted = true;
+                    }
+                }
+
+                // If images are found in the clipboard, add them to the current file input
+                if (imagesPasted) {
+                    const currentInput = fileInputs[currentInputIndex];
+                    const existingFiles = Array.from(currentInput.files);
+                    existingFiles.forEach(file => dataTransfer.items.add(file));
+                    currentInput.files = dataTransfer.files;
+
+                    alert(`Images pasted into input ${currentInputIndex + 1}!`);
+
+                    // Move to the next file input if the current one has files
+                    if (currentInput.files.length > 0) {
+                        currentInputIndex++;
+                        // Stop if we've processed all inputs
+                        if (currentInputIndex >= fileInputs.length) {
+                            currentInputIndex = fileInputs.length - 1; // Stay on the last input
+                            alert('All inputs are filled!');
+                        }
+                    }
+                }
             });
 
-            // Handle adding new image input fields for answer images
-            $(document).on('click', '.add-answer-image-row', function () {
-                var newanswerRow = `
-                <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="answerimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#answer-image-rows').append(newanswerRow);
-            });
+            document.getElementById('upload-form').addEventListener('submit', function(event) {
+                event.preventDefault();
 
-            // Handle adding new image input fields for solution images
-            $(document).on('click', '.add-solution-image-row', function () {
-                var newSolutionRow = `
-                <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="solutionimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#solution-image-rows').append(newSolutionRow);
-            });
-
-            // Handle removing an image row for both question and answer images
-            $(document).on('click', '.remove-image-row', function () {
-                $(this).closest('.input-group').remove();
+                fileInputs.forEach((input, index) => {
+                    const files = input.files;
+                    if (files.length > 0) {
+                        console.log(`Files uploaded from input ${index + 1}:`, Array.from(files).map(file => file.name));
+                    } else {
+                        console.log(`No files selected in input ${index + 1}.`);
+                    }
+                });
             });
         });
     </script>
