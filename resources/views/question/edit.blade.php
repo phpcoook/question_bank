@@ -51,7 +51,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="std">Year</label>
-                            <select name="std" id="std" class="form-control" required>
+                            <select name="std" id="std" class="form-control" required tabindex="1">
                                 <option value="">Select Year</option>
                                 <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
                                 <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
@@ -71,11 +71,14 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"> Select All
-                            <select name="topics[]" id="topics" class="form-control select2"  multiple required>
+                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"
+                                                                            tabindex="2"> Select All
+                            <select name="topics[]" id="topics" class="form-control select2" multiple required
+                                    tabindex="3">
                                 <option disabled value="">Select Topics</option>
                                 @foreach($topics as $topic)
-                                    <option {{(in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'selected' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                    <option
+                                        {{(in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'selected' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
                                 @endforeach
                             </select>
                             @error('topics')
@@ -83,8 +86,11 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox" id="sub_topic_select_box"> Select All
-                            <select  name="sub_topics[]" id="sub_topics" class="form-control select3"  multiple required>
+                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox"
+                                                                                    id="sub_topic_select_box"
+                                                                                    tabindex="4"> Select All
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required
+                                    tabindex="5">
                                 <option disabled value="">Select Sub Topics</option>
                             </select>
                             @error('sub_topics')
@@ -93,7 +99,7 @@
                         </div>
                         <div class="form-group">
                             <label for="difficulty">Difficulty</label>
-                            <select name="difficulty" class="form-control" required>
+                            <select name="difficulty" class="form-control" required tabindex="6">
                                 <option value="">Select Difficulty</option>
                                 <option value="foundation" {{ $data->difficulty == 'foundation' ? 'selected' : '' }}>
                                     Foundation
@@ -114,7 +120,7 @@
                         <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control" value="{{$data->code}}"
-                                   placeholder="Enter Code" required>
+                                   placeholder="Enter Code" required tabindex="7">
                             @error('code')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -124,19 +130,26 @@
                             <label for="image">Question Images</label>
                             <div id="image-rows">
                                 <div class="input-group">
-                                    <input type="file" class="form-control" name="questionimage[]">
-                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question Image</button>
+                                    <input type="file" class="form-control" name="questionimage[]" tabindex="8">
+                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
+                                        Image
+                                    </button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'question')
                                             <div class="input-group mt-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                         alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control"
+                                                       name="existing_question_images[]"
+                                                       value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row"
+                                                        data-image-id="{{ $image->id }}">Remove
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -154,19 +167,25 @@
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]">
-                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution Image</button>
+                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9">
+                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
+                                        Image
+                                    </button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'solution')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                         alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
+                                                       readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row"
+                                                        data-image-id="{{ $image->id }}">Remove
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -180,19 +199,25 @@
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]">
-                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer Image</button>
+                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10">
+                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
+                                        Image
+                                    </button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'answer')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                         alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
+                                                       readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row"
+                                                        data-image-id="{{ $image->id }}">Remove
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -204,7 +229,7 @@
                         <div class="form-group">
                             <label for="time">Time (in minutes)</label>
                             <input type="number" name="time" id="time" class="form-control"
-                                   placeholder="Enter Time" value="{{$data->time}}" required>
+                                   placeholder="Enter Time" value="{{$data->time}}" required tabindex="11">
                             @error('time')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -223,185 +248,187 @@
 @endsection
 
 @section('page-script')
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
 
-        $("#topic_select_box").click(function() {
-            if ($("#topic_select_box").is(':checked')) {
-                $("#topics > option").each(function() {
-                    if (!$(this).is(':disabled')) {
-                        $(this).prop("selected", true);
-                    }
-                });
-            } else {
-                $("#topics > option").prop("selected", false);
-            }
-            $("#topics").trigger("change");
-        });
-        $("#sub_topic_select_box").click(function() {
-            if ($("#sub_topic_select_box").is(':checked')) {
-                $("#sub_topics > option").each(function() {
-                    if (!$(this).is(':disabled')) {
-                        $(this).prop("selected", true);
-                    }
-                });
-            } else {
-                $("#sub_topics > option").prop("selected", false);
-            }
-            $("#sub_topics").trigger("change");
-        });
+            $("#topic_select_box").click(function () {
+                if ($("#topic_select_box").is(':checked')) {
+                    $("#topics > option").each(function () {
+                        if (!$(this).is(':disabled')) {
+                            $(this).prop("selected", true);
+                        }
+                    });
+                } else {
+                    $("#topics > option").prop("selected", false);
+                }
+                $("#topics").trigger("change");
+            });
+            $("#sub_topic_select_box").click(function () {
+                if ($("#sub_topic_select_box").is(':checked')) {
+                    $("#sub_topics > option").each(function () {
+                        if (!$(this).is(':disabled')) {
+                            $(this).prop("selected", true);
+                        }
+                    });
+                } else {
+                    $("#sub_topics > option").prop("selected", false);
+                }
+                $("#sub_topics").trigger("change");
+            });
 
-        $('#std').change(function () {
-            let selectedStandard = $(this).val();
-            if (selectedStandard) {
+            $('#std').change(function () {
+                let selectedStandard = $(this).val();
+                if (selectedStandard) {
+                    $.ajax({
+                        url: '{{env('AJAX_URL')}}' + 'getTopics',
+                        type: 'POST',
+                        data: {
+                            'std': selectedStandard,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (result) {
+                            $('#topics').html(result.data);
+                            $topics = $('#topics').val();
+                            if ($topics.length == 0) {
+                                $('#sub_topics').html('<option value="">Please select a topic first</option>');
+                            }
+                        },
+                        error: function (error) {
+                            alert('Something went wrong while fetching topics!');
+                        }
+                    });
+                } else {
+                    $('#topics').html('<option value="">Please select a topic first</option>');
+                    $('#sub_topics').html('<option value="">Please select a topic first</option>');
+                }
+            });
+
+            if ($('#topics').val()) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getTopics',
+                    url: '{{env('AJAX_URL')}}' + 'getSelectedSubTopicData',
                     type: 'POST',
                     data: {
-                        'std': selectedStandard,
+                        'topic_ids': $('#topics').val(),
+                        'selected': '{{$data->subtopic_id}}',
                         _token: '{{ csrf_token() }}'
                     },
                     success: function (result) {
-                        $('#topics').html(result.data);
-                        $topics = $('#topics').val();
-                        if ($topics.length == 0) {
-                            $('#sub_topics').html('<option value="">Please select a topic first</option>');
-                        }
+                        $('#sub_topics').html(result.data)
+                        $('.select3').select2()
                     },
                     error: function (error) {
-                        alert('Something went wrong while fetching topics!');
+                        alert('Something Went Wrong!');
                     }
                 });
-            } else {
-                $('#topics').html('<option value="">Please select a topic first</option>');
-                $('#sub_topics').html('<option value="">Please select a topic first</option>');
             }
-        });
 
-        if($('#topics').val()){
-            $.ajax({
-                url: '{{env('AJAX_URL')}}'+'getSelectedSubTopicData',
-                type: 'POST',
-                data: {
-                    'topic_ids': $('#topics').val(),
-                    'selected' :'{{$data->subtopic_id}}',
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(result) {
-                    $('#sub_topics').html(result.data)
-                    $('.select3').select2()
-                },
-                error: function(error) {
-                    alert('Something Went Wrong!');
-                }
+            let currentInput = null;
+            $(document).on('focus', 'input[type="file"]', function () {
+                currentInput = this;
             });
-        }
-        // Handle adding new image input fields dynamically
-        $(document).on('click', '.add-question-image-row', function () {
-            var newRow = `
+
+            // Handle adding new image input fields dynamically
+            $(document).on('click', '.add-question-image-row', function () {
+                var newRow = `
                 <div class="input-group mt-3">
                     <input type="file" class="form-control" name="questionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
-            $('#image-rows').append(newRow);
-        });
+                $('#image-rows').append(newRow);
+                // updateFileInputs();
+            });
 
-        // Handle adding new image input fields for answer images
-        $(document).on('click', '.add-answer-image-row', function () {
-            var newanswerRow = `
+            // Handle adding new image input fields for answer images
+            $(document).on('click', '.add-answer-image-row', function () {
+                var newanswerRow = `
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="answerimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
-            $('#answer-image-rows').append(newanswerRow);
-        });
+                $('#answer-image-rows').append(newanswerRow);
+                // updateFileInputs();
+            });
 
-        // Handle adding new image input fields for solution images
-        $(document).on('click', '.add-solution-image-row', function () {
-            var newSolutionRow = `
+            // Handle adding new image input fields for solution images
+            $(document).on('click', '.add-solution-image-row', function () {
+                var newSolutionRow = `
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="solutionimage[]">
                     <button type="button" class="btn btn-danger remove-image-row">Remove</button>
                 </div>`;
-            $('#solution-image-rows').append(newSolutionRow);
-        });
+                $('#solution-image-rows').append(newSolutionRow);
+                // updateFileInputs();
+            });
 
-        // Handle removing an image row
-        $(document).on('click', '.remove-image-row', function () {
-            var imageId = $(this).data('image-id');
-            var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_solution_images';
-            if (imageId) {
-                const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
-                if (!currentValue.includes(imageId.toString())) {
-                    currentValue.push(imageId);
-                    $(targetFieldId).val(currentValue.join(','));
-                }
-            }
-            // Remove the image row from the DOM
-            $(this).closest('.input-group').remove();
-        });
-
-        const fileInputs = [
-            ...document.querySelectorAll('input[type="file"]')
-        ];
-
-        let currentInputIndex = 0;
-
-        // Handle paste event for images
-        window.addEventListener('paste', function(event) {
-            const items = event.clipboardData.items;
-            const dataTransfer = new DataTransfer();
-            let imagesPasted = false;
-
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-
-                // Check if the pasted item is an image
-                if (item.type.startsWith('image/')) {
-                    const file = item.getAsFile();
-                    dataTransfer.items.add(file);
-                    imagesPasted = true;
-                }
-            }
-
-            // If images are found in the clipboard, add them to the current file input
-            if (imagesPasted) {
-                const currentInput = fileInputs[currentInputIndex];
-                const existingFiles = Array.from(currentInput.files);
-                existingFiles.forEach(file => dataTransfer.items.add(file));
-                currentInput.files = dataTransfer.files;
-
-                alert(`Images pasted into input ${currentInputIndex + 1}!`);
-
-                // Move to the next file input if the current one has files
-                if (currentInput.files.length > 0) {
-                    currentInputIndex++;
-                    // Stop if we've processed all inputs
-                    if (currentInputIndex >= fileInputs.length) {
-                        currentInputIndex = fileInputs.length - 1; // Stay on the last input
-                        alert('All inputs are filled!');
+            // Handle removing an image row
+            $(document).on('click', '.remove-image-row', function () {
+                var imageId = $(this).data('image-id');
+                var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_solution_images';
+                if (imageId) {
+                    const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
+                    if (!currentValue.includes(imageId.toString())) {
+                        currentValue.push(imageId);
+                        $(targetFieldId).val(currentValue.join(','));
                     }
                 }
+                // Remove the image row from the DOM
+                $(this).closest('.input-group').remove();
+            });
+
+            let fileInputs = [...document.querySelectorAll('input[type="file"]')];
+            let currentInputIndex = 0;
+
+// Update the file inputs list
+            function updateFileInputs() {
+                fileInputs = [...document.querySelectorAll('input[type="file"]')];
             }
-        });
 
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+// Handle paste event for images
+            window.addEventListener('paste', function (event) {
+                const items = event.clipboardData.items;
+                const dataTransfer = new DataTransfer();
+                let imagesPasted = false;
 
-            fileInputs.forEach((input, index) => {
-                const files = input.files;
-                if (files.length > 0) {
-                    console.log(`Files uploaded from input ${index + 1}:`, Array.from(files).map(file => file.name));
-                } else {
-                    console.log(`No files selected in input ${index + 1}.`);
+                // Loop through clipboard items to check if any images are pasted
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+
+                    if (item.type.startsWith('image/')) {
+                        const file = item.getAsFile();
+                        dataTransfer.items.add(file);
+                        imagesPasted = true;
+                    }
+                }
+
+                if (imagesPasted) {
+                    const existingFiles = Array.from(currentInput.files);
+                    existingFiles.forEach(file => dataTransfer.items.add(file));
+                    currentInput.files = dataTransfer.files;
+
+                    alert(`Images pasted into the input field!`);
                 }
             });
-        });
 
-    });
-</script>
-<!-- Place the first <script> tag in your HTML's <head> -->
-    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+// Handle form submission to log the uploaded files
+            document.getElementById('upload-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                fileInputs.forEach((input, index) => {
+                    const files = input.files;
+                    if (files.length > 0) {
+                        console.log(`Files uploaded from input with tabindex ${input.getAttribute('tabindex')}:`, Array.from(files).map(file => file.name));
+                    } else {
+                        console.log(`No files selected in input with tabindex ${input.getAttribute('tabindex')}.`);
+                    }
+                });
+            });
+
+
+        });
+    </script>
+    <!-- Place the first <script> tag in your HTML's <head> -->
+    <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js"
+            referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
@@ -412,20 +439,20 @@
             $('.select3').select2()
             // Handle adding new image input fields for question images
 
-            $('#topics').change(function() {
+            $('#topics').change(function () {
                 const selectedOptions = $(this).val(); // This should be an array
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': selectedOptions, // Send as array
                         _token: '{{ csrf_token() }}'
                     },
-                    success: function(result) {
+                    success: function (result) {
                         $('#sub_topics').html(result.data)
                         $('.select3').select2()
                     },
-                    error: function(error) {
+                    error: function (error) {
                         alert('Something Went Wrong!');
                     }
                 });
@@ -468,13 +495,13 @@
             });
         });
     </script>
-<style>
-    .select2-container--default .select2-selection--multiple .select2-selection__choice {
-        background-color: #007bff !important;
-        border: 1px solid #007bff!important;
-        color: #ffffff!important;
-    }
-</style>
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff !important;
+            border: 1px solid #007bff !important;
+            color: #ffffff !important;
+        }
+    </style>
 @endsection
 
 
