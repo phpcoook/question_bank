@@ -9,6 +9,9 @@
         .input_image {
             max-width: -webkit-fill-available;
         }
+        ::file-selector-button {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -130,30 +133,24 @@
                             <label for="image">Question Images</label>
                             <div id="image-rows">
                                 <div class="input-group">
-                                    <input type="file" class="form-control" name="questionimage[]" tabindex="8">
-                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="questionimage[]" id="question" tabindex="8">
+                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'question')
                                             <div class="input-group mt-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
-                                                         alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control"
-                                                       name="existing_question_images[]"
-                                                       value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row"
-                                                        data-image-id="{{ $image->id }}">Remove
-                                                </button>
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
                                         @endif
                                     @endforeach
                                 @endif
+                                <div class="image-preview mt-3" id="question-image"></div>
                             </div>
                             @error('question_images')
                             <div class="text-danger">{{ $message }}</div>
@@ -161,67 +158,56 @@
                             <input type="hidden" name="remove_question_images" id="remove_question_images" value="">
                         </div>
 
-
-                        <!-- Solution Images (Fixed part) -->
+                        <!-- Solution Images -->
                         <div class="form-group">
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9">
-                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9" id="solution">
+                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'solution')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
-                                                         alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
-                                                       readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row"
-                                                        data-image-id="{{ $image->id }}">Remove
-                                                </button>
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
                                         @endif
                                     @endforeach
                                 @endif
+                                <div id="solution-image"></div>
                             </div>
                             <input type="hidden" name="remove_solution_images" id="remove_solution_images" value="">
                         </div>
 
-                        <!-- Answer Images (Fixed part) -->
+                        <!-- Answer Images -->
                         <div class="form-group">
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10">
-                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
-                                        Image
-                                    </button>
+                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10" id="answer">
+                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer Image</button>
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'answer')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
-                                                         alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
-                                                       readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row"
-                                                        data-image-id="{{ $image->id }}">Remove
-                                                </button>
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
                                         @endif
                                     @endforeach
                                 @endif
+                                <div class="image-preview" id="answer-image"></div>
                             </div>
                             <input type="hidden" name="remove_answer_images" id="remove_answer_images" value="">
                         </div>
@@ -249,6 +235,12 @@
 
 @section('page-script')
     <script>
+        document.querySelectorAll('#question, #answer, #solution').forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault();
+            });
+        });
+
         $(document).ready(function () {
 
             $("#topic_select_box").click(function () {
@@ -322,48 +314,39 @@
                 });
             }
 
+            const previews = [
+                document.getElementById('question-image'),
+                document.getElementById('solution-image'),
+                document.getElementById('answer-image')
+            ];
+
             let currentInput = null;
+
             $(document).on('focus', 'input[type="file"]', function () {
                 currentInput = this;
             });
 
-            // Handle adding new image input fields dynamically
-            $(document).on('click', '.add-question-image-row', function () {
-                var newRow = `
-                <div class="input-group mt-3">
-                    <input type="file" class="form-control" name="questionimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#image-rows').append(newRow);
-                // updateFileInputs();
-            });
+            // Function to handle adding new image input fields dynamically
+            function addImageRow(containerId, name, buttonClass) {
+                $(document).on('click', buttonClass, function () {
+                    var newRow = `
+        <div class="input-group mb-3">
+            <input type="file" class="form-control" name="${name}[]">
+            <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+        </div>`;
+                    $(containerId).append(newRow);
+                });
+            }
+            addImageRow('#image-rows', 'questionimage', '.add-question-image-row');
+            addImageRow('#solution-image-rows', 'solutionimage', '.add-solution-image-row');
+            addImageRow('#answer-image-rows', 'answerimage', '.add-answer-image-row');
 
-            // Handle adding new image input fields for answer images
-            $(document).on('click', '.add-answer-image-row', function () {
-                var newanswerRow = `
-                <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="answerimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#answer-image-rows').append(newanswerRow);
-                // updateFileInputs();
-            });
 
-            // Handle adding new image input fields for solution images
-            $(document).on('click', '.add-solution-image-row', function () {
-                var newSolutionRow = `
-                <div class="input-group mb-3">
-                    <input type="file" class="form-control" name="solutionimage[]">
-                    <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-                </div>`;
-                $('#solution-image-rows').append(newSolutionRow);
-                // updateFileInputs();
-            });
-
-            // Handle removing an image row
+            // Handle removing an image row and the associated preview
             $(document).on('click', '.remove-image-row', function () {
                 var imageId = $(this).data('image-id');
-                var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' : '#remove_solution_images';
+                var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' :
+                    $(this).closest('#solution-image-rows').length > 0 ? '#remove_solution_images' : '#remove_answer_images';
                 if (imageId) {
                     const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
                     if (!currentValue.includes(imageId.toString())) {
@@ -373,17 +356,82 @@
                 }
                 // Remove the image row from the DOM
                 $(this).closest('.input-group').remove();
+                // Remove the preview image container
+                $(this).closest('.file-preview').remove();
             });
 
-            let fileInputs = [...document.querySelectorAll('input[type="file"]')];
-            let currentInputIndex = 0;
+            // Function to update the preview with images
+            function updatePreview(previewContainer, files) {
+                console.log(previewContainer);
+                previewContainer.innerHTML = '';
 
-// Update the file inputs list
-            function updateFileInputs() {
-                fileInputs = [...document.querySelectorAll('input[type="file"]')];
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    // Create a container for each file preview
+                    const fileContainer = document.createElement('div');
+                    fileContainer.classList.add('file-preview');
+                    fileContainer.style.display = 'flex';
+                    fileContainer.style.alignItems = 'center';
+                    fileContainer.style.marginBottom = '10px';
+
+                    // Create and configure the image element
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.style.maxWidth = '39px';
+                    img.style.marginRight = '7px';
+
+                    // Create and configure the input element for the file name
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = file.name;
+                    input.readOnly = true;
+                    input.style.marginLeft = '10px';
+                    input.classList.add('form-control');
+
+                    // Create a remove button for the image preview
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.classList.add('btn', 'btn-danger', 'remove-image-row');
+                    removeButton.textContent = 'Remove';
+
+                    // Append image, input, and remove button to the file container
+                    fileContainer.appendChild(img);
+                    fileContainer.appendChild(input);
+                    fileContainer.appendChild(removeButton);
+
+                    // Append the file container to the preview container
+                    previewContainer.appendChild(fileContainer);
+
+                    // Add event listener to the remove button
+                    removeButton.addEventListener('click', function () {
+                        // Remove the file from the DataTransfer object and input.files
+                        const updatedFiles = Array.from(currentInput.files).filter((f) => f !== file);
+                        const newDataTransfer = new DataTransfer();
+                        updatedFiles.forEach(f => newDataTransfer.items.add(f));
+                        currentInput.files = newDataTransfer.files;
+
+                        // Remove the file container from the preview
+                        fileContainer.remove();
+                    });
+                }
             }
 
-// Handle paste event for images
+            // Example usage:
+            const previewContainer = document.getElementById('answer-image');
+            const inputFile = document.querySelector('input[type="file"]');
+
+
+            inputFile.addEventListener('change', (event) => {
+                const files = event.target.files;
+                updatePreview(previewContainer, files);
+            });
+
+
+
+
+
+
+            // Handle paste event for images
             window.addEventListener('paste', function (event) {
                 const items = event.clipboardData.items;
                 const dataTransfer = new DataTransfer();
@@ -395,8 +443,10 @@
 
                     if (item.type.startsWith('image/')) {
                         const file = item.getAsFile();
-                        dataTransfer.items.add(file);
-                        imagesPasted = true;
+                        if (file) {
+                            dataTransfer.items.add(file);
+                            imagesPasted = true;
+                        }
                     }
                 }
 
@@ -405,25 +455,28 @@
                     existingFiles.forEach(file => dataTransfer.items.add(file));
                     currentInput.files = dataTransfer.files;
 
+                    // Update preview based on the input index
+                    const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
+                    updatePreview(previews[inputIndex], dataTransfer.files);
+
                     alert(`Images pasted into the input field!`);
                 }
             });
 
-// Handle form submission to log the uploaded files
+            // Handle form submission to log the uploaded files
             document.getElementById('upload-form').addEventListener('submit', function (event) {
                 event.preventDefault();
+                let fileInputs = [...document.querySelectorAll('input[type="file"]')];
 
-                fileInputs.forEach((input, index) => {
+                fileInputs.forEach((input) => {
                     const files = input.files;
                     if (files.length > 0) {
-                        console.log(`Files uploaded from input with tabindex ${input.getAttribute('tabindex')}:`, Array.from(files).map(file => file.name));
+                        console.log(`Files uploaded:`, Array.from(files).map(file => file.name));
                     } else {
-                        console.log(`No files selected in input with tabindex ${input.getAttribute('tabindex')}.`);
+                        console.log(`No files selected in this input.`);
                     }
                 });
             });
-
-
         });
     </script>
     <!-- Place the first <script> tag in your HTML's <head> -->

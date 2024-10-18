@@ -1,5 +1,12 @@
 @extends('layouts.layoutMaster')
 @section('title',env('WEB_NAME').' | Question Create')
+@section('page-style')
+    <style>
+        ::file-selector-button {
+            display: none;
+        }
+    </style>
+@endsection
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -40,7 +47,7 @@
 
                         <div class="form-group">
                             <label for="std">Year</label>
-                            <select name="std" id="std" class="form-control" required>
+                            <select name="std" id="std" class="form-control" required tabindex="1">
                                 <option value="">Select Year</option>
                                 <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
                                 <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
@@ -62,8 +69,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"> Select All
-                            <select name="topics[]" id="topics" class="form-control select2" multiple required>
+                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box" tabindex="2"> Select All
+                            <select name="topics[]" id="topics" class="form-control select2" multiple required tabindex="3">
                                 <option disabled value="">Select Topics</option>
                             </select>
                             @error('topics')
@@ -71,8 +78,8 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox" id="sub_topic_select_box"> Select All
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required>
+                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox" id="sub_topic_select_box" tabindex="4"> Select All
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required tabindex="5">
                                 <option disabled value="">Select Sub Topics</option>
                             </select>
                             @error('sub_topics')
@@ -82,7 +89,7 @@
 
                         <div class="form-group">
                             <label for="difficulty">Difficulty</label>
-                            <select name="difficulty" class="form-control" required>
+                            <select name="difficulty" class="form-control" required tabindex="6">
                                 <option value="">Select Difficulty</option>
                                 <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
                                     Foundation
@@ -103,7 +110,7 @@
                         <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control"
-                                   placeholder="Enter Code" value="{{ old('code') }}" required>
+                                   placeholder="Enter Code" value="{{ old('code') }}" required tabindex="7">
                             @error('code')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -111,13 +118,17 @@
                         <div class="form-group">
                             <label for="questionimage">Question Image</label>
                             <div id="question-image-rows">
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="questionimage[]" id="questionimage">
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" name="questionimage[]" id="question" tabindex="8">
+                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
+                                        Image
+                                    </button>
                                 </div>
                             </div>
                             @error('questionimage')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
+                            <div class="image-preview" id="question-image"></div>
                         </div>
 
 
@@ -125,12 +136,16 @@
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]" id="solutionimage">
+                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9" id="solution">
+                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
+                                        Image
+                                    </button>
                                 </div>
                             </div>
                             @error('solutionimage')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
+                            <div id="solution-image"></div>
                         </div>
 
                         <!-- Answer Image Upload -->
@@ -138,18 +153,22 @@
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]" id="answerimage">
+                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10" id="answer">
+                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
+                                        Image
+                                    </button>
                                 </div>
                             </div>
                             @error('answerimage')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
+                            <div class="image-preview" id="answer-image"></div>
                         </div>
 
                         <div class="form-group">
                             <label for="time">Time (in minutes)</label>
                             <input type="number" name="time" id="time" class="form-control"
-                                   placeholder="Enter Time" value="{{ old('time') }}" required>
+                                   placeholder="Enter Time" value="{{ old('time') }}" required tabindex="11">
                             @error('time')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -174,6 +193,11 @@
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
+        document.querySelectorAll('#question, #answer, #solution').forEach(function(element) {
+            element.addEventListener('click', function(event) {
+                event.preventDefault();
+            });
+        });
         $(document).ready(function () {
             $("#topic_select_box").click(function() {
                 if ($("#topic_select_box").is(':checked')) {
@@ -266,63 +290,174 @@
                 });
             });
 
-            const fileInputs = [
-                document.getElementById('questionimage'),
-                document.getElementById('solutionimage'),
-                document.getElementById('answerimage')
+
+            const previews = [
+                document.getElementById('question-image'),
+                document.getElementById('solution-image'),
+                document.getElementById('answer-image')
             ];
 
-            let currentInputIndex = 0;
+            let currentInput = null;
+
+            $(document).on('focus', 'input[type="file"]', function () {
+                currentInput = this;
+            });
+
+
+            // Function to handle adding new image input fields dynamically
+            function addImageRow(containerId, name, buttonClass) {
+                $(document).on('click', buttonClass, function () {
+                    var newRow = `
+        <div class="input-group mb-3">
+            <input type="file" class="form-control" name="${name}[]">
+            <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+        </div>`;
+                    $(containerId).append(newRow);
+                });
+            }
+            // Adding event handlers for each image type
+            addImageRow('#question-image-rows', 'questionimage', '.add-question-image-row');
+            addImageRow('#solution-image-rows', 'solutionimage', '.add-solution-image-row');
+            addImageRow('#answer-image-rows', 'answerimage', '.add-answer-image-row');
+
+
+
+            // Handle removing an image row and the associated preview
+            $(document).on('click', '.remove-image-row', function () {
+                var imageId = $(this).data('image-id');
+                var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' :
+                    $(this).closest('#solution-image-rows').length > 0 ? '#remove_solution_images' : '#remove_answer_images';
+                if (imageId) {
+                    const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
+                    if (!currentValue.includes(imageId.toString())) {
+                        currentValue.push(imageId);
+                        $(targetFieldId).val(currentValue.join(','));
+                    }
+                }
+                // Remove the image row from the DOM
+                $(this).closest('.input-group').remove();
+                // Remove the preview image container
+                $(this).closest('.file-preview').remove();
+            });
+
+            // Function to update the preview with images
+            function updatePreview(previewContainer, files) {
+                previewContainer.innerHTML = '';
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    // Create a container for each file preview
+                    const fileContainer = document.createElement('div');
+                    fileContainer.classList.add('file-preview');
+                    fileContainer.style.display = 'flex';
+                    fileContainer.style.alignItems = 'center';
+                    fileContainer.style.marginBottom = '10px';
+
+                    // Create and configure the image element
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.style.maxWidth = '50px';
+                    img.style.marginRight = '10px';
+
+                    // Create and configure the input element for the file name
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = file.name;
+                    input.readOnly = true;
+                    input.style.marginLeft = '10px';
+                    input.classList.add('form-control');
+
+                    // Create a remove button for the image preview
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.classList.add('btn', 'btn-danger', 'ml-2', 'remove-image-row');
+                    removeButton.textContent = 'Remove';
+
+
+                    // Append image, input, and remove button to the file container
+                    fileContainer.appendChild(img);
+                    fileContainer.appendChild(input);
+                    fileContainer.appendChild(removeButton);
+
+                    // Append the file container to the preview container
+                    previewContainer.appendChild(fileContainer);
+
+                    // Add event listener to the remove button
+                    removeButton.addEventListener('click', function () {
+                        // Remove the file from the DataTransfer object and input.files
+                        const updatedFiles = Array.from(currentInput.files).filter((f) => f !== file);
+                        const newDataTransfer = new DataTransfer();
+                        updatedFiles.forEach(f => newDataTransfer.items.add(f));
+                        currentInput.files = newDataTransfer.files;
+
+                        // Remove the file container from the preview
+                        fileContainer.remove();
+                    });
+                }
+            }
+
+            // Example usage:
+            const previewContainer = document.getElementById('answer-image');
+            const inputFile = document.querySelector('input[type="file"]');
+
+
+            inputFile.addEventListener('change', (event) => {
+                const files = event.target.files;
+                updatePreview(previewContainer, files);
+            });
+
 
             // Handle paste event for images
-            window.addEventListener('paste', function(event) {
+            window.addEventListener('paste', function (event) {
                 const items = event.clipboardData.items;
                 const dataTransfer = new DataTransfer();
                 let imagesPasted = false;
 
+                // Loop through clipboard items to check if any images are pasted
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
 
-                    // Check if the pasted item is an image
                     if (item.type.startsWith('image/')) {
                         const file = item.getAsFile();
-                        dataTransfer.items.add(file);
-                        imagesPasted = true;
+                        if (file) {
+                            dataTransfer.items.add(file);
+                            imagesPasted = true;
+                        }
                     }
                 }
 
-                // If images are found in the clipboard, add them to the current file input
                 if (imagesPasted) {
-                    const currentInput = fileInputs[currentInputIndex];
                     const existingFiles = Array.from(currentInput.files);
                     existingFiles.forEach(file => dataTransfer.items.add(file));
                     currentInput.files = dataTransfer.files;
 
-                    alert(`Images pasted into input ${currentInputIndex + 1}!`);
+                    // Update preview based on the input index
+                    const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
+                    updatePreview(previews[inputIndex], dataTransfer.files);
 
-                    // Move to the next file input if the current one has files
-                    if (currentInput.files.length > 0) {
-                        currentInputIndex++;
-                        // Stop if we've processed all inputs
-                        if (currentInputIndex >= fileInputs.length) {
-                            currentInputIndex = fileInputs.length - 1; // Stay on the last input
-                            alert('All inputs are filled!');
-                        }
-                    }
+                    alert(`Images pasted into the input field!`);
                 }
             });
 
-            document.getElementById('upload-form').addEventListener('submit', function(event) {
+            // Handle form submission to log the uploaded files
+            document.getElementById('upload-form').addEventListener('submit', function (event) {
                 event.preventDefault();
+                let fileInputs = [...document.querySelectorAll('input[type="file"]')];
 
-                fileInputs.forEach((input, index) => {
+                fileInputs.forEach((input) => {
                     const files = input.files;
                     if (files.length > 0) {
-                        console.log(`Files uploaded from input ${index + 1}:`, Array.from(files).map(file => file.name));
+                        console.log(`Files uploaded:`, Array.from(files).map(file => file.name));
                     } else {
-                        console.log(`No files selected in input ${index + 1}.`);
+                        console.log(`No files selected in this input.`);
                     }
                 });
+            });
+
+            // Handle removing an image row for both question and answer images
+            $(document).on('click', '.remove-image-row', function () {
+                $(this).closest('.input-group').remove();
             });
         });
     </script>
