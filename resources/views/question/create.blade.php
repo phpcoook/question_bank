@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" id="upload-form" tabindex="12">Submit</button>
                     </div>
                 </form>
             </div>
@@ -324,9 +324,12 @@
 
             // Handle removing an image row and the associated preview
             $(document).on('click', '.remove-image-row', function () {
-                var imageId = $(this).data('image-id');
-                var targetFieldId = $(this).closest('#image-rows').length > 0 ? '#remove_question_images' :
+                var imageId = $(this).data('imageid');
+                var filename = $(this).data('filename');
+                var filedName = $(this).data('filedname');
+                var targetFieldId = $(this).closest('#question-image').length > 0 ? '#remove_question_images' :
                     $(this).closest('#solution-image-rows').length > 0 ? '#remove_solution_images' : '#remove_answer_images';
+
                 if (imageId) {
                     const currentValue = $(targetFieldId).val() ? $(targetFieldId).val().split(',') : [];
                     if (!currentValue.includes(imageId.toString())) {
@@ -334,14 +337,32 @@
                         $(targetFieldId).val(currentValue.join(','));
                     }
                 }
+
+                // Remove the image from the input file field based on filename
+                var inputElement = document.getElementById(filedName); // Get the input file element by id
+                if (inputElement && inputElement.files) {
+                    var dataTransfer = new DataTransfer(); // Create a new DataTransfer object
+
+                    for (let i = 0; i < inputElement.files.length; i++) {
+                        // Keep all files except the one that matches the filename to be removed
+                        if (inputElement.files[i].name !== filename) {
+                            dataTransfer.items.add(inputElement.files[i]);
+                        }
+                    }
+
+                    // Update the input file field with the new FileList
+                    inputElement.files = dataTransfer.files;
+                }
+
                 // Remove the image row from the DOM
                 $(this).closest('.input-group').remove();
                 // Remove the preview image container
                 $(this).closest('.file-preview').remove();
             });
 
+
             // Function to update the preview with images
-            function updatePreview(previewContainer, files) {
+            function updatePreview(previewContainer, files,currentInputId) {
                 previewContainer.innerHTML = '';
 
                 for (let i = 0; i < files.length; i++) {
@@ -371,7 +392,10 @@
                     // Create a remove button for the image preview
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.classList.add('btn', 'btn-danger', 'ml-2', 'remove-image-row');
+                    removeButton.setAttribute('data-imageId',i);
+                    removeButton.setAttribute('data-fileName', file.name);
+                    removeButton.setAttribute('data-filedName', currentInputId);
+                    removeButton.classList.add('btn', 'btn-danger', 'remove-image-row');
                     removeButton.textContent = 'Remove';
 
 
@@ -404,7 +428,7 @@
 
             inputFile.addEventListener('change', (event) => {
                 const files = event.target.files;
-                updatePreview(previewContainer, files);
+                updatePreview(previewContainer, files,'answer-image');
             });
 
 
@@ -434,7 +458,7 @@
 
                     // Update preview based on the input index
                     const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
-                    updatePreview(previews[inputIndex], dataTransfer.files);
+                    updatePreview(previews[inputIndex], dataTransfer.files,currentInput.id);
 
                     alert(`Images pasted into the input field!`);
                 }
@@ -453,11 +477,6 @@
                         console.log(`No files selected in this input.`);
                     }
                 });
-            });
-
-            // Handle removing an image row for both question and answer images
-            $(document).on('click', '.remove-image-row', function () {
-                $(this).closest('.input-group').remove();
             });
         });
     </script>
@@ -502,11 +521,6 @@
                 unhighlight: function (element) {
                     $(element).removeClass('is-invalid');
                 }
-            });
-
-            // Remove image input rows
-            $(document).on('click', '.remove-image-row', function () {
-                $(this).closest('.input-group').remove();
             });
         });
     </script>
