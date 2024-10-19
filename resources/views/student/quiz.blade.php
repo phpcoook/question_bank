@@ -503,7 +503,7 @@
                     quiz_id: '{{$quiz_id}}'
                 };
 
-                fetch('{{url('student/save-quiz')}}', {
+                fetch('{{env('AJAX_URL')}}' + 'student/save-quiz', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
