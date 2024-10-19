@@ -13,7 +13,15 @@
 
         .timer {
             font-size: 1.2em;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            border: 3px solid #113581;
+            border-radius: 10px;
+            width: 94px;
+            height: 45px;
+            align-items: center;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
         }
 
         .extra-time {
@@ -129,6 +137,70 @@
         .displayNone {
             display: none;
         }
+
+        .ans-correct {
+            background: #C8E7A7;
+            color: #5C9B56;
+            border-radius: 10px;
+        }
+
+        .ans-wrong {
+            background: #CA1E1E;
+            color: red;
+            border-radius: 10px;
+        }
+
+        .imgbox-bottom-btns {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-progress-bar {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .custom-progress-bar .progress {
+            height: 5px;
+            border-radius: 10px;
+            background-color: #f2f2f2;
+        }
+
+        .custom-progress-bar .progress-bar {
+            background-color: #113581;
+        }
+
+        .custom-progress-bar {
+            margin: 40px 0;
+        }
+
+        .custom-progress-bar p {
+            margin-bottom: 0;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .question-code-box h6 {
+            font-size: 20px;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .question-code-box h3 {
+            margin: 0 !important;
+            font-size: 20px;
+            color: #555;
+        }
+
+        .question-code-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 0 20px 0;
+        }
     </style>
 
 @endsection
@@ -166,24 +238,42 @@
         <section class="content m-2">
 
             <div class="card card-primary text-center">
-                @if(!empty($randomCombination))
-                    <div class="form-wizard">
-                        <div class="steps">
-                            <ul id="li-steps">
-                                @foreach($randomCombination as $i=>$question)
-                                    <li>
-                                        <span>{{$i+1}}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
+                <div class="container">
+                    @if(!empty($randomCombination))
+                        <div class="form-wizard">
+                            <div class="steps">
+                                <ul id="li-steps">
+                                    @foreach($randomCombination as $i=>$question)
+                                        <li>
+                                            <span>{{$i+1}}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
+                        <div class="custom-progress-bar">
+                            <p>1 of
+                                @foreach($randomCombination as $i=>$question)
+                                    <span>{{$i+1}}</span>
+                                @endforeach
+                            </p>
+                            <div class="progress ">
+                                <div class="progress-bar w-25" role="progressbar" aria-valuenow="75"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="question-code-box">
+                            <h6>Question – {CODE)
+                            </h6>
+                            <h3 class="mt-5" id="try-solution">Stage 1 Question
+                            </h3>
 
-                    </div>
-                    <h3 class="mt-5" id="try-solution">Try to find Solution in given time!</h3>
-                    <div class="timer" id="timer">
-                        <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
-                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                             viewBox="0 0 512 512" xml:space="preserve">
+                            <div class="d-flex justify-content-end">
+                                <div class="timer" id="timer">
+                                    <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         viewBox="0 0 512 512" xml:space="preserve">
                             <g>
                                 <g>
                                     <g>
@@ -207,56 +297,76 @@
                                 </g>
                             </g>
                             </svg>
-                        <br> Timer: <span id="time">0:00</span></div>
-                    <div class="images" id="images"></div>
-                    <div class="buttons" id="buttons"></div>
-                    <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
-                    @if(!empty($question['solution_image']))
-                        <div id="accordion" class="p-4">
-                            <div class="card card-success">
-                                <div class="card-header bg-success">
-                                    <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
-                                           See Solution
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                    <div class="card-body images" id="solution_images">
-                                      No Solution Available for this Question
-                                    </div>
+                                    <span id="time">0:00</span>
                                 </div>
                             </div>
                         </div>
-                    @endif
-                @else
-                    @if($validity)
-                        <h3 class="m-5">There are no further questions available on this topic.</h3>
-                    @else
-                        <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
-                            week!</h3>
-                        <p>For unlimited quizzes, consider purchasing a paid plan!</p>
 
-                    @endif
-                @endif
-                    @if(!empty($question['answer_image']))
-                        <div id="accordions" class="p-4">
-                            <div class="card card-success">
-                                <div class="card-header bg-success">
-                                    <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse" href="#collapseThrees" aria-expanded="false">
-                                            See Answer
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
-                                    <div class="card-body images" id="answer_images">
-                                        No Answer Available for this Question
+                        <div class="images" id="images"></div>
+
+
+                        {{--                    <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>--}}
+                        @if(!empty($question['solution_image']))
+                            <div id="accordion" class="p-4">
+                                <div class="card card-success">
+                                    <div class="card-header bg-success">
+                                        <h4 class="card-title w-100">
+                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                               href="#collapseThree" aria-expanded="false">
+                                                See Solution
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                        <div class="card-body images" id="solution_images">
+                                            No Solution Available for this Question
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
+
+                    @else
+                        @if($validity)
+                            <h3 class="m-5">There are no further questions available on this topic.</h3>
+                        @else
+                            <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
+                                week!</h3>
+                            <p>For unlimited quizzes, consider purchasing a paid plan!</p>
+
+                        @endif
                     @endif
+
+                    <div class="imgbox-bottom-btns my-5">
+                        <div>
+                            @if(!empty($randomCombination))
+                                <div id="question-image" class="mb-4"></div>
+                            @endif
+                            @if(!empty($question['answer_image']))
+                                <div id="accordions">
+                                    <div class="card card-success mb-0">
+                                        <div class="card-header bg-success">
+                                            <h4 class="card-title w-100">
+                                                <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                                   href="#collapseThrees" aria-expanded="false">
+                                                    See Answer
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
+                                            <div class="card-body images" id="answer_images">
+                                                No Answer Available for this Question
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        @if(!empty($randomCombination))
+                            <div class="buttons" id="buttons"></div>
+                        @endif
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -309,7 +419,8 @@
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
-            var imagesHtml = '<div class="row col-md-12">';
+            console.log(JSON.stringify(questionData) + '-----');
+            var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
             var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
@@ -317,29 +428,31 @@
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
-<div class="d-flex justify-content-center gap-4 align-items-center">
-           <div onclick="handleAnswer('correct')" class="d-flex align-items-center" style="cursor: pointer;margin-right: 15px;">
-    <i class="fas fa-check" style="color: green; margin-right: 5px; font-size: 1.5em;"></i>Correct
-</div>
-<div onclick="handleAnswer('wrong')" class="d-flex align-items-center" style="cursor: pointer; margin-left: 10px;">
-    <i class="fas fa-times" style="color: red; margin-right: 5px; font-size: 1.5em;"></i>Wrong
-</div>
-<div onclick="handleAnswer('report')" class="d-flex align-items-center" style="cursor: pointer; margin-left: 10px;">
-    <i class="fas fa-ban" style="color: red; margin-right: 5px; font-size: 1.5em;"></i>Report Question!
-</div>
-</div>
+                <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
+                           <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                    Correct
+                </div>
+                <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                   Wrong
+                </div>
+                </div>
         `;
-            @if(!empty($question['solution_image']))
-            var solutionImagesHtml = '<div class="row col-md-12">';
+            document.getElementById('question-image').innerHTML = `
+            <div onclick="handleAnswer('report')" class="d-flex align-items-center  justify-content-center" style="cursor: pointer; margin-left: 10px;">
+                    <i class="fas fa-ban" style="color: red; margin-right: 5px; font-size: 1.5em;"></i>Report Question!
+                </div>`;
+
+                @if(!empty($question['solution_image']))
+            var solutionImagesHtml = '<div class="row col-md-12 justify-content-between">';
             $.each(questionData.solutionImages, function (imgIndex, image) {
                 solutionImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
             });
             solutionImagesHtml += '</div>';
             document.getElementById('solution_images').innerHTML = solutionImagesHtml;
-            @endif
+                @endif
 
-            @if(!empty($question['answer_image']))
-            var AnswerImagesHtml = '<div class="row col-md-12">';
+                @if(!empty($question['answer_image']))
+            var AnswerImagesHtml = '<div class="row col-md-12 mb-4">';
             $.each(questionData.answerImages, function (imgIndex, image) {
                 AnswerImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
             });

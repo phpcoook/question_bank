@@ -45,7 +45,7 @@ class QuizController extends Controller
             if ($attended->count() > 0) {
                 $notIn = $attended->pluck('question_id');
                 $questions = Question::with('quizImage')
-                    ->select('id', 'time')
+                    ->select('id', 'time', 'code')
                     ->where('reported', '0')
                     ->where('difficulty', $request->difficulty)
                     ->where('std', Auth::user()->std)
@@ -56,9 +56,11 @@ class QuizController extends Controller
                         }
                     });
 
+                Log::info('$questions ::: '.json_encode($questions));
+
             } else {
                 $questions = Question::with('quizImage')
-                    ->select('id', 'time')
+                    ->select('id', 'time', 'code')
                     ->where('reported', '0')
                     ->where('difficulty', $request->difficulty)
                     ->where('std', Auth::user()->std)
@@ -67,6 +69,8 @@ class QuizController extends Controller
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
                     });
+
+                Log::info('$questions111s ::: '.json_encode($questions));
             }
             if(CustomService::checkSubscription()){
                 $questions->with('solutionImage');
