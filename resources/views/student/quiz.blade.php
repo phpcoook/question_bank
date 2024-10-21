@@ -251,7 +251,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="custom-progress-bar">
+                        <div class="custom-progress-bar" id="custom-progress-bar">
                             <p><span id="try-solution">1</span> of
                                     <span id="total-question">{{ count($randomCombination) }}</span>
                             </p>
@@ -263,7 +263,7 @@
                                 ></div>
                             </div>
                         </div>
-                        <div class="question-code-box">
+                        <div class="question-code-box" id="question-code-box">
                             <h6>
                                 Question – { <span id="question-code"></span> }
                             </h6>
@@ -337,7 +337,7 @@
                         @endif
                     @endif
 
-                    <div class="imgbox-bottom-btns mb-5 mt-2">
+                    <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
                         <div>
                             @if(!empty($randomCombination))
                                 <div id="question-image" class="mb-4"></div>
@@ -566,6 +566,12 @@
             document.getElementById('buttons').innerHTML = '';
             document.getElementById('time').innerText = '0:00';
             document.getElementById('images').innerHTML = '';
+
+            document.getElementById('question-code-box').innerHTML = '';
+            document.getElementById('imgbox-bottom-btns').innerHTML = '';
+            document.getElementById('accordion').innerHTML = '';
+            document.getElementById('custom-progress-bar').innerHTML = '';
+
             if ($('#accordion').length) {
                 $('#accordion').css('display', 'none');
             }
