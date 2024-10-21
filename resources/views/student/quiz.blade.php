@@ -240,7 +240,7 @@
             <div class="card card-primary text-center">
                 <div class="container">
                     @if(!empty($randomCombination))
-                        <div class="form-wizard">
+                        <div class="form-wizard" style="display: none;">
                             <div class="steps">
                                 <ul id="li-steps">
                                     @foreach($randomCombination as $i=>$question)
@@ -252,22 +252,22 @@
                             </div>
                         </div>
                         <div class="custom-progress-bar">
-                            <p>1 of
-                                @foreach($randomCombination as $i=>$question)
-                                    <span>{{$i+1}}</span>
-                                @endforeach
+                            <p><span id="try-solution">1</span> of
+                                    <span id="total-question">{{ count($randomCombination) }}</span>
                             </p>
-                            <div class="progress ">
-                                <div class="progress-bar w-25" role="progressbar" aria-valuenow="75"
+                            <div class="progress">
+                                <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="75"
                                      aria-valuemin="0"
-                                     aria-valuemax="100"></div>
+                                     aria-valuemax="100"
+                                     style="width: 0%;"
+                                ></div>
                             </div>
                         </div>
                         <div class="question-code-box">
-                            <h6>Question – {CODE)
+                            <h6>
+                                Question – { <span id="question-code"></span> }
                             </h6>
-                            <h3 class="mt-5" id="try-solution">Stage 1 Question
-                            </h3>
+                            <h3 class="mt-5">Stage <span id="count-question">1</span> Question</h3>
 
                             <div class="d-flex justify-content-end">
                                 <div class="timer" id="timer">
@@ -305,9 +305,9 @@
                         <div class="images" id="images"></div>
 
 
-                        {{--                    <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>--}}
+                                            <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
                         @if(!empty($question['solution_image']))
-                            <div id="accordion" class="p-4">
+                            <div class="d-flex justify-content-lg-start" id="accordion" class="p-4">
                                 <div class="card card-success">
                                     <div class="card-header bg-success">
                                         <h4 class="card-title w-100">
@@ -337,7 +337,7 @@
                         @endif
                     @endif
 
-                    <div class="imgbox-bottom-btns my-5">
+                    <div class="imgbox-bottom-btns mb-5 mt-2">
                         <div>
                             @if(!empty($randomCombination))
                                 <div id="question-image" class="mb-4"></div>
@@ -372,7 +372,6 @@
     </div>
 
 @endsection
-
 @section('page-script')
     <script>
         var user_id = 0;
@@ -380,6 +379,7 @@
         const questions = [
                 @foreach($randomCombination as $question)
             {
+                code: '{{ $question["code"] }}',
                 id: {{ $question['id'] }},
                 time: {{ $question['time'] }},
                 images: {!! json_encode($question['quiz_image']) !!},
@@ -388,7 +388,9 @@
             },
             @endforeach
         ];
-
+        let w = 100 / questions.length;
+        document.getElementById('progress-bar').style.width
+        $('#progress-bar').css('width',w+'%');
         let currentQuestionIndex = 0;
         let timer;
         let remainingTime;
@@ -419,7 +421,7 @@
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
-            console.log(JSON.stringify(questionData) + '-----');
+            $('#question-code').html(questionData.code)
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
             var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
@@ -460,6 +462,7 @@
             document.getElementById('answer_images').innerHTML = AnswerImagesHtml;
             @endif
             startTimer(questionData.time); // Start the timer for the current question
+
         }
 
         function sendReport() {
@@ -517,6 +520,9 @@
                             toastr.success(`Your answer has been saved.`);
                             nextQuestion(); // Move to the next question
                             updateActiveStep();
+                            let c = document.getElementById('progress-bar').style.width;
+                            let w = 100 / questions.length;
+                            $('#progress-bar').css('width',parseFloat(c)+parseFloat(w)+'%');
                         } else {
                             toastr.error(`Something went wrong! Your answer was not saved.`);
                         }
@@ -540,6 +546,9 @@
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
+                document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
+                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                document.getElementById('total-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }

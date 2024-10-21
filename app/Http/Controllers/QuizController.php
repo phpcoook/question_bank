@@ -30,7 +30,7 @@ class QuizController extends Controller
                 $startDate = $startOfWeek->toDateTimeString();
                 $totalMinutes = Quiz::where('user_id', Auth::user()->id)
                     ->whereBetween('quiz.created_at', [$startDate, $endDate])
-                    ->join('question','question.id','quiz.question_id')
+                    ->join('question', 'question.id', 'quiz.question_id')
                     ->sum('question.time');
                 if ($totalMinutes >= $time->no_of_questions) {
                     $validity = false;
@@ -55,9 +55,6 @@ class QuizController extends Controller
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
                     });
-
-                Log::info('$questions ::: '.json_encode($questions));
-
             } else {
                 $questions = Question::with('quizImage')
                     ->select('id', 'time', 'code')
@@ -69,14 +66,12 @@ class QuizController extends Controller
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
                     });
-
-                Log::info('$questions111s ::: '.json_encode($questions));
             }
-            if(CustomService::checkSubscription()){
+            if (CustomService::checkSubscription()) {
                 $questions->with('solutionImage');
             }
             $questions->with('answerImage');
-            Log::info($questions->get()->toArray());
+
             $result = $this->findCombinations($questions->get()->toArray(), $target);
             $randomCombination = $result;
             $validity = true;
