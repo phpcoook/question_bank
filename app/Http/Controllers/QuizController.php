@@ -182,7 +182,6 @@ class QuizController extends Controller
     public function saveQuiz(Request $request)
     {
         try {
-
             $quiz = Quiz::upsert(
                 [
                     'answer' => $request->response,

@@ -201,6 +201,16 @@
             align-items: center;
             margin: 0 0 20px 0;
         }
+
+        .correct-total {
+            border: 3px solid #153883;
+            border-radius: 50%;
+        }
+
+        .wrong-total {
+            border: 3px solid #153883;
+            border-radius: 50%;
+        }
     </style>
 
 @endsection
@@ -253,7 +263,7 @@
                         </div>
                         <div class="custom-progress-bar" id="custom-progress-bar">
                             <p><span id="try-solution">1</span> of
-                                    <span id="total-question">{{ count($randomCombination) }}</span>
+                                <span id="total-question">{{ count($randomCombination) }}</span>
                             </p>
                             <div class="progress">
                                 <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="75"
@@ -305,70 +315,132 @@
                         <div class="images" id="images"></div>
 
 
-                                            <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em;"></div>
-                        @if(!empty($question['solution_image']))
-                            <div class="d-flex justify-content-lg-start" id="accordion" class="p-4">
-                                <div class="card card-success">
+                        <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em; display: none">
+                            <h3>Let’s see how you went!</h3>
+                            <div class="d-flex justify-content-center">
+                                <div class="timer" id="timer">
+                                    <svg fill="#000000" height="30px" width="30px" version="1.1" id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         viewBox="0 0 512 512" xml:space="preserve">
+                            <g>
+                                <g>
+                                    <g>
+                                        <path d="M256,178.087c-12.294,0-22.261,9.966-22.261,22.261v89.043c0,12.294,9.966,22.261,22.261,22.261
+                                            c12.294,0,22.261-9.967,22.261-22.261v-89.043C278.261,188.053,268.294,178.087,256,178.087z"/>
+                                        <path d="M434.087,142.786l6.52,6.52c8.693,8.693,22.788,8.693,31.482,0c8.693-8.693,8.693-22.788,0-31.482l-44.522-44.522
+                                            c-8.693-8.693-22.788-8.693-31.482,0s-8.693,22.788,0,31.482l6.52,6.52l-5.725,5.725c-32.98-26.988-73.845-44.698-118.619-49.142
+                                            V44.522h22.261c12.294,0,22.261-9.966,22.261-22.261C322.783,9.967,312.816,0,300.522,0h-89.043
+                                            c-12.294,0-22.261,9.967-22.261,22.261c0,12.294,9.966,22.261,22.261,22.261h22.261v23.366
+                                            c-44.773,4.445-85.638,22.154-118.618,49.141l-5.725-5.725l6.519-6.519c8.693-8.693,8.693-22.788,0-31.482
+                                            s-22.788-8.693-31.482,0l-44.522,44.522c-8.693,8.693-8.693,22.788,0,31.482c8.693,8.693,22.788,8.693,31.482,0l6.521-6.521
+                                            l5.725,5.725c-31.402,38.374-50.248,87.423-50.248,140.881C33.391,412.344,133.047,512,256,512s222.609-99.656,222.609-222.609
+                                            c0-53.458-18.846-102.506-50.247-140.88L434.087,142.786z M278.261,466.096v-20.879c0-12.294-9.967-22.261-22.261-22.261
+                                            c-12.294,0-22.261,9.967-22.261,22.261v20.879c-80.562-10.044-144.4-73.882-154.444-154.444h20.879
+                                            c12.294,0,22.261-9.967,22.261-22.261s-9.966-22.261-22.261-22.261H79.295c5.014-40.216,23.43-76.264,50.643-103.535
+                                            c0.046-0.045,0.096-0.082,0.141-0.127c0.045-0.045,0.082-0.095,0.127-0.141c27.27-27.212,63.318-45.628,103.533-50.641v20.879
+                                            c0,12.294,9.966,22.261,22.261,22.261c12.294,0,22.261-9.967,22.261-22.261v-20.879c40.224,5.015,76.279,23.437,103.552,50.659
+                                            c0.039,0.039,0.071,0.083,0.11,0.122s0.083,0.072,0.122,0.11c27.222,27.272,45.645,63.328,50.659,103.552h-20.879
+                                            c-12.294,0-22.261,9.967-22.261,22.261s9.966,22.261,22.261,22.261h20.879C422.661,392.214,358.823,456.052,278.261,466.096z"/>
+                                    </g>
+                                </g>
+                            </g>
+                            </svg>
+                                    <span id="total-time">0:00</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-center">
+                                    <div class="correct-total-box align-items-center">
+                                        <div class="correct-total p-3 m-5 justify-content-center">3</div>
+                                        <div
+                                            class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
+                                            style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
+                                            Correct
+                                        </div>
+                                    </div>
+                                    <div class="wrong-total-box align-items-center">
+                                        <div class="wrong-total p-3 m-5 justify-content-center">1</div>
+                                        <div
+                                            class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
+                                            style="cursor: pointer; margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
+                                            Wrong
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-center mt-3">
+                                    <a class="btn btn-sm btn-info"
+                                       href="{{ route('student.dashboard') }}">Continue to
+                                        Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                @if(!empty($question['solution_image']))
+                    <div class="d-flex justify-content-lg-start p-4" id="accordion">
+                        <div class="card card-success">
+                            <div class="card-header bg-success">
+                                <h4 class="card-title w-100">
+                                    <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                       href="#collapseThree" aria-expanded="false">
+                                        See Solution
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                <div class="card-body images" id="solution_images">
+                                    No Solution Available for this Question
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @else
+                    @if($validity)
+                        <h3 class="m-5">There are no further questions available on this topic.</h3>
+                    @else
+                        <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
+                            week!</h3>
+                        <p>For unlimited quizzes, consider purchasing a paid plan!</p>
+
+                    @endif
+                @endif
+
+                <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
+                    <div class="question-answer mx-4">
+                        @if(!empty($randomCombination))
+                            <div id="question-image" class="mb-4"></div>
+                        @endif
+                        @if(!empty($question['answer_image']))
+                            <div id="accordions">
+                                <div class="card card-success mb-0">
                                     <div class="card-header bg-success">
                                         <h4 class="card-title w-100">
                                             <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                               href="#collapseThree" aria-expanded="false">
-                                                See Solution
+                                               href="#collapseThrees" aria-expanded="false">
+                                                See Answer
                                             </a>
                                         </h4>
                                     </div>
-                                    <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                        <div class="card-body images" id="solution_images">
-                                            No Solution Available for this Question
+                                    <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
+                                        <div class="card-body images" id="answer_images">
+                                            No Answer Available for this Question
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endif
-
-                    @else
-                        @if($validity)
-                            <h3 class="m-5">There are no further questions available on this topic.</h3>
-                        @else
-                            <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
-                                week!</h3>
-                            <p>For unlimited quizzes, consider purchasing a paid plan!</p>
-
-                        @endif
-                    @endif
-
-                    <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
-                        <div>
-                            @if(!empty($randomCombination))
-                                <div id="question-image" class="mb-4"></div>
-                            @endif
-                            @if(!empty($question['answer_image']))
-                                <div id="accordions">
-                                    <div class="card card-success mb-0">
-                                        <div class="card-header bg-success">
-                                            <h4 class="card-title w-100">
-                                                <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                                   href="#collapseThrees" aria-expanded="false">
-                                                    See Answer
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
-                                            <div class="card-body images" id="answer_images">
-                                                No Answer Available for this Question
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        @if(!empty($randomCombination))
-                            <div class="buttons" id="buttons"></div>
-                        @endif
                     </div>
+                    @if(!empty($randomCombination))
+                        <div class="buttons" id="buttons"></div>
+                    @endif
                 </div>
             </div>
-        </section>
+    </div>
+    </section>
     </div>
 
 @endsection
@@ -390,7 +462,7 @@
         ];
         let w = 100 / questions.length;
         document.getElementById('progress-bar').style.width
-        $('#progress-bar').css('width',w+'%');
+        $('#progress-bar').css('width', w + '%');
         let currentQuestionIndex = 0;
         let timer;
         let remainingTime;
@@ -518,11 +590,11 @@
                     .then(data => {
                         if (data.success == true) {
                             toastr.success(`Your answer has been saved.`);
-                            nextQuestion(); // Move to the next question
+                            nextQuestion();
                             updateActiveStep();
-                            let c = document.getElementById('progress-bar').style.width;
+                            let c = $('#progress-bar').css('width');
                             let w = 100 / questions.length;
-                            $('#progress-bar').css('width',parseFloat(c)+parseFloat(w)+'%');
+                            $('#progress-bar').css('width', parseFloat(c) + parseFloat(w) + '%');
                         } else {
                             toastr.error(`Something went wrong! Your answer was not saved.`);
                         }
@@ -562,15 +634,18 @@
             if (lastLi) {
                 lastLi.classList.add('active');
             }
-            document.getElementById('totalTime').innerHTML = `Thank you for participating in the quiz! Total time taken: ${totalMinutes} minutes and ${totalSeconds} seconds.`;
-            document.getElementById('buttons').innerHTML = '';
-            document.getElementById('time').innerText = '0:00';
+            // document.getElementById('totalTime').innerHTML = `Thank you for participating in the quiz! Total time taken: ${totalMinutes} minutes and ${totalSeconds} seconds.`;
+            document.getElementById('totalTime').style.display = 'block';
+            // document.getElementById('buttons').innerHTML = '';
+            // document.getElementById('time').innerText = '0:00';
             document.getElementById('images').innerHTML = '';
 
             document.getElementById('question-code-box').innerHTML = '';
             document.getElementById('imgbox-bottom-btns').innerHTML = '';
             document.getElementById('accordion').innerHTML = '';
             document.getElementById('custom-progress-bar').innerHTML = '';
+            document.getElementById('custom-progress-bar').style.display = 'none';
+            document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
 
             if ($('#accordion').length) {
                 $('#accordion').css('display', 'none');
@@ -578,7 +653,7 @@
             if ($('#accordions').length) {
                 $('#accordions').css('display', 'none');
             }
-            document.getElementById('timer').style.display = 'none';
+            // document.getElementById('timer').style.display = 'none';
             document.getElementById('li-steps').style.display = 'none';
         }
 
