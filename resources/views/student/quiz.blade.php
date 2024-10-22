@@ -680,16 +680,12 @@
             if (lastLi) {
                 lastLi.classList.add('active');
             }
-            // document.getElementById('totalTime').innerHTML = `Thank you for participating in the quiz! Total time taken: ${totalMinutes} minutes and ${totalSeconds} seconds.`;
             document.getElementById('totalTime').style.display = 'block';
-            // document.getElementById('buttons').innerHTML = '';
-            // document.getElementById('time').innerText = '0:00';
             document.getElementById('images').innerHTML = '';
 
             document.getElementById('question-code-box').innerHTML = '';
             document.getElementById('imgbox-bottom-btns').innerHTML = '';
-            // document.getElementById('accordions').innerHTML = '';
-            // document.getElementById('accordion').innerHTML = '';
+            document.getElementById('accordion').innerHTML = '';
             document.getElementById('custom-progress-bar').innerHTML = '';
             document.getElementById('custom-progress-bar').style.display = 'none';
             document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
