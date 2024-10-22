@@ -401,6 +401,11 @@
                                     Dashboard
                                 </a>
                             </div>
+
+                            <p class="d-flex justify-content-center mt-3"><span class="text-bold px-1">Tip: </span>
+                                Review
+                                the questions marked incorrect in the “Wrong Question” tab and
+                                discuss them with your tutor during your lessons.</p>
                         </div>
 
 
