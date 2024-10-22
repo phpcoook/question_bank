@@ -407,27 +407,6 @@
                                 the questions marked incorrect in the “Wrong Question” tab and
                                 discuss them with your tutor during your lessons.</p>
                         </div>
-
-
-                        @if(!empty($question['solution_image']))
-                            <div class="d-flex justify-content-lg-start p-4" id="accordion">
-                                <div class="card card-success">
-                                    <div class="card-header bg-success">
-                                        <h4 class="card-title w-100">
-                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                               href="#collapseThree" aria-expanded="false">
-                                                See Solution
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                        <div class="card-body images" id="solution_images">
-                                            No Solution Available for this Question
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
                     @else
                         @if($validity)
                             <h3 class="m-5">There are no further questions available on this topic.</h3>
@@ -438,31 +417,51 @@
 
                         @endif
                     @endif
+
+                    @if(!empty($question['solution_image']))
+                        <div class="d-flex justify-content-lg-start p-4" id="accordion">
+                            <div class="card card-success">
+                                <div class="card-header bg-success">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                           href="#collapseThree" aria-expanded="false">
+                                            See Solution
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                    <div class="card-body images" id="solution_images">
+                                        No Solution Available for this Question
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
                     <div class="question-answer">
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
-                            @if(!empty($question['answer_image']))
-                                <div id="accordions">
-                                    <div class="card card-success mb-0">
-                                        <div class="card-header bg-success">
-                                            <h4 class="card-title w-100">
-                                                <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                                   href="#collapseThrees" aria-expanded="false">
-                                                    See Answer
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
-                                            <div class="card-body images" id="answer_images">
-                                                No Answer Available for this Question
-                                            </div>
+                        @endif
+                        @if(!empty($question['answer_image']))
+                            <div id="accordions">
+                                <div class="card card-success mb-0">
+                                    <div class="card-header bg-success">
+                                        <h4 class="card-title w-100">
+                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                               href="#collapseThrees" aria-expanded="false">
+                                                See Answer
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
+                                        <div class="card-body images" id="answer_images">
+                                            No Answer Available for this Question
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            </div>
                         @endif
                     </div>
                     @if(!empty($randomCombination))
