@@ -162,6 +162,7 @@ class UserController extends Controller
     }
 
     public function profile(){
+        $subscription = null;
         if(Auth::user()->role == 'student'){
             $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
             if(!empty($subscription) && $subscription->status == 'active') {
@@ -172,8 +173,6 @@ class UserController extends Controller
                 $subscription['startDate'] = date('jS M - Y h:i A', strtotime($subscription->start_date));
                 $subscription['endDate'] = date('jS M - Y h:i A', strtotime($subscription->end_date));
                 $subscription['renewalDate'] = $date->format('jS M - Y h:i A');
-            }else{
-                $subscription = null;
             }
         }
         return view('profile',compact('subscription'));

@@ -647,7 +647,7 @@
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        toastr.error(`An error occurred while submitting your answer. Please try again.`);
+                        // toastr.error(`An error occurred while submitting your answer. Please try again.`);
                         nextQuestion();
                     });
             }
@@ -685,7 +685,7 @@
 
             document.getElementById('question-code-box').innerHTML = '';
             document.getElementById('imgbox-bottom-btns').innerHTML = '';
-            document.getElementById('accordion').innerHTML = '';
+
             document.getElementById('custom-progress-bar').innerHTML = '';
             document.getElementById('custom-progress-bar').style.display = 'none';
             document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
@@ -697,6 +697,8 @@
                 $('#accordion').css('display', 'none');
             }
             document.getElementById('li-steps').style.display = 'none';
+            document.getElementById('accordion').innerHTML = '';
+            document.getElementById('accordions').innerHTML = '';
         }
 
         window.onload = loadQuestion;
