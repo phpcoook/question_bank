@@ -4,7 +4,7 @@
     <style>
         .question {
             margin-bottom: 20px;
-            font-size: 1.5em;
+            font-size: 1.5rem;
         }
 
         .buttons {
@@ -12,7 +12,7 @@
         }
 
         .timer {
-            font-size: 1.2em;
+            font-size: 1.2rem;
             margin-bottom: 15px;
             border: 3px solid #113581;
             border-radius: 10px;
