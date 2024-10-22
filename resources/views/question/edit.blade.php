@@ -477,8 +477,6 @@
                     // Update preview based on the input index
                     const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
                     updatePreview(previews[inputIndex], dataTransfer.files,currentInput.id);
-
-                    alert(`Images pasted into the input field!`);
                 }
             });
 
