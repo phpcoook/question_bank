@@ -410,7 +410,7 @@
 
 
                         @if(!empty($question['solution_image']))
-                            <div class="d-flex justify-content-lg-start p-4" id="accordion">
+                            <div class="d-flex justify-content-lg-start p-4" id="accordions">
                                 <div class="card card-success">
                                     <div class="card-header bg-success">
                                         <h4 class="card-title w-100">
@@ -688,18 +688,17 @@
 
             document.getElementById('question-code-box').innerHTML = '';
             document.getElementById('imgbox-bottom-btns').innerHTML = '';
-            document.getElementById('accordion').innerHTML = '';
+            document.getElementById('accordions').innerHTML = '';
             document.getElementById('custom-progress-bar').innerHTML = '';
             document.getElementById('custom-progress-bar').style.display = 'none';
             document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
 
-            if ($('#accordion').length) {
-                $('#accordion').css('display', 'none');
+            if ($('#accordions').length) {
+                $('#accordions').css('display', 'none');
             }
             if ($('#accordions').length) {
                 $('#accordions').css('display', 'none');
             }
-            // document.getElementById('timer').style.display = 'none';
             document.getElementById('li-steps').style.display = 'none';
         }
 
