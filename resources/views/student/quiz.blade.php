@@ -205,11 +205,38 @@
         .correct-total {
             border: 3px solid #153883;
             border-radius: 50%;
+            height: 150px;
+            width: 150px;
+            margin-right: auto;
+            margin-left: auto;
         }
 
         .wrong-total {
             border: 3px solid #153883;
             border-radius: 50%;
+            height: 150px;
+            width: 150px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .info-button {
+            padding: 5px 80px !important;
+            font-size: 13px;
+            width: 100% !important;
+        }
+
+        .quiz-info-total {
+            gap: 20px;
+        }
+
+        .dashboard-btn {
+            background-color: #153883;
+            color: #ffffff;
+        }
+
+        .question-answer {
+            margin-left: 7rem;
         }
     </style>
 
@@ -246,7 +273,6 @@
         @endif
 
         <section class="content m-2">
-
             <div class="card card-primary text-center">
                 <div class="container">
                     @if(!empty($randomCombination))
@@ -348,69 +374,69 @@
                                     <span id="total-time">0:00</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="d-flex justify-content-center">
-                                    <div class="correct-total-box align-items-center">
-                                        <div class="correct-total p-3 m-5 justify-content-center">3</div>
-                                        <div
-                                            class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
-                                            style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
-                                            Correct
-                                        </div>
-                                    </div>
-                                    <div class="wrong-total-box align-items-center">
-                                        <div class="wrong-total p-3 m-5 justify-content-center">1</div>
-                                        <div
-                                            class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
-                                            style="cursor: pointer; margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
-                                            Wrong
-                                        </div>
+                            <div class="d-flex justify-content-center quiz-info-total">
+                                <div class="correct-total-box align-items-center">
+                                    <div class="correct-total d-flex mb-3 justify-content-center align-items-center"><h1
+                                            class="font-weight-bold" id="correct-total-count">0</h1></div>
+                                    <div
+                                        class="d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
+                                        style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
+                                        Correct
                                     </div>
                                 </div>
-
-                                <div class="d-flex justify-content-center mt-3">
-                                    <a class="btn btn-sm btn-info"
-                                       href="{{ route('student.dashboard') }}">Continue to
-                                        Dashboard
-                                    </a>
+                                <div class="wrong-total-box align-items-center">
+                                    <div class="wrong-total d-flex mb-3 justify-content-center align-items-center"><h1
+                                            class="font-weight-bold" id="wrong-total-count">0</h1></div>
+                                    <div
+                                        class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
+                                        style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
+                                        Wrong
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="d-flex justify-content-center mt-3">
+                                <a class="btn btn-sm dashboard-btn"
+                                   href="{{ route('student.dashboard') }}">Continue to
+                                    Dashboard
+                                </a>
+                            </div>
                         </div>
+
+
+                        @if(!empty($question['solution_image']))
+                            <div class="d-flex justify-content-lg-start p-4" id="accordion">
+                                <div class="card card-success">
+                                    <div class="card-header bg-success">
+                                        <h4 class="card-title w-100">
+                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                               href="#collapseThree" aria-expanded="false">
+                                                See Solution
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                        <div class="card-body images" id="solution_images">
+                                            No Solution Available for this Question
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        @if($validity)
+                            <h3 class="m-5">There are no further questions available on this topic.</h3>
+                        @else
+                            <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
+                                week!</h3>
+                            <p>For unlimited quizzes, consider purchasing a paid plan!</p>
+
+                        @endif
+                    @endif
                 </div>
 
-                @if(!empty($question['solution_image']))
-                    <div class="d-flex justify-content-lg-start p-4" id="accordion">
-                        <div class="card card-success">
-                            <div class="card-header bg-success">
-                                <h4 class="card-title w-100">
-                                    <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                       href="#collapseThree" aria-expanded="false">
-                                        See Solution
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
-                                <div class="card-body images" id="solution_images">
-                                    No Solution Available for this Question
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                @else
-                    @if($validity)
-                        <h3 class="m-5">There are no further questions available on this topic.</h3>
-                    @else
-                        <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
-                            week!</h3>
-                        <p>For unlimited quizzes, consider purchasing a paid plan!</p>
-
-                    @endif
-                @endif
-
                 <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
-                    <div class="question-answer mx-4">
+                    <div class="question-answer">
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
                         @endif
@@ -439,8 +465,7 @@
                     @endif
                 </div>
             </div>
-    </div>
-    </section>
+        </section>
     </div>
 
 @endsection
@@ -461,8 +486,8 @@
             @endforeach
         ];
         let w = 100 / questions.length;
-        document.getElementById('progress-bar').style.width
         $('#progress-bar').css('width', w + '%');
+
         let currentQuestionIndex = 0;
         let timer;
         let remainingTime;
@@ -562,7 +587,18 @@
             });
         }
 
+        var correct = 0;
+        var wrong = 0;
+
         function handleAnswer(response) {
+            if (response === 'correct') {
+                correct += 1;
+                document.getElementById('correct-total-count').innerText = correct;
+            } else if (response === 'wrong') {
+                wrong += 1;
+                document.getElementById('wrong-total-count').innerText = wrong;
+            }
+
             const questionData = questions[currentQuestionIndex];
             if (response === 'report') {
                 $('#reportModal').modal('show');
@@ -592,9 +628,14 @@
                             toastr.success(`Your answer has been saved.`);
                             nextQuestion();
                             updateActiveStep();
-                            let c = $('#progress-bar').css('width');
-                            let w = 100 / questions.length;
-                            $('#progress-bar').css('width', parseFloat(c) + parseFloat(w) + '%');
+                            var c = document.getElementById('progress-bar');
+                            if (c) {
+                                var c = c.style.width;
+                                let w = 100 / questions.length;
+                                $('#progress-bar').css('width', parseFloat(c) + parseFloat(w) + '%');
+                            } else {
+                                console.error("Progress bar element not found.");
+                            }
                         } else {
                             toastr.error(`Something went wrong! Your answer was not saved.`);
                         }
@@ -602,7 +643,7 @@
                     .catch((error) => {
                         console.error('Error:', error);
                         toastr.error(`An error occurred while submitting your answer. Please try again.`);
-                        nextQuestion(); // Proceed to the next question even if there's an error
+                        nextQuestion();
                     });
             }
         }
@@ -620,7 +661,7 @@
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
-                document.getElementById('total-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('total-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
