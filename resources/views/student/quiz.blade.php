@@ -444,25 +444,25 @@
                     <div class="question-answer">
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
-                        @endif
-                        @if(!empty($question['answer_image']))
-                            <div id="accordions">
-                                <div class="card card-success mb-0">
-                                    <div class="card-header bg-success">
-                                        <h4 class="card-title w-100">
-                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                               href="#collapseThrees" aria-expanded="false">
-                                                See Answer
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
-                                        <div class="card-body images" id="answer_images">
-                                            No Answer Available for this Question
+                            @if(!empty($question['answer_image']))
+                                <div id="accordions">
+                                    <div class="card card-success mb-0">
+                                        <div class="card-header bg-success">
+                                            <h4 class="card-title w-100">
+                                                <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                                   href="#collapseThrees" aria-expanded="false">
+                                                    See Answer
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseThrees" class="collapse" data-parent="#accordions" style="">
+                                            <div class="card-body images" id="answer_images">
+                                                No Answer Available for this Question
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         @endif
                     </div>
                     @if(!empty($randomCombination))
