@@ -235,6 +235,10 @@
             color: #ffffff;
         }
 
+        .dashboard-btn:hover{
+            color: white;
+        }
+
         .question-answer {
             margin-left: 7rem;
         }
@@ -301,7 +305,7 @@
                         </div>
                         <div class="question-code-box" id="question-code-box">
                             <h6>
-                                Question – { <span id="question-code"></span> }
+                                Question –  <span id="question-code"></span>
                             </h6>
                             <h3 class="mt-5">Stage <span id="count-question">1</span> Question</h3>
 
@@ -523,10 +527,10 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             $('#question-code').html(questionData.code)
-            var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
+                var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
             var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
-                imagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300"></div>';
             });
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
@@ -541,8 +545,8 @@
                 </div>
         `;
             document.getElementById('question-image').innerHTML = `
-            <div onclick="handleAnswer('report')" class="d-flex align-items-center  justify-content-center" style="cursor: pointer; margin-left: 10px;">
-                    <i class="fas fa-ban" style="color: red; margin-right: 5px; font-size: 1.5em;"></i>Report Question!
+            <div onclick="handleAnswer('report')" class="d-flex align-items-center  justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
+                    <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
                 </div>`;
 
                 @if(!empty($question['solution_image']))
@@ -555,9 +559,9 @@
                 @endif
 
                 @if(!empty($question['answer_image']))
-            var AnswerImagesHtml = '<div class="row col-md-12 mb-4">';
+            var AnswerImagesHtml = '<div class="row mb-4">';
             $.each(questionData.answerImages, function (imgIndex, image) {
-                AnswerImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                AnswerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
             });
             AnswerImagesHtml += '</div>';
             document.getElementById('answer_images').innerHTML = AnswerImagesHtml;
@@ -595,6 +599,7 @@
         var wrong = 0;
 
         function handleAnswer(response) {
+            document.getElementById('collapseThrees').classList.remove('show');
             if (response === 'correct') {
                 correct += 1;
                 document.getElementById('correct-total-count').innerText = correct;
