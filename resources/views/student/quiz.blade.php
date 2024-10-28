@@ -427,8 +427,7 @@
                             <div class="card card-success">
                                 <div class="card-header bg-success">
                                     <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
-                                           href="#collapseThree" aria-expanded="false">
+                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important;" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
                                             See Solution
                                         </a>
                                     </h4>
