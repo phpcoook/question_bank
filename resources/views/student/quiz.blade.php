@@ -242,6 +242,9 @@
         .question-answer {
             margin-left: 7rem;
         }
+        .solution-question{
+            max-width: 50%;
+        }
     </style>
 
 @endsection
@@ -424,10 +427,10 @@
 
                     @if(!empty($question['solution_image']))
                         <div class="d-flex justify-content-lg-start p-4" id="accordion">
-                            <div class="card card-success">
+                            <div class="card card-success solution-question">
                                 <div class="card-header bg-success">
                                     <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important;" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
+                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
                                             See Solution
                                         </a>
                                     </h4>
@@ -549,9 +552,9 @@
                 </div>`;
 
                 @if(!empty($question['solution_image']))
-            var solutionImagesHtml = '<div class="row col-md-12 justify-content-between">';
+            var solutionImagesHtml = '<div class="row">';
             $.each(questionData.solutionImages, function (imgIndex, image) {
-                solutionImagesHtml += '<div class="col-md-4 mt-2"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
             });
             solutionImagesHtml += '</div>';
             document.getElementById('solution_images').innerHTML = solutionImagesHtml;

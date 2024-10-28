@@ -374,6 +374,7 @@
                     fileContainer.style.display = 'flex';
                     fileContainer.style.alignItems = 'center';
                     fileContainer.style.marginBottom = '10px';
+                    fileContainer.setAttribute('data-imageid', i);
 
                     // Create and configure the image element
                     const img = document.createElement('img');
@@ -475,6 +476,40 @@
                         console.log(`No files selected in this input.`);
                     }
                 });
+            });
+
+            $('#solution-image').sortable({
+                items: '.file-preview',
+                placeholder: 'sortable-placeholder'
+            });
+            $(function() {
+                // Initialize sortable functionality
+                $('#solution-image').sortable({
+                    items: '.file-preview',
+                    placeholder: 'sortable-placeholder',
+                    stop: function(event, ui) {
+                        // Get the dragged and target indices
+                        const draggedIndex = ui.item.index();
+                        const targetIndex = ui.item.prev().index(); // You might want to adjust this based on your layout
+
+                        // Update the file array
+                        updateFileArray(draggedIndex, targetIndex);
+                    }
+                });
+
+                // Function to update the file array based on the drag-and-drop action
+                function updateFileArray(draggedIndex, targetIndex) {
+                    // Move the files in the fileArray based on drag-and-drop
+                    const movedFile = fileArray.splice(draggedIndex, 1)[0];
+                    fileArray.splice(targetIndex, 0, movedFile);
+
+                    // Optional: log the updated file array for debugging
+                    console.log(fileArray);
+                }
+            });
+
+            $('.remove-image-row').on('click', function () {
+                $(this).closest('.file-preview').remove();
             });
         });
     </script>

@@ -28,7 +28,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required|unique:question,code',
-                'time' => 'required|integer',
+                'time' => 'required|numeric|min:0',
                 'questionimage' => 'required|array',
                 'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
                 'topics' => 'required|array', // Ensure topics are required
@@ -47,7 +47,7 @@ class QuestionBanController extends Controller
                 $question = new Question();
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
-                $question->time = $request->time;
+                $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);
                 $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->std = $request->std;
@@ -117,7 +117,7 @@ class QuestionBanController extends Controller
                 'id',
                 'code',
                 'difficulty',
-                'time',
+                    'time',
                 'reported',
                 'std',
                 'subtopic_id',
@@ -222,7 +222,7 @@ class QuestionBanController extends Controller
             $validator = Validator::make($request->all(), [
                 'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required',
-                'time' => 'required|integer',
+                'time' => 'required|numeric|min:0',
                 'topics' => 'required|array', // Ensure topics are required
                 'sub_topics' => [
                     'required',
@@ -238,7 +238,7 @@ class QuestionBanController extends Controller
                 $question = Question::findOrFail($id);
                 $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
-                $question->time = $request->time;
+                $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);
                 $question->subtopic_id = json_encode($request->sub_topics, 1);
                 $question->std = $request->std;
