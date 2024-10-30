@@ -72,7 +72,7 @@ class QuizController extends Controller
             }
             $questions->with('answerImage');
 
-            $result = $this->findCombinations($questions->get()->toArray(), $target);
+            $result = $this->findCombinations($questions->get()->toArray(), $target * 60);
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);

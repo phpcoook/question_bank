@@ -69,8 +69,10 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box" tabindex="2"> Select All
-                            <select name="topics[]" id="topics" class="form-control select2" multiple required tabindex="3">
+                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"
+                                                                            tabindex="2"> Select All
+                            <select name="topics[]" id="topics" class="form-control select2" multiple required
+                                    tabindex="3">
                                 <option disabled value="">Select Topics</option>
                             </select>
                             @error('topics')
@@ -78,8 +80,11 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox" id="sub_topic_select_box" tabindex="4"> Select All
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required tabindex="5">
+                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox"
+                                                                                    id="sub_topic_select_box"
+                                                                                    tabindex="4"> Select All
+                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required
+                                    tabindex="5">
                                 <option disabled value="">Select Sub Topics</option>
                             </select>
                             @error('sub_topics')
@@ -119,7 +124,8 @@
                             <label for="questionimage">Question Image</label>
                             <div id="question-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="questionimage[]" id="question" tabindex="8">
+                                    <input type="file" class="form-control" name="questionimage[]" id="question"
+                                           tabindex="8">
                                     <button type="button" class="btn btn-primary add-question-image-row">Add Question
                                         Image
                                     </button>
@@ -136,7 +142,8 @@
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9" id="solution">
+                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9"
+                                           id="solution">
                                     <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
                                         Image
                                     </button>
@@ -153,7 +160,8 @@
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10" id="answer">
+                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10"
+                                           id="answer">
                                     <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
                                         Image
                                     </button>
@@ -193,15 +201,15 @@
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
-        document.querySelectorAll('#question, #answer, #solution').forEach(function(element) {
-            element.addEventListener('click', function(event) {
+        document.querySelectorAll('#question, #answer, #solution').forEach(function (element) {
+            element.addEventListener('click', function (event) {
                 event.preventDefault();
             });
         });
         $(document).ready(function () {
-            $("#topic_select_box").click(function() {
+            $("#topic_select_box").click(function () {
                 if ($("#topic_select_box").is(':checked')) {
-                    $("#topics > option").each(function() {
+                    $("#topics > option").each(function () {
                         if (!$(this).is(':disabled')) {
                             $(this).prop("selected", true);
                         }
@@ -211,9 +219,9 @@
                 }
                 $("#topics").trigger("change");
             });
-            $("#sub_topic_select_box").click(function() {
+            $("#sub_topic_select_box").click(function () {
                 if ($("#sub_topic_select_box").is(':checked')) {
-                    $("#sub_topics > option").each(function() {
+                    $("#sub_topics > option").each(function () {
                         if (!$(this).is(':disabled')) {
                             $(this).prop("selected", true);
                         }
@@ -228,7 +236,7 @@
                 let selectedStandard = $(this).val();
                 if (selectedStandard) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}'+'getTopics',
+                        url: '{{env('AJAX_URL')}}' + 'getTopics',
                         type: 'POST',
                         data: {
                             'std': selectedStandard,
@@ -253,7 +261,7 @@
 
             if ($('#topics').val()) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': $('#topics').val(), // Send as array
@@ -274,7 +282,7 @@
             $('#topics').change(function () {
                 const selectedOptions = $(this).val(); // This should be an array
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': selectedOptions, // Send as array
@@ -315,11 +323,11 @@
                     $(containerId).append(newRow);
                 });
             }
+
             // Adding event handlers for each image type
             addImageRow('#question-image-rows', 'questionimage', '.add-question-image-row');
             addImageRow('#solution-image-rows', 'solutionimage', '.add-solution-image-row');
             addImageRow('#answer-image-rows', 'answerimage', '.add-answer-image-row');
-
 
 
             // Handle removing an image row and the associated preview
@@ -362,7 +370,7 @@
 
 
             // Function to update the preview with images
-            function updatePreview(previewContainer, files,currentInputId) {
+            function updatePreview(previewContainer, files, currentInputId) {
                 previewContainer.innerHTML = '';
 
                 for (let i = 0; i < files.length; i++) {
@@ -374,7 +382,6 @@
                     fileContainer.style.display = 'flex';
                     fileContainer.style.alignItems = 'center';
                     fileContainer.style.marginBottom = '10px';
-                    fileContainer.setAttribute('data-imageid', i);
 
                     // Create and configure the image element
                     const img = document.createElement('img');
@@ -393,7 +400,7 @@
                     // Create a remove button for the image preview
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.setAttribute('data-imageId',i);
+                    removeButton.setAttribute('data-imageId', i);
                     removeButton.setAttribute('data-fileName', file.name);
                     removeButton.setAttribute('data-filedName', currentInputId);
                     removeButton.classList.add('btn', 'btn-danger', 'remove-image-row');
@@ -429,7 +436,7 @@
 
             inputFile.addEventListener('change', (event) => {
                 const files = event.target.files;
-                updatePreview(previewContainer, files,'answer-image');
+                updatePreview(previewContainer, files, 'answer-image');
             });
 
 
@@ -459,7 +466,7 @@
 
                     // Update preview based on the input index
                     const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
-                    updatePreview(previews[inputIndex], dataTransfer.files,currentInput.id);
+                    updatePreview(previews[inputIndex], dataTransfer.files, currentInput.id);
                 }
             });
 
@@ -476,40 +483,6 @@
                         console.log(`No files selected in this input.`);
                     }
                 });
-            });
-
-            $('#solution-image').sortable({
-                items: '.file-preview',
-                placeholder: 'sortable-placeholder'
-            });
-            $(function() {
-                // Initialize sortable functionality
-                $('#solution-image').sortable({
-                    items: '.file-preview',
-                    placeholder: 'sortable-placeholder',
-                    stop: function(event, ui) {
-                        // Get the dragged and target indices
-                        const draggedIndex = ui.item.index();
-                        const targetIndex = ui.item.prev().index(); // You might want to adjust this based on your layout
-
-                        // Update the file array
-                        updateFileArray(draggedIndex, targetIndex);
-                    }
-                });
-
-                // Function to update the file array based on the drag-and-drop action
-                function updateFileArray(draggedIndex, targetIndex) {
-                    // Move the files in the fileArray based on drag-and-drop
-                    const movedFile = fileArray.splice(draggedIndex, 1)[0];
-                    fileArray.splice(targetIndex, 0, movedFile);
-
-                    // Optional: log the updated file array for debugging
-                    console.log(fileArray);
-                }
-            });
-
-            $('.remove-image-row').on('click', function () {
-                $(this).closest('.file-preview').remove();
             });
         });
     </script>

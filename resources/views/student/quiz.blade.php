@@ -346,6 +346,18 @@
                         </div>
 
                         <div class="images" id="images"></div>
+                        <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column" id="nex-previous-btn">
+                            <div onclick="questionNext()"
+                                 class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
+                                 style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                                Next
+                            </div>
+                            <div onclick="previousQuestion()"
+                                 class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
+                                 style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                                Previous
+                            </div>
+                        </div>
 
 
                         <div id="totalTime" class="mb-4" style="margin-top: 20px; font-size: 1.2em; display: none">
@@ -430,12 +442,12 @@
                             <div class="card card-success solution-question">
                                 <div class="card-header bg-success">
                                     <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto" data-toggle="collapse" href="#collapseThree" aria-expanded="false">
+                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto" data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
                                             See Solution
                                         </a>
                                     </h4>
                                 </div>
-                                <div id="collapseThree" class="collapse" data-parent="#accordion" style="">
+                                <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
                                     <div class="card-body images" id="solution_images">
                                         No Solution Available for this Question
                                     </div>
@@ -488,17 +500,25 @@
             {
                 code: '{{ $question["code"] }}',
                 id: {{ $question['id'] }},
-                time: {{ $question['time'] }},
+                time: {{ $question['time'] / 60 }},
                 images: {!! json_encode($question['quiz_image']) !!},
                 solutionImages: {!! !empty($question['solution_image'])?json_encode($question['solution_image']):json_encode([]) !!},
                 answerImages: {!! !empty($question['answer_image'])?json_encode($question['answer_image']):json_encode([]) !!}
             },
             @endforeach
         ];
+
         let w = 100 / questions.length;
         $('#progress-bar').css('width', w + '%');
 
         let currentQuestionIndex = 0;
+        updateProgressBar(); // Initial progress bar setup
+
+        function updateProgressBar() {
+            let progressWidth = (currentQuestionIndex + 1) / questions.length * 100; // Calculate progress
+            $('#progress-bar').css('width', progressWidth + '%');
+        }
+
         let timer;
         let remainingTime;
 
@@ -513,6 +533,7 @@
         }
 
         function updateTimerDisplay() {
+
             const minutes = Math.floor(Math.abs(remainingTime) / 60); // Use abs for negative values
             const seconds = Math.abs(remainingTime % 60); // Use abs for negative values
             const timeDisplay = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -528,8 +549,8 @@
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
-            $('#question-code').html(questionData.code)
-                var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
+            $('#question-code').html(questionData.code);
+            var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
             var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300"></div>';
@@ -537,39 +558,40 @@
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
-                <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
-                           <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
-                    Correct
-                </div>
-                <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
-                   Wrong
-                </div>
-                </div>
-        `;
+        <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
+            <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                Correct
+            </div>
+            <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                Wrong
+            </div>
+        </div>
+    `;
             document.getElementById('question-image').innerHTML = `
-            <div onclick="handleAnswer('report')" class="d-flex align-items-center  justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
-                    <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
-                </div>`;
+        <div onclick="handleAnswer('report')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
+            <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
+        </div>`;
 
-                @if(!empty($question['solution_image']))
-            var solutionImagesHtml = '<div class="row">';
-            $.each(questionData.solutionImages, function (imgIndex, image) {
-                solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
-            });
-            solutionImagesHtml += '</div>';
-            document.getElementById('solution_images').innerHTML = solutionImagesHtml;
-                @endif
+            if (questionData.solutionImages.length > 0) {
+                var solutionImagesHtml = '<div class="row">';
+                $.each(questionData.solutionImages, function (imgIndex, image) {
+                    solutionImagesHtml += '<div class="col-m   d-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                });
+                solutionImagesHtml += '</div>';
+                document.getElementById('solution_images').innerHTML = solutionImagesHtml;
+            }
 
-                @if(!empty($question['answer_image']))
-            var AnswerImagesHtml = '<div class="row mb-4">';
-            $.each(questionData.answerImages, function (imgIndex, image) {
-                AnswerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
-            });
-            AnswerImagesHtml += '</div>';
-            document.getElementById('answer_images').innerHTML = AnswerImagesHtml;
-            @endif
+            if (questionData.answerImages.length > 0) {
+                var answerImagesHtml = '<div class="row mb-4">';
+
+                $.each(questionData.answerImages, function (imgIndex, image) {
+                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                });
+                answerImagesHtml += '</div>';
+                document.getElementById('answer_images').innerHTML = answerImagesHtml;
+            }
+
             startTimer(questionData.time); // Start the timer for the current question
-
         }
 
         function sendReport() {
@@ -602,6 +624,7 @@
 
         function handleAnswer(response) {
             document.getElementById('collapseThrees').classList.remove('show');
+            document.getElementById('collapseThreeSolution').classList.remove('show');
             if (response === 'correct') {
                 correct += 1;
                 document.getElementById('correct-total-count').innerText = correct;
@@ -666,17 +689,43 @@
             }
         }
 
-        function nextQuestion() {
+             function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
-                // document.getElementById('total-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
         }
+
+        function questionNext() {
+            document.getElementById('collapseThrees').classList.remove('show');
+            document.getElementById('collapseThreeSolution').classList.remove('show');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+                updateProgressBar(); // Update progress bar on next
+                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+            } else {
+                showTotalTime();
+            }
+        }
+        function previousQuestion() {
+            document.getElementById('collapseThrees').classList.remove('show');
+            document.getElementById('collapseThreeSolution').classList.remove('show');
+            currentQuestionIndex--;
+            if (currentQuestionIndex >= 0) {
+                loadQuestion();
+                updateProgressBar(); // Update progress bar on previous
+                document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
+                document.getElementById('count-question').innerText = currentQuestionIndex - 1;
+            } else {
+                currentQuestionIndex = 0; // Prevent going below the first question
+            }
+        }
+
 
         function showTotalTime() {
             clearInterval(timer);
@@ -695,6 +744,9 @@
             document.getElementById('custom-progress-bar').innerHTML = '';
             document.getElementById('custom-progress-bar').style.display = 'none';
             document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
+
+            document.getElementById('nex-previous-btn').style.setProperty('display', 'none', 'important');
+
 
             if ($('#accordions').length) {
                 $('#accordions').css('display', 'none');
