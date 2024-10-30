@@ -235,14 +235,15 @@
             color: #ffffff;
         }
 
-        .dashboard-btn:hover{
+        .dashboard-btn:hover {
             color: white;
         }
 
         .question-answer {
             margin-left: 7rem;
         }
-        .solution-question{
+
+        .solution-question {
             max-width: 50%;
         }
     </style>
@@ -308,7 +309,7 @@
                         </div>
                         <div class="question-code-box" id="question-code-box">
                             <h6>
-                                Question –  <span id="question-code"></span>
+                                Question – <span id="question-code"></span>
                             </h6>
                             <h3 class="mt-5">Stage <span id="count-question">1</span> Question</h3>
 
@@ -346,7 +347,8 @@
                         </div>
 
                         <div class="images" id="images"></div>
-                        <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column" id="nex-previous-btn">
+                        <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column"
+                             id="nex-previous-btn">
                             <div onclick="questionNext()"
                                  class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
                                  style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
@@ -442,7 +444,9 @@
                             <div class="card card-success solution-question">
                                 <div class="card-header bg-success">
                                     <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed px-4" style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto" data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
+                                        <a class="d-block w-100 text-white collapsed px-4"
+                                           style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
+                                           data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
                                             See Solution
                                         </a>
                                     </h4>
@@ -623,8 +627,16 @@
         var wrong = 0;
 
         function handleAnswer(response) {
-            document.getElementById('collapseThrees').classList.remove('show');
-            document.getElementById('collapseThreeSolution').classList.remove('show');
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+
+            if (collapseThrees) {
+                collapseThrees.classList.remove('show');
+            }
+            if (collapseThreeSolution) {
+                collapseThreeSolution.classList.remove('show');
+            }
+
             if (response === 'correct') {
                 correct += 1;
                 document.getElementById('correct-total-count').innerText = correct;
@@ -689,7 +701,7 @@
             }
         }
 
-             function nextQuestion() {
+        function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
@@ -701,26 +713,45 @@
         }
 
         function questionNext() {
-            document.getElementById('collapseThrees').classList.remove('show');
-            document.getElementById('collapseThreeSolution').classList.remove('show');
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+
+            if (collapseThrees) {
+                collapseThrees.classList.remove('show');
+            }
+            if (collapseThreeSolution) {
+                collapseThreeSolution.classList.remove('show');
+            }
+
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 updateProgressBar(); // Update progress bar on next
+                document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
         }
+
+
         function previousQuestion() {
-            document.getElementById('collapseThrees').classList.remove('show');
-            document.getElementById('collapseThreeSolution').classList.remove('show');
-            currentQuestionIndex--;
-            if (currentQuestionIndex >= 0) {
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+
+            if (collapseThrees) {
+                collapseThrees.classList.remove('show');
+            }
+            if (collapseThreeSolution) {
+                collapseThreeSolution.classList.remove('show');
+            }
+
+            if (currentQuestionIndex > 0) {
                 loadQuestion();
                 updateProgressBar(); // Update progress bar on previous
-                document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex - 1;
+
+                document.getElementById('try-solution').innerText = document.getElementById("try-solution").innerText - 1;
+                document.getElementById('count-question').innerText = document.getElementById("count-question").innerText -1;
             } else {
                 currentQuestionIndex = 0; // Prevent going below the first question
             }
