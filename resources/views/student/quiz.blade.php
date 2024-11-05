@@ -653,6 +653,15 @@
 
 
         function handleAnswer(response) {
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+            if (collapseThrees) {
+                collapseThrees.classList.remove('show');
+            }
+            if (collapseThreeSolution) {
+                collapseThreeSolution.classList.remove('show');
+            }
+
             const questionData = questions[currentQuestionIndex];
             const questionId = questionData.id;
 
