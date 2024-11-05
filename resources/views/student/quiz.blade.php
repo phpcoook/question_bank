@@ -625,37 +625,56 @@
 
         var correct = 0;
         var wrong = 0;
+        var questionStatus = {};
+
+        function updateTotalCounts() {
+            let totalCorrect = 0;
+            let totalWrong = 0;
+
+            for (const questionId in questionStatus) {
+                totalCorrect += questionStatus[questionId].correct;
+                totalWrong += questionStatus[questionId].wrong;
+            }
+
+            document.getElementById('correct-total-count').innerText = totalCorrect;
+            document.getElementById('wrong-total-count').innerText = totalWrong;
+        }
+
 
         function handleAnswer(response) {
-            const collapseThrees = document.getElementById('collapseThrees');
-            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+            const questionData = questions[currentQuestionIndex];
+            const questionId = questionData.id;
 
-            if (collapseThrees) {
-                collapseThrees.classList.remove('show');
+            if (!questionStatus[questionId]) {
+                questionStatus[questionId] = { correct: 0, wrong: 0, status: '' };
             }
-            if (collapseThreeSolution) {
-                collapseThreeSolution.classList.remove('show');
-            }
+
+            const currentStatus = questionStatus[questionId].status;
 
             if (response === 'correct') {
-                correct += 1;
-                document.getElementById('correct-total-count').innerText = correct;
+                if (currentStatus === 'wrong') {
+                    questionStatus[questionId].wrong -= 1;
+                }
+                questionStatus[questionId].correct += 1;
+                questionStatus[questionId].status = 'correct';
             } else if (response === 'wrong') {
-                wrong += 1;
-                document.getElementById('wrong-total-count').innerText = wrong;
+                if (currentStatus === 'correct') {
+                    questionStatus[questionId].correct -= 1;
+                }
+                questionStatus[questionId].wrong += 1;
+                questionStatus[questionId].status = 'wrong';
             }
 
-            const questionData = questions[currentQuestionIndex];
             if (response === 'report') {
                 $('#reportModal').modal('show');
+                questionStatus[questionId].status = 'report';
             } else {
-
-                const timeTaken = (questionData.time * 60) - remainingTime; // Calculate time taken
-                totalTime += timeTaken; // Update total time
+                const timeTaken = (questionData.time * 60) - remainingTime;
+                totalTime += timeTaken;
 
                 const payload = {
                     user_id: user_id,
-                    question_id: questionData.id,
+                    question_id: questionId,
                     time_taken: timeTaken,
                     quiz_id: '{{$quiz_id}}'
                 };
@@ -670,29 +689,25 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success == true) {
+                        if (data.success === true) {
                             toastr.success(`Your answer has been saved.`);
                             nextQuestion();
                             updateActiveStep();
-                            var c = document.getElementById('progress-bar');
-                            if (c) {
-                                var c = c.style.width;
-                                let w = 100 / questions.length;
-                                $('#progress-bar').css('width', parseFloat(c) + parseFloat(w) + '%');
-                            } else {
-                                console.error("Progress bar element not found.");
-                            }
+                            updateProgressBar();
                         } else {
                             toastr.error(`Something went wrong! Your answer was not saved.`);
                         }
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        // toastr.error(`An error occurred while submitting your answer. Please try again.`);
                         nextQuestion();
                     });
             }
+
+            updateTotalCounts();
         }
+
+
 
         function updateActiveStep() {
             const steps = document.querySelectorAll('.steps li');
@@ -747,16 +762,17 @@
             }
 
             if (currentQuestionIndex > 0) {
+                currentQuestionIndex--; // Decrement the current question index
                 loadQuestion();
                 updateProgressBar(); // Update progress bar on previous
 
-                document.getElementById('try-solution').innerText = document.getElementById("try-solution").innerText - 1;
-                document.getElementById('count-question').innerText = document.getElementById("count-question").innerText -1;
+                // Update displayed question counters based on the new current index
+                document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
+                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
-                currentQuestionIndex = 0; // Prevent going below the first question
+                currentQuestionIndex = 0; // Ensure it doesn't go below 0
             }
         }
-
 
         function showTotalTime() {
             clearInterval(timer);

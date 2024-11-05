@@ -11,6 +11,14 @@ class Quiz extends Model
 
     protected $table = 'quiz';
 
+    protected $fillable = [
+        'answer',
+        'time',
+        'user_id',
+        'question_id',
+        'quiz_id'
+    ];
+
     public function user()
     {
         return $this->hasMany(User::class);

@@ -90,7 +90,8 @@ class QuizController extends Controller
     private function findCombinations(
         array $data,
         int $target
-    ) {
+    )
+    {
         try {
             $totalTime = 0;
             $selectedQuizzes = [];
@@ -165,7 +166,8 @@ class QuizController extends Controller
         int $start,
         array $currentCombination,
         array &$result
-    ) {
+    )
+    {
         if ($target === 0) {
             $result[] = $currentCombination;
             return;
@@ -182,25 +184,33 @@ class QuizController extends Controller
     public function saveQuiz(Request $request)
     {
         try {
-            $quiz = Quiz::upsert(
-                [
+            $userId = Auth::user()->id;
+            $questionId = $request->question_id;
+
+            // Check if a record exists
+            $question = Quiz::where('user_id', $userId)
+                ->where('question_id', $questionId)
+                ->first();
+
+            if ($question) {
+                // Update existing record with new values and add time taken
+                $question->update([
+                    'answer' => $request->response,
+                    'time' => $question->time + $request->time_taken,
+                    'quiz_id' => $request->quiz_id
+                ]);
+            } else {
+                // Insert new record if none exists
+                Quiz::create([
                     'answer' => $request->response,
                     'time' => $request->time_taken,
-                    'user_id' => Auth::user()->id,
-                    'question_id' => $request->question_id,
+                    'user_id' => $userId,
+                    'question_id' => $questionId,
                     'quiz_id' => $request->quiz_id
-                ],
-                [
-                    'user_id' => Auth::user()->id,
-                    'question_id' => $request->question_id
-                ]
-
-            );
-            if ($quiz) {
-                return response()->json(['success' => true]);
-            } else {
-                return response()->json(['success' => false]);
+                ]);
             }
+
+            return response()->json(['success' => true]);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             return response()->json(['success' => false]);
