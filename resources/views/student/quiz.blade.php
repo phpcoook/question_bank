@@ -499,18 +499,29 @@
     <script>
         var user_id = 0;
         var totalTime = 0;
-        const questions = [
+        const questionsrow = [
                 @foreach($randomCombination as $question)
             {
                 code: '{{ $question["code"] }}',
                 id: {{ $question['id'] }},
                 time: {{ $question['time'] / 60 }},
                 images: {!! json_encode($question['quiz_image']) !!},
-                solutionImages: {!! !empty($question['solution_image'])?json_encode($question['solution_image']):json_encode([]) !!},
-                answerImages: {!! !empty($question['answer_image'])?json_encode($question['answer_image']):json_encode([]) !!}
+                solutionImages: {!! !empty($question['solution_image']) ? json_encode($question['solution_image']) : json_encode([]) !!},
+                answerImages: {!! !empty($question['answer_image']) ? json_encode($question['answer_image']) : json_encode([]) !!}
             },
             @endforeach
         ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        const questions = shuffleArray(questionsrow);
+
 
         let w = 100 / questions.length;
         $('#progress-bar').css('width', w + '%');
@@ -646,7 +657,7 @@
             const questionId = questionData.id;
 
             if (!questionStatus[questionId]) {
-                questionStatus[questionId] = { correct: 0, wrong: 0, status: '' };
+                questionStatus[questionId] = {correct: 0, wrong: 0, status: ''};
             }
 
             const currentStatus = questionStatus[questionId].status;
@@ -706,7 +717,6 @@
 
             updateTotalCounts();
         }
-
 
 
         function updateActiveStep() {
