@@ -538,7 +538,7 @@
         let remainingTime;
 
         function startTimer(duration) {
-            remainingTime = duration * 60;
+            remainingTime = Math.round(duration * 60);
             updateTimerDisplay();
             clearInterval(timer);
             timer = setInterval(() => {
@@ -547,11 +547,12 @@
             }, 1000);
         }
 
-        function updateTimerDisplay() {
 
-            const minutes = Math.floor(Math.abs(remainingTime) / 60); // Use abs for negative values
-            const seconds = Math.abs(remainingTime % 60); // Use abs for negative values
-            const timeDisplay = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        function updateTimerDisplay() {
+            const roundedTime = Math.round(remainingTime);
+            const minutes = Math.floor(Math.abs(roundedTime) / 60);
+            const seconds = Math.abs(roundedTime % 60);
+            const timeDisplay = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('time').innerText = timeDisplay;
 
             // Change the color to red when time reaches 0 or below
@@ -808,8 +809,9 @@
 
         function showTotalTime() {
             clearInterval(timer);
-            const totalMinutes = Math.floor(totalTime / 60);
-            const totalSeconds = totalTime % 60;
+            const roundedTotalTime = Math.round(totalTime);
+            const totalMinutes = Math.floor(roundedTotalTime / 60);
+            const totalSeconds = roundedTotalTime % 60;
             const lastLi = document.querySelector('#li-steps li:last-child');
             if (lastLi) {
                 lastLi.classList.add('active');
@@ -822,7 +824,7 @@
 
             document.getElementById('custom-progress-bar').innerHTML = '';
             document.getElementById('custom-progress-bar').style.display = 'none';
-            document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds}`;
+            document.getElementById('total-time').innerHTML = `${totalMinutes} : ${totalSeconds.toString().padStart(2, '0')}`;
 
             document.getElementById('nex-previous-btn').style.setProperty('display', 'none', 'important');
 
