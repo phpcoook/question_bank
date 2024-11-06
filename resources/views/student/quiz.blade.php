@@ -349,7 +349,7 @@
                         <div class="images" id="images"></div>
                         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column"
                              id="nex-previous-btn">
-                            <div onclick="questionNext()"
+                            <div onclick="questionNext()" id="question-next"
                                  class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
                                  style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
                                 Next
@@ -764,7 +764,12 @@
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
-                showTotalTime();
+                const button = document.getElementById("question-next");
+                button.onclick = null;
+                button.style.cursor = "not-allowed";
+                button.style.opacity = "0.5";
+                button.style.pointerEvents = "none";
+                button.style.backgroundColor = "#d3d3d3";
             }
         }
 
@@ -781,13 +786,21 @@
             }
 
             if (currentQuestionIndex > 0) {
-                currentQuestionIndex--; // Decrement the current question index
+                currentQuestionIndex--;
                 loadQuestion();
-                updateProgressBar(); // Update progress bar on previous
+                updateProgressBar();
 
                 // Update displayed question counters based on the new current index
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+
+                // Re-enable the "Next" button if it was disabled
+                const button = document.getElementById("question-next");
+                button.onclick = questionNext;
+                button.style.cursor = "pointer";
+                button.style.opacity = "1";
+                button.style.pointerEvents = "auto";
+                button.style.backgroundColor = "#C8E7A7";
             } else {
                 currentQuestionIndex = 0; // Ensure it doesn't go below 0
             }
