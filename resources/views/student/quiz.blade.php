@@ -590,7 +590,7 @@
             if (questionData.solutionImages.length > 0) {
                 var solutionImagesHtml = '<div class="row">';
                 $.each(questionData.solutionImages, function (imgIndex, image) {
-                    solutionImagesHtml += '<div class="col-m   d-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
                 });
                 solutionImagesHtml += '</div>';
                 document.getElementById('solution_images').innerHTML = solutionImagesHtml;
