@@ -600,7 +600,7 @@
                 var answerImagesHtml = '<div class="row mb-4">';
 
                 $.each(questionData.answerImages, function (imgIndex, image) {
-                    answerImagesHtml += '<div class="col-md-6 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
                 });
                 answerImagesHtml += '</div>';
                 document.getElementById('answer_images').innerHTML = answerImagesHtml;
