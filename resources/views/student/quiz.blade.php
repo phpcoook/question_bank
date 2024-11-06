@@ -246,6 +246,9 @@
         .solution-question {
             max-width: 50%;
         }
+        .content .container {
+            max-width: 1024px;
+        }
     </style>
 
 @endsection
