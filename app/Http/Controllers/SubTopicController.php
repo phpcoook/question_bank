@@ -52,11 +52,16 @@ class SubTopicController extends Controller
             $topicIds = is_array($request->topic_ids) ? $request->topic_ids : [$request->topic_ids];
             $topicIds = array_unique(array_map('intval', $topicIds));
             $subTopics = SubTopic::whereIn('topic_id', $topicIds)->get();
-            $html = '<option disabled value=""> Select SubTopics</option>';
+            $html = '';
             if ($subTopics->count()) {
-                foreach ($subTopics as $subTopic) {
-                    $html .= '<option value="' . $subTopic->id . '"> ' . $subTopic->title . '</option>';
+                foreach ($subTopics as $topic) {
+                    $html .= '<div class="form-check">';
+                    $html .= '<input class="form-check-input" type="checkbox" name="sub_topics[]" value="' . $topic->id . '" id="sub_topic_' . $topic->id . '" checked>';
+                    $html .= '<label class="form-check-label" for="sub_topic_' . $topic->id . '">' . $topic->title . '</label>';
+                    $html .= '</div>';
                 }
+            } else {
+                $html .= '<p>No SubTopics available.</p>';
             }
             return response()->json(['data' => $html]);
         } catch (\Exception $e) {
@@ -69,11 +74,16 @@ class SubTopicController extends Controller
     {
         try {
             $data = Topic::where('std',$request->std)->get();
-            $html = '<option disabled value=""> Select SubTopics</option>';
+            $html = '';
             if ($data->count()) {
-                foreach ($data as $Topic) {
-                    $html .= '<option value="' . $Topic->id . '"> ' . $Topic->title . '</option>';
+                foreach ($data as $topic) {
+                    $html .= '<div class="form-check">';
+                    $html .= '<input class="form-check-input" type="checkbox" name="topics[]" value="' . $topic->id . '" id="topic_' . $topic->id . '">';
+                    $html .= '<label class="form-check-label" for="topic_' . $topic->id . '">' . $topic->title . '</label>';
+                    $html .= '</div>';
                 }
+            } else {
+                $html .= '<p>No Topics available.</p>';
             }
             return response()->json(['data' => $html]);
         } catch (\Exception $e) {
@@ -87,15 +97,19 @@ class SubTopicController extends Controller
             $topicIds = is_array($request->topic_ids) ? $request->topic_ids : [$request->topic_ids];
             $topicIds = array_unique(array_map('intval', $topicIds));
             $subTopics = SubTopic::whereIn('topic_id', $topicIds)->get();
-            $html = '<option disabled value=""> Select SubTopics</option>';
+            $html = '';
 
             $array = json_decode(html_entity_decode($request->selected), true);
-
             if ($subTopics->count()) {
                 foreach ($subTopics as $subTopic) {
-                    $selected = (in_array($subTopic->id,$array))?'selected':'';
-                    $html .= '<option '.$selected.' value="' . $subTopic->id . '"> ' . $subTopic->title . '</option>';
+                    $checked = in_array($subTopic->id, $array) ? 'checked' : '';
+                    $html .= '<div class="form-check">';
+                    $html .= '<input class="form-check-input" type="checkbox" name="sub_topics[]" value="' . $subTopic->id . '" id="sub_topic_' . $subTopic->id . '" ' . $checked . '>';
+                    $html .= '<label class="form-check-label" for="sub_topic_' . $subTopic->id . '">' . $subTopic->title . '</label>';
+                    $html .= '</div>';
                 }
+            }else {
+                $html .= '<p>No SubTopics available.</p>';
             }
             return response()->json(['data' => $html]);
         } catch (\Exception $e) {

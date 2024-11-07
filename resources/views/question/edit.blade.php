@@ -13,6 +13,65 @@
             display: none;
         }
     </style>
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff !important;
+            border: 1px solid #007bff !important;
+            color: #ffffff !important;
+        }
+    </style>
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            max-width: 500px;
+            right: 0;
+            width: 100%;
+            max-height: 500px;
+            padding: 0;
+            margin: 0 auto;
+            height: fit-content;
+            background-color: rgb(244 246 249);
+            z-index: 999999;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 100%;
+            max-width: 700px;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #343a40;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 1;
+            width: 30px;
+            height: 30px;
+            background-color: #ffffff;
+            z-index: 2;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 28px;
+            text-shadow: none;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+        .close:hover,
+        .close:focus {
+            color: red;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: 1;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -74,28 +133,23 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"
-                                                                            tabindex="2"> Select All
-                            <select name="topics[]" id="topics" class="form-control select2" multiple required
-                                    tabindex="3">
-                                <option disabled value="">Select Topics</option>
+                            <label for="topics">Topics</label>
+                            <div id="topics" class="mx-3">
                                 @foreach($topics as $topic)
-                                    <option
-                                        {{(in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'selected' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="topics[]" value="{{ $topic->id }}" id="topic_{{ $topic->id }}"
+                                            {{ (in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sub_topic_{{ $topic->id }}">{{ $topic->title }}</label>
+                                    </div>
                                 @endforeach
-                            </select>
+                            </div>
                             @error('topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox"
-                                                                                    id="sub_topic_select_box"
-                                                                                    tabindex="4"> Select All
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required
-                                    tabindex="5">
-                                <option disabled value="">Select Sub Topics</option>
-                            </select>
+                            <label for="sub_topics">Sub Topics</label>
+                            <div id="sub_topics" class="mx-3"></div>
                             @error('sub_topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -141,7 +195,7 @@
                                         @if(!empty($image->type) && $image->type == 'question')
                                             <div class="input-group mt-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
                                                 </div>
                                                 <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -171,7 +225,7 @@
                                         @if(!empty($image->type) && $image->type == 'solution')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
                                                 </div>
                                                 <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -198,7 +252,7 @@
                                         @if(!empty($image->type) && $image->type == 'answer')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
                                                 </div>
                                                 <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -228,6 +282,28 @@
                     </div>
                 </form>
 
+                <!-- Add a modal for displaying images in popup -->
+                <div id="imageModal" class="modal" style="display: none;">
+                    <span class="close">&times;</span>
+                    <img class="modal-content" id="popupImage">
+                </div>
+
+                <div id="demo-modal" class="modal">
+                    <div class="modal__content">
+                        <h1>CSS Only Modal</h1>
+
+                        <p>
+                            You can use the :target pseudo-class to create a modals with Zero JavaScript. Enjoy!
+                        </p>
+
+                        <div class="modal__footer">
+                            Made with <i class="fa fa-heart"></i>, by <a href="https://twitter.com/denicmarko" target="_blank">@denicmarko</a>
+                        </div>
+
+                        <a href="#" class="modal__close">&times;</a>
+                    </div>
+                </div>
+
             </div>
         </section>
     </div>
@@ -242,32 +318,6 @@
         });
 
         $(document).ready(function () {
-
-            $("#topic_select_box").click(function () {
-                if ($("#topic_select_box").is(':checked')) {
-                    $("#topics > option").each(function () {
-                        if (!$(this).is(':disabled')) {
-                            $(this).prop("selected", true);
-                        }
-                    });
-                } else {
-                    $("#topics > option").prop("selected", false);
-                }
-                $("#topics").trigger("change");
-            });
-            $("#sub_topic_select_box").click(function () {
-                if ($("#sub_topic_select_box").is(':checked')) {
-                    $("#sub_topics > option").each(function () {
-                        if (!$(this).is(':disabled')) {
-                            $(this).prop("selected", true);
-                        }
-                    });
-                } else {
-                    $("#sub_topics > option").prop("selected", false);
-                }
-                $("#sub_topics").trigger("change");
-            });
-
             $('#std').change(function () {
                 let selectedStandard = $(this).val();
                 if (selectedStandard) {
@@ -280,33 +330,33 @@
                         },
                         success: function (result) {
                             $('#topics').html(result.data);
-                            $topics = $('#topics').val();
-                            if ($topics.length == 0) {
-                                $('#sub_topics').html('<option value="">Please select a topic first</option>');
-                            }
+                            $('#sub_topics').html('<p>No SubTopics available.</p>');
                         },
                         error: function (error) {
                             alert('Something went wrong while fetching topics!');
                         }
                     });
                 } else {
-                    $('#topics').html('<option value="">Please select a topic first</option>');
-                    $('#sub_topics').html('<option value="">Please select a topic first</option>');
+                    $('#topics').html('<p>No Topics available.</p>');
+                    $('#sub_topics').html('<p>No SubTopics available.</p>');
                 }
             });
 
-            if ($('#topics').val()) {
+            if ($('input[name="topics[]"]:checked').length > 0) {
+                let selectedTopics = $('input[name="topics[]"]:checked').map(function() {
+                    return $(this).val();
+                }).get();
+
                 $.ajax({
                     url: '{{env('AJAX_URL')}}' + 'getSelectedSubTopicData',
                     type: 'POST',
                     data: {
-                        'topic_ids': $('#topics').val(),
+                        'topic_ids':selectedTopics,
                         'selected': '{{$data->subtopic_id}}',
                         _token: '{{ csrf_token() }}'
                     },
                     success: function (result) {
                         $('#sub_topics').html(result.data)
-                        $('.select3').select2()
                     },
                     error: function (error) {
                         alert('Something Went Wrong!');
@@ -495,6 +545,31 @@
                 });
             });
         });
+        // Load subtopics based on the selected topics
+        $(document).on('change', 'input[name="topics[]"]', function () {
+            let selectedTopics = $('input[name="topics[]"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            if (selectedTopics.length > 0) {
+                $.ajax({
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                    type: 'POST',
+                    data: {
+                        'topic_ids': selectedTopics,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (result) {
+                        $('#sub_topics').html(result.data);
+                    },
+                    error: function () {
+                        alert('Something Went Wrong!');
+                    }
+                });
+            } else {
+                $('#sub_topics').html('<p>No SubTopics available.</p>');
+            }
+        });
     </script>
     <!-- Place the first <script> tag in your HTML's <head> -->
     <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js"
@@ -505,28 +580,6 @@
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
-            $('.select2').select2()
-            $('.select3').select2()
-            // Handle adding new image input fields for question images
-
-            $('#topics').change(function () {
-                const selectedOptions = $(this).val(); // This should be an array
-                $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
-                    type: 'POST',
-                    data: {
-                        'topic_ids': selectedOptions, // Send as array
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (result) {
-                        $('#sub_topics').html(result.data)
-                        $('.select3').select2()
-                    },
-                    error: function (error) {
-                        alert('Something Went Wrong!');
-                    }
-                });
-            });
             $("#question-edit").validate({
                 rules: {
                     difficulty: {
@@ -565,13 +618,31 @@
             });
         });
     </script>
-    <style>
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #007bff !important;
-            border: 1px solid #007bff !important;
-            color: #ffffff !important;
+    <script>
+        // JavaScript function to handle image click
+        function openImageModal(imageElement) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("popupImage");
+
+            // Set the clicked image as modal content
+            modal.style.display = "block";
+            modalImg.src = imageElement.src;
         }
-    </style>
+
+        // Close the modal when the user clicks on <span> (x)
+        var closeBtn = document.getElementsByClassName("close")[0];
+        closeBtn.onclick = function() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        // Also close modal on outside click
+        window.onclick = function(event) {
+            var modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 @endsection
 
 

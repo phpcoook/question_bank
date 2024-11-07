@@ -69,24 +69,16 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="topics">Topics</label>&nbsp; <input type="checkbox" id="topic_select_box"
-                                                                            tabindex="2"> Select All
-                            <select name="topics[]" id="topics" class="form-control select2" multiple required
-                                    tabindex="3">
-                                <option disabled value="">Select Topics</option>
-                            </select>
+                            <label for="topics">Topics:</label>&nbsp;
+                            <p>Up to five Topics can be selected</p>
+                            <div id="topics" class="mx-3"></div>
                             @error('topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>&nbsp; <input type="checkbox"
-                                                                                    id="sub_topic_select_box"
-                                                                                    tabindex="4"> Select All
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required
-                                    tabindex="5">
-                                <option disabled value="">Select Sub Topics</option>
-                            </select>
+                            <label for="sub_topics">Sub Topics</label>&nbsp;
+                            <div id="sub_topics" class="mx-3"></div>
                             @error('sub_topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -207,31 +199,6 @@
             });
         });
         $(document).ready(function () {
-            $("#topic_select_box").click(function () {
-                if ($("#topic_select_box").is(':checked')) {
-                    $("#topics > option").each(function () {
-                        if (!$(this).is(':disabled')) {
-                            $(this).prop("selected", true);
-                        }
-                    });
-                } else {
-                    $("#topics > option").prop("selected", false);
-                }
-                $("#topics").trigger("change");
-            });
-            $("#sub_topic_select_box").click(function () {
-                if ($("#sub_topic_select_box").is(':checked')) {
-                    $("#sub_topics > option").each(function () {
-                        if (!$(this).is(':disabled')) {
-                            $(this).prop("selected", true);
-                        }
-                    });
-                } else {
-                    $("#sub_topics > option").prop("selected", false);
-                }
-                $("#sub_topics").trigger("change");
-            });
-
             $('#std').change(function () {
                 let selectedStandard = $(this).val();
                 if (selectedStandard) {
@@ -244,60 +211,17 @@
                         },
                         success: function (result) {
                             $('#topics').html(result.data);
-                            $topics = $('#topics').val();
-                            if ($topics.length == 0) {
-                                $('#sub_topics').html('<option value="">Please select a topic first</option>');
-                            }
+                            $('#sub_topics').html('<p>No SubTopics available.</p>');
                         },
                         error: function (error) {
                             alert('Something went wrong while fetching topics!');
                         }
                     });
                 } else {
-                    $('#topics').html('<option value="">Please select a topic first</option>');
+                    $('#topics').html('<p>Please select a standard first</p>');
                     $('#sub_topics').html('<option value="">Please select a topic first</option>');
                 }
             });
-
-            if ($('#topics').val()) {
-                $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
-                    type: 'POST',
-                    data: {
-                        'topic_ids': $('#topics').val(), // Send as array
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (result) {
-                        $('#sub_topics').html(result.data)
-                        $('.select3').select2()
-                    },
-                    error: function (error) {
-                        alert('Something Went Wrong!');
-                    }
-                });
-            }
-            $('.select2').select2()
-            $('.select3').select2()
-
-            $('#topics').change(function () {
-                const selectedOptions = $(this).val(); // This should be an array
-                $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
-                    type: 'POST',
-                    data: {
-                        'topic_ids': selectedOptions, // Send as array
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (result) {
-                        $('#sub_topics').html(result.data)
-                        $('.select3').select2()
-                    },
-                    error: function (error) {
-                        alert('Something Went Wrong!');
-                    }
-                });
-            });
-
 
             const previews = [
                 document.getElementById('question-image'),
@@ -316,10 +240,10 @@
             function addImageRow(containerId, name, buttonClass) {
                 $(document).on('click', buttonClass, function () {
                     var newRow = `
-        <div class="input-group mb-3">
-            <input type="file" class="form-control" name="${name}[]">
-            <button type="button" class="btn btn-danger remove-image-row">Remove</button>
-        </div>`;
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" name="${name}[]">
+                            <button type="button" class="btn btn-danger remove-image-row">Remove</button>
+                        </div>`;
                     $(containerId).append(newRow);
                 });
             }
@@ -484,6 +408,31 @@
                     }
                 });
             });
+        });
+        // Load subtopics based on the selected topics
+        $(document).on('change', 'input[name="topics[]"]', function () {
+            let selectedTopics = $('input[name="topics[]"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+
+            if (selectedTopics.length > 0) {
+                $.ajax({
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                    type: 'POST',
+                    data: {
+                        'topic_ids': selectedTopics,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (result) {
+                        $('#sub_topics').html(result.data);
+                    },
+                    error: function () {
+                        alert('Something Went Wrong!');
+                    }
+                });
+            } else {
+                $('#sub_topics').html('<p>No SubTopics available.</p>');
+            }
         });
     </script>
 

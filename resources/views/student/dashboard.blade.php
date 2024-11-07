@@ -40,23 +40,27 @@
                         <div class="card-deck mb-3 text-center">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-header">
-                                    <h4 class="my-0 font-weight-normal">Free PLan</h4>
+                                    <h4 class="my-0 font-weight-normal">Free Plan</h4>
                                 </div>
                                 <div class="card-body pricing">
                                     <h1 class="card-title pricing-card-title w-100 text-bold">$0</h1>
                                     <br>
                                     <ul>
-                                        <li><i class="fa fa-check text-success"></i> One {{$setting->no_of_questions}}
-                                            minute exam once a week
+                                       <li>
+                                           <i class="fa fa-check text-success"></i>
+                                           Test your knowledge with one
+                                       </li>
+                                        <li>
+                                            <i class="fa fa-check text-success"></i>
+                                            Challenge yourself with Exam-Style Questions
                                         </li>
-                                        <li><i class="fa fa-times text-danger"></i> Unable to see previous correct
-                                            answers
+                                        <li>
+                                            <i class="fa fa-check text-success"></i>
+                                            Work on speed to never run out of time in exams.
                                         </li>
-                                        <li><i class="fa fa-times text-danger"></i> Unable to look at full working out
-                                            for questions
-                                        </li>
-                                        <li><i class="fa fa-times text-danger"></i> Solution not displayed during the
-                                            test
+                                        <li>
+                                            <i class="fa fa-times text-danger"></i>
+                                            minute quiz once a week.
                                         </li>
                                     </ul>
                                     <button disabled type="button" class="btn btn-lg btn-block btn-primary">
@@ -66,7 +70,7 @@
                             </div>
                             <div class="card mb-4 box-shadow">
                                 <div class="card-header">
-                                    <h4 class="my-0 font-weight-normal">Paid Plan</h4>
+                                    <h4 class="my-0 font-weight-normal">Subscribe to Premium</h4>
 
                                 </div>
                                 <div class="card-body pricing">
@@ -74,16 +78,17 @@
                                         ${{ ucfirst($setting->subscription_charge) }}</h1>
                                     <br>
                                     <ul>
-                                        <li><i class="fa fa-check text-success"></i> Unlimited Exam Generations that are
-                                            all {{$setting->no_of_questions}} minute long
+                                        <li>
+                                            <i class="fa fa-check text-success"></i>
+                                            Unlimited quiz generation to help you ace your exams.
                                         </li>
-                                        <li><i class="fa fa-check text-success"></i> Able to see previous correct
-                                            answers
+                                        <li>
+                                            <i class="fa fa-check text-success"></i>
+                                            Full solutions written by top scorers to guide you on the right track.
                                         </li>
-                                        <li><i class="fa fa-check text-success"></i> Able to look at full working out
-                                            for questions
-                                        </li>
-                                        <li><i class="fa fa-check text-success"></i> Recurring subscription via Stripe
+                                        <li>
+                                            <i class="fa fa-check text-success"></i>
+                                            Ability to view past quiz attempts to learn from your mistakes.
                                         </li>
                                     </ul>
                                     <a target="_blank" href=" {{url('payment/create-checkout-session/')}}"
