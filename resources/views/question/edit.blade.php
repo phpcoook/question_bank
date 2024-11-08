@@ -15,6 +15,11 @@
         }
     </style>
     <style>
+        .popup-image{
+            max-width: 450px;
+        }
+    </style>
+    <style>
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             background-color: #007bff !important;
             border: 1px solid #007bff !important;
@@ -22,58 +27,6 @@
         }
     </style>
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
-    <style>
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            max-width: 500px;
-            right: 0;
-            width: 100%;
-            max-height: 500px;
-            padding: 0;
-            margin: 0 auto;
-            height: fit-content;
-            background-color: rgb(244 246 249);
-            z-index: 999999;
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 100%;
-            max-width: 700px;
-        }
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: #343a40;
-            font-size: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            opacity: 1;
-            width: 30px;
-            height: 30px;
-            background-color: #ffffff;
-            z-index: 2;
-            text-align: center;
-            border-radius: 50%;
-            line-height: 28px;
-            text-shadow: none;
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-        }
-        .close:hover,
-        .close:focus {
-            color: red;
-            text-decoration: none;
-            cursor: pointer;
-            opacity: 1;
-        }
-    </style>
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -204,7 +157,7 @@
                                         @if(!empty($image->type) && $image->type == 'question')
                                             <div class="input-group mt-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
                                                 </div>
                                                 <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -234,7 +187,7 @@
                                         @if(!empty($image->type) && $image->type == 'solution')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
                                                 </div>
                                                 <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -261,7 +214,7 @@
                                         @if(!empty($image->type) && $image->type == 'answer')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
                                                 </div>
                                                 <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
@@ -291,10 +244,19 @@
                     </div>
                 </form>
 
-                <!-- Add a modal for displaying images in popup -->
-                <div id="imageModal" class="modal" style="display: none;">
-                    <span class="close">&times;</span>
-                    <img class="modal-content" id="popupImage">
+                <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img id="popupImage" class="img-fluid popup-image" alt="Modal Image">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -612,28 +574,9 @@
         });
     </script>
     <script>
-        // JavaScript function to handle image click
         function openImageModal(imageElement) {
-            var modal = document.getElementById("imageModal");
             var modalImg = document.getElementById("popupImage");
-
-            // Set the clicked image as modal content
-            modal.style.display = "block";
             modalImg.src = imageElement.src;
-        }
-
-        // Close the modal when the user clicks on <span> (x)
-        var closeBtn = document.getElementsByClassName("close")[0];
-        closeBtn.onclick = function() {
-            document.getElementById("imageModal").style.display = "none";
-        }
-
-        // Also close modal on outside click
-        window.onclick = function(event) {
-            var modal = document.getElementById("imageModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
         }
     </script>
 
