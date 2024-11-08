@@ -88,8 +88,6 @@
 @section('page-script')
     <script>
         $(document).ready(function () {
-
-
             $('#Question-table').DataTable({
                 processing: true,
                 serverSide: true,
