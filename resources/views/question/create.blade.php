@@ -6,6 +6,14 @@
             display: none;
         }
     </style>
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff !important;
+            border: 1px solid #007bff !important;
+            color: #ffffff !important;
+        }
+    </style>
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
 @endsection
 @section('content')
     <div class="content-wrapper">
@@ -47,27 +55,25 @@
 
                         <div class="form-group">
                             <label for="std">Year</label>
-                            <select name="std" id="std" class="form-control" required tabindex="1">
-                                <option value="">Select Year</option>
-                                <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
-                                <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
-                                <option value="10" {{ (old('std') == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
-                                <option value="9" {{ (old('std') == 9) ? 'selected' : '' }}>9<sup>th</sup></option>
-                                <option value="8" {{ (old('std') == 8) ? 'selected' : '' }}>8<sup>th</sup></option>
-                                <option value="7" {{ (old('std') == 7) ? 'selected' : '' }}>7<sup>th</sup></option>
-                                <option value="6" {{ (old('std') == 6) ? 'selected' : '' }}>6<sup>th</sup></option>
-                                <option value="5" {{ (old('std') == 5) ? 'selected' : '' }}>5<sup>th</sup></option>
-                                <option value="4" {{ (old('std') == 4) ? 'selected' : '' }}>4<sup>th</sup></option>
-                                <option value="3" {{ (old('std') == 3) ? 'selected' : '' }}>3<sup>rd</sup></option>
-                                <option value="2" {{ (old('std') == 2) ? 'selected' : '' }}>2<sup>nd</sup></option>
-                                <option value="1" {{ (old('std') == 1) ? 'selected' : '' }}>1<sup>st</sup></option>
+                            <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
+                                <option value="12" {{ in_array('12', old('std', [])) ? 'selected' : '' }}>Year 7 Maths</option>
+                                <option value="11" {{ in_array('11', old('std', [])) ? 'selected' : '' }}>Year 8 Maths</option>
+                                <option value="10" {{ in_array('10', old('std', [])) ? 'selected' : '' }}>Year 9 Maths</option>
+                                <option value="9" {{ in_array('9', old('std', [])) ? 'selected' : '' }}>Year 10 Maths</option>
+                                <option value="8" {{ in_array('8', old('std', [])) ? 'selected' : '' }}>Year 11 Standard Maths</option>
+                                <option value="7" {{ in_array('7', old('std', [])) ? 'selected' : '' }}>Year 11 2U Maths</option>
+                                <option value="6" {{ in_array('6', old('std', [])) ? 'selected' : '' }}>Year 11 3U Maths</option>
+                                <option value="5" {{ in_array('5', old('std', [])) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
+                                <option value="4" {{ in_array('4', old('std', [])) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
+                                <option value="3" {{ in_array('3', old('std', [])) ? 'selected' : '' }}>Year 12 2U Maths</option>
+                                <option value="2" {{ in_array('2', old('std', [])) ? 'selected' : '' }}>Year 12 3U Maths</option>
+                                <option value="1" {{ in_array('1', old('std', [])) ? 'selected' : '' }}>Year 12 4U Maths</option>
                             </select>
-
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
+                        
                         <div class="form-group">
                             <label for="topics">Topics:</label>&nbsp;
                             <p>Up to five Topics can be selected</p>
@@ -83,7 +89,6 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="difficulty">Difficulty</label>
                             <select name="difficulty" class="form-control" required tabindex="6">
@@ -103,7 +108,6 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control"
@@ -128,8 +132,6 @@
                             @enderror
                             <div class="image-preview" id="question-image"></div>
                         </div>
-
-
                         <div class="form-group">
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
@@ -164,7 +166,6 @@
                             @enderror
                             <div class="image-preview" id="answer-image"></div>
                         </div>
-
                         <div class="form-group">
                             <label for="time">Time (in minutes)</label>
                             <input type="number" name="time" id="time" class="form-control"
@@ -173,7 +174,6 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <div class="card-footer d-flex justify-content-end">
@@ -190,8 +190,8 @@
     <script src="https://cdn.tiny.cloud/1/qfriyoi7c3pgz0wo25pnp83z6n3l8n2p56ckw8fyjz9oq2a0/tinymce/6/tinymce.min.js"
             referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
-    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
+
     <script>
         document.querySelectorAll('#question, #answer, #solution').forEach(function (element) {
             element.addEventListener('click', function (event) {
@@ -201,7 +201,7 @@
         $(document).ready(function () {
             $('#std').change(function () {
                 let selectedStandard = $(this).val();
-                if (selectedStandard) {
+                if (selectedStandard && selectedStandard.length > 0) {
                     $.ajax({
                         url: '{{env('AJAX_URL')}}' + 'getTopics',
                         type: 'POST',
@@ -479,11 +479,13 @@
             });
         });
     </script>
-    <style>
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #007bff !important;
-            border: 1px solid #007bff !important;
-            color: #ffffff !important;
-        }
-    </style>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select Year(s)",
+                allowClear: true
+            });
+        });
+    </script>
 @endsection

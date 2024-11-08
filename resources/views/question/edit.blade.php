@@ -1,6 +1,7 @@
 @extends('layouts.layoutMaster')
 @section('title',env('WEB_NAME').' | Question Edit')
 @section('page-style')
+
     <style>
         .input_image_div {
             max-width: 41px;
@@ -20,6 +21,7 @@
             color: #ffffff !important;
         }
     </style>
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <style>
         /* Modal styles */
         .modal {
@@ -113,20 +115,27 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="std">Year</label>
-                            <select name="std" id="std" class="form-control" required tabindex="1">
+                            @php
+                                $cleanedStd = trim($data->std, '[]');
+                                $stdArray = is_array($data->std) ? $data->std : explode(',', $cleanedStd);
+                                $stdArray = array_map(function($item) {
+                                    return trim($item, '"');
+                                }, $stdArray);
+                            @endphp
+                            <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
                                 <option value="">Select Year</option>
-                                <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
-                                <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
-                                <option value="10" {{ ($data->std == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
-                                <option value="9" {{ ($data->std == 9) ? 'selected' : '' }}>9<sup>th</sup></option>
-                                <option value="8" {{ ($data->std == 8) ? 'selected' : '' }}>8<sup>th</sup></option>
-                                <option value="7" {{ ($data->std == 7) ? 'selected' : '' }}>7<sup>th</sup></option>
-                                <option value="6" {{ ($data->std == 6) ? 'selected' : '' }}>6<sup>th</sup></option>
-                                <option value="5" {{ ($data->std == 5) ? 'selected' : '' }}>5<sup>th</sup></option>
-                                <option value="4" {{ ($data->std == 4) ? 'selected' : '' }}>4<sup>th</sup></option>
-                                <option value="3" {{ ($data->std == 3) ? 'selected' : '' }}>3<sup>rd</sup></option>
-                                <option value="2" {{ ($data->std == 2) ? 'selected' : '' }}>2<sup>nd</sup></option>
-                                <option value="1" {{ ($data->std == 1) ? 'selected' : '' }}>1<sup>st</sup></option>
+                                <option value="12" {{ in_array("12", $stdArray) ? 'selected' : '' }}>Year 7 Maths</option>
+                                <option value="11" {{ in_array("11", $stdArray) ? 'selected' : '' }}>Year 8 Maths</option>
+                                <option value="10" {{ in_array("10", $stdArray) ? 'selected' : '' }}>Year 9 Maths</option>
+                                <option value="9" {{ in_array("9", $stdArray) ? 'selected' : '' }}>Year 10 Maths</option>
+                                <option value="8" {{ in_array("8", $stdArray) ? 'selected' : '' }}>Year 11 Standard Maths</option>
+                                <option value="7" {{ in_array("7", $stdArray) ? 'selected' : '' }}>Year 11 2U Maths</option>
+                                <option value="6" {{ in_array("6", $stdArray) ? 'selected' : '' }}>Year 11 3U Maths</option>
+                                <option value="5" {{ in_array("5", $stdArray) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
+                                <option value="4" {{ in_array("4", $stdArray) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
+                                <option value="3" {{ in_array("3", $stdArray) ? 'selected' : '' }}>Year 12 2U Maths</option>
+                                <option value="2" {{ in_array("2", $stdArray) ? 'selected' : '' }}>Year 12 3U Maths</option>
+                                <option value="1" {{ in_array("1", $stdArray) ? 'selected' : '' }}>Year 12 4U Maths</option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
@@ -288,22 +297,6 @@
                     <img class="modal-content" id="popupImage">
                 </div>
 
-                <div id="demo-modal" class="modal">
-                    <div class="modal__content">
-                        <h1>CSS Only Modal</h1>
-
-                        <p>
-                            You can use the :target pseudo-class to create a modals with Zero JavaScript. Enjoy!
-                        </p>
-
-                        <div class="modal__footer">
-                            Made with <i class="fa fa-heart"></i>, by <a href="https://twitter.com/denicmarko" target="_blank">@denicmarko</a>
-                        </div>
-
-                        <a href="#" class="modal__close">&times;</a>
-                    </div>
-                </div>
-
             </div>
         </section>
     </div>
@@ -320,7 +313,7 @@
         $(document).ready(function () {
             $('#std').change(function () {
                 let selectedStandard = $(this).val();
-                if (selectedStandard) {
+                if (selectedStandard && selectedStandard.length > 0) {
                     $.ajax({
                         url: '{{env('AJAX_URL')}}' + 'getTopics',
                         type: 'POST',
@@ -576,7 +569,7 @@
             referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
+
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
@@ -642,6 +635,15 @@
                 modal.style.display = "none";
             }
         }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select Year(s)",
+                allowClear: true
+            });
+        });
     </script>
 @endsection
 

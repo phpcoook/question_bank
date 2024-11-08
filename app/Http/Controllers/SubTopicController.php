@@ -73,7 +73,7 @@ class SubTopicController extends Controller
     public function getTopics(Request $request)
     {
         try {
-            $data = Topic::where('std',$request->std)->get();
+            $data = Topic::whereIn('std',$request->std)->get();
             $html = '';
             if ($data->count()) {
                 foreach ($data as $topic) {
@@ -99,7 +99,7 @@ class SubTopicController extends Controller
             $subTopics = SubTopic::whereIn('topic_id', $topicIds)->get();
             $html = '';
 
-            $array = json_decode(html_entity_decode($request->selected), true);
+            $array = json_decode(html_entity_decode($request->selected), true) ?? [];
             if ($subTopics->count()) {
                 foreach ($subTopics as $subTopic) {
                     $checked = in_array($subTopic->id, $array) ? 'checked' : '';

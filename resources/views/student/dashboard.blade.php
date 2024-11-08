@@ -107,8 +107,35 @@
                 <div class="row m-3">
 
                     <div class="col-md-6 m-auto">
-                        <h4 class="mb-1">Questions done / Topic</h4>
-                        @if(!empty($subscription))
+                        <h4 class="mb-1">
+                            @php $std = Auth::user()->std @endphp
+                            @if($std == 1)
+                                Year 12 4U Maths
+                            @elseif($std == 2)
+                                Year 12 3U Maths
+                            @elseif($std == 3)
+                                Year 12 2U Maths
+                            @elseif($std == 4)
+                                Year 12 Standard 2 Maths
+                            @elseif($std == 5)
+                                Year 12 Standard 1 Maths
+                            @elseif($std == 6)
+                                Year 11 3U Maths
+                            @elseif($std == 7)
+                                Year 11 2U Maths
+                            @elseif($std == 8)
+                                Year 11 Standard Maths
+                            @elseif($std == 9)
+                                Year 10 Maths
+                            @elseif($std == 10)
+                                Year 9 Maths
+                            @elseif($std == 11)
+                                Year 8 Maths
+                            @elseif($std == 12)
+                                Year 7 Maths
+                            @endif
+                        </h4>
+                    @if(!empty($subscription))
                             <p class="mb-3"><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}}  On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
                             </p>

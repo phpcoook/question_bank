@@ -32,11 +32,6 @@ class QuestionBanController extends Controller
                 'questionimage' => 'required|array',
                 'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
                 'topics' => 'required|array', // Ensure topics are required
-                'sub_topics' => [
-                    'required',
-                    'array',
-                    new SubTopicsRequired($request->input('topics')),
-                ],
                 'std' => 'required',
             ]);
 
@@ -50,7 +45,7 @@ class QuestionBanController extends Controller
                 $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);
                 $question->subtopic_id = json_encode($request->sub_topics, 1);
-                $question->std = $request->std;
+                $question->std = json_encode($request->std, 1);
                 $question->save();
 
                 // Handle question images
@@ -134,8 +129,8 @@ class QuestionBanController extends Controller
             $subtopicIds = [];
             $topicIds = [];
             foreach ($questions as $question) {
-                $subtopicIds = array_merge($subtopicIds, json_decode($question['subtopic_id'] ?? '[]', true));
-                $topicIds = array_merge($topicIds, json_decode($question['topic_id'] ?? '[]', true));
+                $subtopicIds = array_merge($subtopicIds, json_decode($question['subtopic_id'] ?? '[]', true) ?: []);
+                $topicIds = array_merge($topicIds, json_decode($question['topic_id'] ?? '[]', true) ?: []);
             }
             $subtopicIds = array_unique($subtopicIds);
             $topicIds = array_unique($topicIds);
@@ -172,7 +167,12 @@ class QuestionBanController extends Controller
                     return $row['difficulty'];
                 })
                 ->addColumn('std', function ($row) {
-                    return $row['std'];
+                    $std = trim($row['std'], '[]');
+                    $stdArray = explode(',', $std);
+                    $cleanedStd = array_map(function($item) {
+                        return trim($item, '"');
+                    }, $stdArray);
+                    return implode(',', $cleanedStd);
                 })
                 ->addColumn('subtopic_name', function ($row) {
                     $sub_html = "";
@@ -224,11 +224,6 @@ class QuestionBanController extends Controller
                 'code' => 'required',
                 'time' => 'required|numeric|min:0',
                 'topics' => 'required|array', // Ensure topics are required
-                'sub_topics' => [
-                    'required',
-                    'array',
-                    new SubTopicsRequired($request->input('topics')),
-                ],
                 'std' => 'required',
             ]);
             if ($validator->fails()) {
@@ -241,7 +236,7 @@ class QuestionBanController extends Controller
                 $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);
                 $question->subtopic_id = json_encode($request->sub_topics, 1);
-                $question->std = $request->std;
+                $question->std = json_encode($request->std, 1);
                 $question->save();
 
                 // Handle question images removal
