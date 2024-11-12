@@ -73,7 +73,6 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        
                         <div class="form-group">
                             <label for="topics">Topics:</label>&nbsp;
                             <p>Up to five Topics can be selected</p>
@@ -86,25 +85,6 @@
                             <label for="sub_topics">Sub Topics</label>&nbsp;
                             <div id="sub_topics" class="mx-3"></div>
                             @error('sub_topics')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group">
-                            <label for="difficulty">Difficulty</label>
-                            <select name="difficulty" class="form-control" required tabindex="6">
-                                <option value="">Select Difficulty</option>
-                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
-                                    Foundation
-                                </option>
-                                <option
-                                    value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
-                                    Intermediate
-                                </option>
-                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>
-                                    Challenging
-                                </option>
-                            </select>
-                            @error('difficulty')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -440,9 +420,6 @@
         $(document).ready(function () {
             $("#question-form").validate({
                 rules: {
-                    difficulty: {
-                        required: true
-                    },
                     question: {
                         required: true,
                         minlength: 10
@@ -453,9 +430,6 @@
                     }
                 },
                 messages: {
-                    difficulty: {
-                        required: "Please select the difficulty level"
-                    },
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"

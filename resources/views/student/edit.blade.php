@@ -42,18 +42,18 @@
                             <label for="std">Year</label>
                             <select name="std" class="form-control" required>
                                 <option value="">Select Year</option>
-                                <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>12<sup>th</sup></option>
-                                <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>11<sup>th</sup></option>
-                                <option value="10" {{ ($data->std == 10) ? 'selected' : '' }}>10<sup>th</sup></option>
-                                <option value="9" {{ ($data->std == 9) ? 'selected' : '' }}>9<sup>th</sup></option>
-                                <option value="8" {{ ($data->std == 8) ? 'selected' : '' }}>8<sup>th</sup></option>
-                                <option value="7" {{ ($data->std == 7) ? 'selected' : '' }}>7<sup>th</sup></option>
-                                <option value="6" {{ ($data->std == 6) ? 'selected' : '' }}>6<sup>th</sup></option>
-                                <option value="5" {{ ($data->std == 5) ? 'selected' : '' }}>5<sup>th</sup></option>
-                                <option value="4" {{ ($data->std == 4) ? 'selected' : '' }}>4<sup>th</sup></option>
-                                <option value="3" {{ ($data->std == 3) ? 'selected' : '' }}>3<sup>rd</sup></option>
-                                <option value="2" {{ ($data->std == 2) ? 'selected' : '' }}>2<sup>nd</sup></option>
-                                <option value="1" {{ ($data->std == 1) ? 'selected' : '' }}>1<sup>st</sup></option>
+                                <option value="12" {{ ($data->std == 12) ? 'selected' : '' }}>Year 7 Maths</option>
+                                <option value="11" {{ ($data->std == 11) ? 'selected' : '' }}>Year 8 Maths</option>
+                                <option value="10" {{ ($data->std == 10) ? 'selected' : '' }}>Year 9 Maths</option>
+                                <option value="9" {{ ($data->std == 9) ? 'selected' : '' }}>Year 10 Maths</option>
+                                <option value="8" {{ ($data->std == 8) ? 'selected' : '' }}>Year 11 Standard Maths</option>
+                                <option value="7" {{ ($data->std == 7) ? 'selected' : '' }}>Year 11 2U Maths</option>
+                                <option value="6" {{ ($data->std == 6) ? 'selected' : '' }}>Year 11 3U Maths</option>
+                                <option value="5" {{ ($data->std == 5) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
+                                <option value="4" {{ ($data->std == 4) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
+                                <option value="3" {{ ($data->std == 3) ? 'selected' : '' }}>Year 12 2U Maths</option>
+                                <option value="2" {{ ($data->std == 2) ? 'selected' : '' }}>Year 12 3U Maths</option>
+                                <option value="1" {{ ($data->std == 1) ? 'selected' : '' }}>Year 12 4U Maths</option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>

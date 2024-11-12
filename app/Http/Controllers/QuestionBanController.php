@@ -26,7 +26,6 @@ class QuestionBanController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required|unique:question,code',
                 'time' => 'required|numeric|min:0',
                 'questionimage' => 'required|array',
@@ -41,7 +40,6 @@ class QuestionBanController extends Controller
 
                 $question = new Question();
                 $question->code = $request->code;
-                $question->difficulty = $request->difficulty;
                 $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);
                 $question->subtopic_id = json_encode($request->sub_topics, 1);
@@ -111,7 +109,6 @@ class QuestionBanController extends Controller
             $questions = Question::select(
                 'id',
                 'code',
-                'difficulty',
                 'time',
                 'reported',
                 'std',
@@ -121,8 +118,6 @@ class QuestionBanController extends Controller
             if (!empty($request->filter)) {
                 if ($request->filter == 'reported') {
                     $questions->where('reported', '1');
-                } else {
-                    $questions->where('difficulty', $request->filter);
                 }
             }
             $questions = $questions->get()->toArray();
@@ -162,9 +157,6 @@ class QuestionBanController extends Controller
                 ->addIndexColumn()
                 ->addColumn('code', function ($row) {
                     return $row['code'];
-                })
-                ->addColumn('difficulty', function ($row) {
-                    return $row['difficulty'];
                 })
                 ->addColumn('std', function ($row) {
                     $std = trim($row['std'], '[]');
@@ -224,7 +216,7 @@ class QuestionBanController extends Controller
                     $deleteButton = '<button class="btn btn-danger btn-sm delete-question" data-id="' . $row['id'] . '">Delete</button>' . $reported;
                     return $editButton . ' ' . $deleteButton;
                 })
-                ->rawColumns(['actions', 'code', 'difficulty', 'std', 'subtopic_name', 'topic_name'])
+                ->rawColumns(['actions', 'code', 'std', 'subtopic_name', 'topic_name'])
                 ->make(true);
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -249,7 +241,6 @@ class QuestionBanController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'difficulty' => 'required|in:foundation,intermediate,challenging',
                 'code' => 'required',
                 'time' => 'required|numeric|min:0',
                 'topics' => 'required|array', // Ensure topics are required
@@ -260,7 +251,6 @@ class QuestionBanController extends Controller
             } else {
 
                 $question = Question::findOrFail($id);
-                $question->difficulty = $request->difficulty;
                 $question->code = $request->code;
                 $question->time = $request->time * 60;
                 $question->topic_id = json_encode($request->topics, 1);

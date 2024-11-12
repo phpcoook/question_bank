@@ -50,27 +50,28 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="sub_topics">Topics</label>
-                            <select name="topics[]" id="topics" class="form-control select2" multiple required>
-                                <option value="">Select Topics</option>
+                            <div class="mx-2">
                                 @foreach($topics as $topic)
-                                    <option {{(old('topics'))? in_array($topic->id, old('topics'))?'selected':'' : ''}} value="{{$topic->id}}">{{$topic->title}}</option>
+                                    <div class="form-check">
+                                        <input type="checkbox" name="topics[]" class="form-check-input"
+                                               value="{{$topic->id}}"
+                                            {{ (old('topics') && in_array($topic->id, old('topics'))) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="topics">{{$topic->title}}</label>
+                                    </div>
                                 @endforeach
-                            </select>
-                            @error('sub_topics')
+                            </div>
+                            @error('topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="sub_topics">Sub Topics</label>
-                            <select name="sub_topics[]" id="sub_topics" class="form-control select3" multiple required>
-                                <option value="">Select Sub Topics</option>
-                            </select>
+                            <label for="sub_topics">Sub Topics</label>&nbsp;
+                            <div id="sub_topics" class="mx-3"></div>
                             @error('sub_topics')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="time">Time</label>
                             <input type="number" max="{{$time->no_of_questions}}" name="time" id="time"
@@ -80,27 +81,6 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
-                        <div class="form-group">
-                            <label for="difficulty">Difficulty</label>
-                            <select name="difficulty" class="form-control" required>
-                                <option value="">Select Difficulty</option>
-                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
-                                    Foundation
-                                </option>
-                                <option
-                                    value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
-                                    Intermediate
-                                </option>
-                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>
-                                    Challenging
-                                </option>
-                            </select>
-                            @error('difficulty')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                     </div>
 
                     <div class="d-flex justify-content-center mb-2">
@@ -125,7 +105,7 @@
         $(document).ready(function () {
             if ($('#topics').val()) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
+                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': $('#topics').val(), // Send as array
@@ -142,25 +122,30 @@
             }
             $('.select2').select2()
             $('.select3').select2()
-            // Handle adding new image input fields for question images
 
-            $('#topics').change(function () {
-                const selectedOptions = $(this).val(); // This should be an array
-                $.ajax({
-                    url: '{{env('AJAX_URL')}}'+'getSubTopicData',
-                    type: 'POST',
-                    data: {
-                        'topic_ids': selectedOptions, // Send as array
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (result) {
-                        $('#sub_topics').html(result.data)
-                        $('.select3').select2()
-                    },
-                    error: function (error) {
-                        alert('Something Went Wrong!');
-                    }
-                });
+            $(document).on('change', 'input[name="topics[]"]', function () {
+                let selectedTopics = $('input[name="topics[]"]:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                if (selectedTopics.length > 0) {
+                    $.ajax({
+                        url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                        type: 'POST',
+                        data: {
+                            'topic_ids': selectedTopics,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (result) {
+                            $('#sub_topics').html(result.data);
+                        },
+                        error: function () {
+                            alert('Something Went Wrong!');
+                        }
+                    });
+                } else {
+                    $('#sub_topics').html('<p>No SubTopics available.</p>');
+                }
             });
         });
     </script>

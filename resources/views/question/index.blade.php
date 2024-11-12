@@ -25,9 +25,6 @@
                         <select id="difficulty" class="form-control" required>
                             <option value="">Filter By</option>
                             <option value="reported" class="text-danger" >Reported</option>
-                            <option value="foundation" >Foundation</option>
-                            <option value="intermediate" >Intermediate</option>
-                            <option value="challenging">Challenging</option>
                         </select>
                         <h6 class="m-0 py-3 text-danger">No of reported question : {{$reported ?? 0}}</h6>
                     </div>
@@ -71,7 +68,6 @@
                                 <th>Topic</th>
                                 <th>Subtopic</th>
                                 <th>Code</th>
-                                <th>Difficulty</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -105,7 +101,6 @@
                     {data: 'topic_name', name: 'topic_name'},
                     {data: 'subtopic_name', name: 'subtopic_name'},
                     {data: 'code', name: 'code'},
-                    {data: 'difficulty', name: 'difficulty'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });

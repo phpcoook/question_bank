@@ -47,8 +47,7 @@ class QuizController extends Controller
                 $questions = Question::with('quizImage')
                     ->select('id', 'time', 'code')
                     ->where('reported', '0')
-                    ->where('difficulty', $request->difficulty)
-                    ->where('std', Auth::user()->std)
+                    ->whereRaw('JSON_CONTAINS(std, ?)', [json_encode(Auth::user()->std)])
                     ->whereNotIn('id', $notIn)
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
@@ -59,11 +58,11 @@ class QuizController extends Controller
                 $questions = Question::with('quizImage')
                     ->select('id', 'time', 'code')
                     ->where('reported', '0')
-                    ->where('difficulty', $request->difficulty)
-                    ->where('std', Auth::user()->std)
+                    ->whereRaw('JSON_CONTAINS(std, ?)', [json_encode(Auth::user()->std)])
                     ->where(function ($query) use ($request) {
                         foreach ($request->sub_topics as $sub_topic) {
-                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                            // Ensure each subtopic is passed as a JSON-encoded array
+                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode([$sub_topic])]);
                         }
                     });
             }
