@@ -85,7 +85,13 @@
                 ajax: '{{env('AJAX_URL')}}'+'topics/data',
                 columns: [
                     {data: 'no',  orderable: false},
-                    {data: 'std', name: 'Year'},
+                    {
+                        data: 'std',
+                        name: 'Year',
+                        render: function (data, type, row) {
+                            return 'Year ' + data.replace(/_/g, ' ');
+                        }
+                    },
                     {data: 'title'},
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]

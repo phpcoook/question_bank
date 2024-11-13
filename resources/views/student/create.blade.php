@@ -42,18 +42,18 @@
                             <label for="std">Year</label>
                             <select name="std" class="form-control" required>
                                 <option value="">Select Year</option>
-                                <option value="12" {{ (old('std') == 12) ? 'selected' : '' }}>Year 7 Maths</option>
-                                <option value="11" {{ (old('std') == 11) ? 'selected' : '' }}>Year 8 Maths</option>
-                                <option value="10" {{ (old('std') == 10) ? 'selected' : '' }}>Year 9 Maths</option>
-                                <option value="9" {{ (old('std') == 9) ? 'selected' : '' }}>Year 10 Maths</option>
-                                <option value="8" {{ (old('std') == 8) ? 'selected' : '' }}>Year 11 Standard Maths</option>
-                                <option value="7" {{ (old('std') == 7) ? 'selected' : '' }}>Year 11 2U Maths</option>
-                                <option value="6" {{ (old('std') == 6) ? 'selected' : '' }}>Year 11 3U Maths</option>
-                                <option value="5" {{ (old('std') == 5) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
-                                <option value="4" {{ (old('std') == 4) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
-                                <option value="3" {{ (old('std') == 3) ? 'selected' : '' }}>Year 12 2U Maths</option>
-                                <option value="2" {{ (old('std') == 2) ? 'selected' : '' }}>Year 12 3U Maths</option>
-                                <option value="1" {{ (old('std') == 1) ? 'selected' : '' }}>Year 12 4U Maths</option>
+                                <option value="7_maths" {{ (old('std') == '7_maths') ? 'selected' : '' }}>Year 7 Maths</option>
+                                <option value="8_maths" {{ (old('std') == '8_maths') ? 'selected' : '' }}>Year 8 Maths</option>
+                                <option value="9_maths" {{ (old('std') == '9_maths') ? 'selected' : '' }}>Year 9 Maths</option>
+                                <option value="10_maths" {{ (old('std') == '10_maths') ? 'selected' : '' }}>Year 10 Maths</option>
+                                <option value="11_standard_maths" {{ (old('std') == '11_standard_maths') ? 'selected' : '' }}>Year 11 Standard Maths</option>
+                                <option value="11_2u_maths" {{ (old('std') == '11_2u_maths') ? 'selected' : '' }}>Year 11 2U Maths</option>
+                                <option value="11_3u_maths" {{ (old('std') == '11_3u_maths') ? 'selected' : '' }}>Year 11 3U Maths</option>
+                                <option value="12_standard_1_maths" {{ (old('std') == '12_standard_1_maths') ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
+                                <option value="12_standard_2_maths" {{ (old('std') == '12_standard_2_maths') ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
+                                <option value="12_2u_maths" {{ (old('std') == '12_2u_maths') ? 'selected' : '' }}>Year 12 2U Maths</option>
+                                <option value="12_3u_maths" {{ (old('std') == '12_3u_maths') ? 'selected' : '' }}>Year 12 3U Maths</option>
+                                <option value="12_4u_maths" {{ (old('std') == '12_4u_maths') ? 'selected' : '' }}>Year 12 4U Maths</option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>

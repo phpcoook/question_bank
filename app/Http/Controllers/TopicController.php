@@ -27,16 +27,7 @@ class TopicController extends Controller
                     return $row->index;
                 })
                 ->addColumn('std', function ($row) {
-                    if ($row->std == 1) {
-                        $ed = "st";
-                    } elseif ($row->std == 2) {
-                        $ed = "nd";
-                    }elseif ($row->std == 3) {
-                        $ed = "rd";
-                    }else{
-                        $ed = "th";
-                    }
-                    return  $row->std.'<sup>'.$ed.'</sup>';
+                    return  $row->std;
                 })
                 ->addColumn('title', function ($row) {
                     return $row->title;
@@ -63,7 +54,7 @@ class TopicController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'std' => 'required|numeric|max:255',
+                'std' => 'required',
                 'title' => 'required|max:255'
             ]);
             if ($validator->fails()) {
@@ -95,7 +86,7 @@ class TopicController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'std' => 'required|numeric|max:255',
+            'std' => 'required',
             'title' => 'required|max:255'
         ]);
         if ($validator->fails()) {

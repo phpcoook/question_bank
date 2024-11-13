@@ -167,31 +167,7 @@ class QuestionBanController extends Controller
 
                     $badgeHtml = '';
                     foreach ($cleanedStd as $item) {
-                        if (e($item) == 1) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 12 4U Maths</small> ';
-                        } else if (e($item) == 2) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 12 3U Maths</small> ';
-                        } else if (e($item) == 3) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 12 2U Maths</small> ';
-                        } else if (e($item) == 4) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 12 Standard 2 Maths</small> ';
-                        } else if (e($item) == 5) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 12 Standard 1 Maths</small> ';
-                        } else if (e($item) == 6) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 11 3U Maths</small> ';
-                        } else if (e($item) == 7) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 11 2U Maths</small> ';
-                        } else if (e($item) == 8) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 11 Standard Maths</small> ';
-                        } else if (e($item) == 9) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 10 Maths</small> ';
-                        } else if (e($item) == 10) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 9 Maths</small> ';
-                        } else if (e($item) == 11) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 8 Maths</small> ';
-                        } else if (e($item) == 12) {
-                            $badgeHtml .= '<small class="badge badge-primary">Year 7 Maths</small> ';
-                        }
+                        $badgeHtml .= '<small class="badge badge-primary">Year ' . $item . '</small> ';
                     }
                     return $badgeHtml;
                 })

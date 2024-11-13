@@ -77,18 +77,18 @@
                             @endphp
                             <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
                                 <option value="">Select Year</option>
-                                <option value="12" {{ in_array("12", $stdArray) ? 'selected' : '' }}>Year 7 Maths</option>
-                                <option value="11" {{ in_array("11", $stdArray) ? 'selected' : '' }}>Year 8 Maths</option>
-                                <option value="10" {{ in_array("10", $stdArray) ? 'selected' : '' }}>Year 9 Maths</option>
-                                <option value="9" {{ in_array("9", $stdArray) ? 'selected' : '' }}>Year 10 Maths</option>
-                                <option value="8" {{ in_array("8", $stdArray) ? 'selected' : '' }}>Year 11 Standard Maths</option>
-                                <option value="7" {{ in_array("7", $stdArray) ? 'selected' : '' }}>Year 11 2U Maths</option>
-                                <option value="6" {{ in_array("6", $stdArray) ? 'selected' : '' }}>Year 11 3U Maths</option>
-                                <option value="5" {{ in_array("5", $stdArray) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
-                                <option value="4" {{ in_array("4", $stdArray) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
-                                <option value="3" {{ in_array("3", $stdArray) ? 'selected' : '' }}>Year 12 2U Maths</option>
-                                <option value="2" {{ in_array("2", $stdArray) ? 'selected' : '' }}>Year 12 3U Maths</option>
-                                <option value="1" {{ in_array("1", $stdArray) ? 'selected' : '' }}>Year 12 4U Maths</option>
+                                <option value="7_maths" {{ in_array('7_maths', $stdArray) ? 'selected' : '' }}>Year 7 Maths</option>
+                                <option value="8_maths" {{ in_array('8_maths', $stdArray) ? 'selected' : '' }}>Year 8 Maths</option>
+                                <option value="9_maths" {{ in_array('9_maths', $stdArray) ? 'selected' : '' }}>Year 9 Maths</option>
+                                <option value="10_maths" {{ in_array('10_maths', $stdArray) ? 'selected' : '' }}>Year 10 Maths</option>
+                                <option value="11_standard_maths" {{ in_array('11_standard_maths', $stdArray) ? 'selected' : '' }}>Year 11 Standard Maths</option>
+                                <option value="11_2u_maths" {{ in_array('11_2u_maths', $stdArray) ? 'selected' : '' }}>Year 11 2U Maths</option>
+                                <option value="11_3u_maths" {{ in_array('11_3u_maths', $stdArray) ? 'selected' : '' }}>Year 11 3U Maths</option>
+                                <option value="12_standard_1_maths" {{ in_array('12_standard_1_maths', $stdArray) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
+                                <option value="12_standard_2_maths" {{ in_array('12_standard_2_maths', $stdArray) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
+                                <option value="12_2u_maths" {{ in_array('12_2u_maths', $stdArray) ? 'selected' : '' }}>Year 12 2U Maths</option>
+                                <option value="12_3u_maths" {{ in_array('12_3u_maths', $stdArray) ? 'selected' : '' }}>Year 12 3U Maths</option>
+                                <option value="12_4u_maths" {{ in_array('12_4u_maths', $stdArray) ? 'selected' : '' }}>Year 12 4U Maths</option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
