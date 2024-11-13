@@ -108,7 +108,9 @@
 
                     <div class="col-md-6 m-auto">
                         <h4 class="mb-1">
-                            {{ "Year ". str_replace('_', ' ', Auth::user()->std) }}
+                            @foreach (json_decode(Auth::user()->std) as $std)
+                                <small class="badge badge-primary">{{ str_replace('_', ' ', $std) }}</small>
+                            @endforeach
                         </h4>
                     @if(!empty($subscription))
                             <p class="mb-3"><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}}  On
