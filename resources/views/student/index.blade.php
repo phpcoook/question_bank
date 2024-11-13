@@ -76,13 +76,7 @@
                     {data: 'first_name', name: 'first_name'},
                     {data: 'last_name', name: 'last_name'},
                     {data: 'email', name: 'email'},
-                    {
-                        data: 'std',
-                        name: 'std',
-                        render: function (data, type, row) {
-                            return 'Year ' + data.replace(/_/g, ' ');
-                        }
-                    },
+                    {data: 'std', name: 'std'},
                     {data: 'date_of_birth', name: 'date_of_birth'},
                     {
                         data: 'subscription',

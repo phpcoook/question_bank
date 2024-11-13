@@ -1,5 +1,15 @@
 @extends('layouts.layoutMaster')
 @section('title',env('WEB_NAME').' | Student Create')
+@section('page-style')
+    <style>
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff !important;
+            border: 1px solid #007bff !important;
+            color: #ffffff !important;
+        }
+    </style>
+    <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
+@endsection
 @section('content')
     <div class="content-wrapper">
         <div class="content-header">
@@ -40,20 +50,51 @@
 
                         <div class="form-group">
                             <label for="std">Year</label>
-                            <select name="std" class="form-control" required>
-                                <option value="">Select Year</option>
-                                <option value="7_maths" {{ (old('std') == '7_maths') ? 'selected' : '' }}>Year 7 Maths</option>
-                                <option value="8_maths" {{ (old('std') == '8_maths') ? 'selected' : '' }}>Year 8 Maths</option>
-                                <option value="9_maths" {{ (old('std') == '9_maths') ? 'selected' : '' }}>Year 9 Maths</option>
-                                <option value="10_maths" {{ (old('std') == '10_maths') ? 'selected' : '' }}>Year 10 Maths</option>
-                                <option value="11_standard_maths" {{ (old('std') == '11_standard_maths') ? 'selected' : '' }}>Year 11 Standard Maths</option>
-                                <option value="11_2u_maths" {{ (old('std') == '11_2u_maths') ? 'selected' : '' }}>Year 11 2U Maths</option>
-                                <option value="11_3u_maths" {{ (old('std') == '11_3u_maths') ? 'selected' : '' }}>Year 11 3U Maths</option>
-                                <option value="12_standard_1_maths" {{ (old('std') == '12_standard_1_maths') ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
-                                <option value="12_standard_2_maths" {{ (old('std') == '12_standard_2_maths') ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
-                                <option value="12_2u_maths" {{ (old('std') == '12_2u_maths') ? 'selected' : '' }}>Year 12 2U Maths</option>
-                                <option value="12_3u_maths" {{ (old('std') == '12_3u_maths') ? 'selected' : '' }}>Year 12 3U Maths</option>
-                                <option value="12_4u_maths" {{ (old('std') == '12_4u_maths') ? 'selected' : '' }}>Year 12 4U Maths</option>
+                            <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
+                                <option value="7_maths" {{ in_array('7_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    7 Maths
+                                </option>
+                                <option value="8_maths" {{ in_array('8_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    8 Maths
+                                </option>
+                                <option value="9_maths" {{ in_array('9_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    9 Maths
+                                </option>
+                                <option value="10_maths" {{ in_array('10_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 10 Maths
+                                </option>
+                                <option
+                                    value="11_standard_maths" {{ in_array('11_standard_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 Standard Maths
+                                </option>
+                                <option
+                                    value="11_2u_maths" {{ in_array('11_2u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 2U Maths
+                                </option>
+                                <option
+                                    value="11_3u_maths" {{ in_array('11_3u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 3U Maths
+                                </option>
+                                <option
+                                    value="12_standard_1_maths" {{ in_array('12_standard_1_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 Standard 1 Maths
+                                </option>
+                                <option
+                                    value="12_standard_2_maths" {{ in_array('12_standard_2_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 Standard 2 Maths
+                                </option>
+                                <option
+                                    value="12_2u_maths" {{ in_array('12_2u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 2U Maths
+                                </option>
+                                <option
+                                    value="12_3u_maths" {{ in_array('12_3u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 3U Maths
+                                </option>
+                                <option
+                                    value="12_4u_maths" {{ in_array('12_4u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 4U Maths
+                                </option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
@@ -98,7 +139,8 @@
 
                         <div class="form-group">
                             <label for="date_of_birth">Date of Birth</label>
-                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ old('date_of_birth') }}" required>
+                            <input type="date" name="date_of_birth" id="date_of_birth" class="form-control"
+                                   value="{{ old('date_of_birth') }}" required>
                             @error('date_of_birth')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -116,6 +158,7 @@
 @endsection
 
 @section('page-script')
+    <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
             $("#student-create").validate({
@@ -195,6 +238,14 @@
             });
         });
 
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Select Year(s)",
+                allowClear: true
+            });
+        });
     </script>
 @endsection
 

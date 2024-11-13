@@ -48,7 +48,7 @@ class StudentController extends Controller
                 $user->last_name = $request->last_name;
                 $user->email = $request->email;
                 $user->password = Hash::make($request->password);
-                $user->std = $request->std;
+                $user->std = json_encode($request->std, 1);
                 $user->date_of_birth = $request->date_of_birth;
                 $user->email_verified_at = '2024-09-18';
                 $user->role = 'student';
@@ -76,6 +76,20 @@ class StudentController extends Controller
             $student = User::where('role', 'student')->orderBy('created_at', 'desc')->get();
             return DataTables::of($student)
                 ->addIndexColumn()
+                ->addColumn('std', function ($row) {
+                    $std = trim($row['std'], '[]');
+                    $stdArray = explode(',', $std);
+                    $cleanedStd = array_map(function ($item) {
+                        return trim($item, '"');
+                    }, $stdArray);
+
+                    $badgeHtml = '';
+                    foreach ($cleanedStd as $item) {
+                        $formattedItem = str_replace('_', ' ', $item);
+                        $badgeHtml .= '<small class="badge badge-primary">' . $formattedItem . '</small> ';
+                    }
+                    return $badgeHtml;
+                })
                 ->addColumn('actions', function ($student) {
                     $editButton = '<a href="' . route('student.edit',
                             $student->id) . '" class="btn btn-primary btn-sm edit-student" data-id="' . $student->id . '">Edit</a>';
@@ -89,7 +103,7 @@ class StudentController extends Controller
                         <label class="custom-control-label" for="customSwitch' . $student->id . '"></label>
                         </div>';
                 })
-                ->rawColumns(['actions', 'subscription'])
+                ->rawColumns(['actions', 'subscription','std'])
                 ->make(true);
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
