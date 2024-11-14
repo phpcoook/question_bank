@@ -120,7 +120,7 @@
                                 <p class="mb-3 text-danger"><strong>Your Subscription Disable by Owner</strong></p>
                             @endif
                         @endif
-                        <div class="card p-3 box-shadow">
+                        <div class="card p-3 box-shadow" style="display: {{ empty($subscription) ? 'none' : 'block' }}">
                             @foreach($topicData as $topicItem)
                                 <div class="progress-group">
                                     {{$topicItem['title']}}
