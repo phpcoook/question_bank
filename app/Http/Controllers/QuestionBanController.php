@@ -162,7 +162,7 @@ class QuestionBanController extends Controller
                     $std = trim($row['std'], '[]');
                     $stdArray = explode(',', $std);
                     $cleanedStd = array_map(function ($item) {
-                        return trim($item, '"');
+                        return str_replace('_', ' ', trim($item, '"'));
                     }, $stdArray);
 
                     $badgeHtml = '';

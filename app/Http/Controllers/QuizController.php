@@ -41,35 +41,60 @@ class QuizController extends Controller
             }
             $target = $request->time ?? 30;
 
-            $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
+            $stdValues = is_string(Auth::user()->std) ? json_decode(Auth::user()->std, true) : Auth::user()->std;
+            $subTopics = is_array($request->sub_topics) ? $request->sub_topics : json_decode($request->sub_topics, true);
+
+            $attended = Quiz::where('user_id', Auth::user()->id)
+                ->where('answer', 'correct')
+                ->get();
+
             if ($attended->count() > 0) {
                 $notIn = $attended->pluck('question_id');
+
                 $questions = Question::with('quizImage')
+                    ->when(CustomService::checkSubscription(), function ($query) {
+                        return $query->with('solutionImage');
+                    })
+                    ->with('answerImage')
                     ->select('id', 'time', 'code')
                     ->where('reported', '0')
-                    ->whereRaw('JSON_CONTAINS(std, ?)', [json_encode(Auth::user()->std)])
+                    ->where(function ($query) use ($stdValues) {
+                        foreach ($stdValues as $stdValue) {
+                            $query->orWhereRaw('JSON_CONTAINS(std, ?)', [json_encode($stdValue)]);
+                        }
+                    })
                     ->whereNotIn('id', $notIn)
-                    ->where(function ($query) use ($request) {
-                        foreach ($request->sub_topics as $sub_topic) {
+                    ->where(function ($query) use ($subTopics) {
+                        foreach ($subTopics as $sub_topic) {
+                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
+                        }
+                    })
+                    ->get();
+            } else {
+                $questions = Question::with('quizImage')
+                    ->when(CustomService::checkSubscription(), function ($query) {
+                        return $query->with('solutionImage');
+                    })
+                    ->with('answerImage')
+                    ->select('id', 'time', 'code')
+                    ->where('reported', '0')
+                    ->where(function ($query) use ($stdValues) {
+                        foreach ($stdValues as $stdValue) {
+                            $query->orWhereRaw('JSON_CONTAINS(std, ?)', [json_encode($stdValue)]);
+                        }
+                    })
+                    ->where(function ($query) use ($subTopics) {
+                        foreach ($subTopics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
                     });
-            } else {
-                $questions = Question::with('quizImage')
-                    ->select('id', 'time', 'code')
-                    ->where('reported', '0')
-                    ->whereRaw('JSON_CONTAINS(std, ?)', [json_encode(Auth::user()->std)])
-                    ->where(function ($query) use ($request) {
-                        foreach ($request->sub_topics as $sub_topic) {
-                            // Ensure each subtopic is passed as a JSON-encoded array
-                            $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode([$sub_topic])]);
-                        }
-                    });
             }
+
             if (CustomService::checkSubscription()) {
                 $questions->with('solutionImage');
             }
-            $questions->with('answerImage');
+            $questions->with('answerImage')->get();
+
 
             $result = $this->findCombinations($questions->get()->toArray(), $target * 60);
             $randomCombination = $result;
