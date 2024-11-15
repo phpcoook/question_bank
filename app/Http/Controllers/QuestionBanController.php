@@ -29,7 +29,7 @@ class QuestionBanController extends Controller
                 'code' => 'required|unique:question,code',
                 'time' => 'required|numeric|min:0',
                 'questionimage' => 'required|array',
-                'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+                'questionimage.*' => 'image|mimes:jpg,jpeg,png,gif,webp|max:2048',
                 'topics' => 'required|array', // Ensure topics are required
                 'std' => 'required',
             ]);

@@ -357,6 +357,10 @@
                     if (item.type.startsWith('image/')) {
                         const file = item.getAsFile();
                         if (file) {
+                            if (!validateImageFile(file)) {
+                                alert('Invalid file type or size. Only JPG, JPEG, PNG, WEBP or GIF files under 5MB are allowed.');
+                                continue;
+                            }
                             dataTransfer.items.add(file);
                             imagesPasted = true;
                         }
@@ -373,6 +377,13 @@
                     updatePreview(previews[inputIndex], dataTransfer.files, currentInput.id);
                 }
             });
+
+            // Validate image file (type and size)
+            function validateImageFile(file) {
+                const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png','image/gif','image/webp'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                return allowedTypes.includes(file.type) && file.size <= maxSize;
+            }
 
             // Handle form submission to log the uploaded files
             document.getElementById('upload-form').addEventListener('submit', function (event) {
@@ -436,7 +447,7 @@
                     },
                     'questionimage[]': {
                         required: "Please upload at least one question image",
-                        extension: "Only image files (jpg, jpeg, png, gif) are allowed"
+                        extension: "Only image files (jpg, jpeg, png, gif, webp) are allowed"
                     }
                 },
                 errorElement: 'div',
