@@ -244,8 +244,19 @@ class QuizController extends Controller
     public function addTime()
     {
         $time = Setting::first();
-        $topics = Topic::all();
-        return view('student.addtime', compact("time", "topics"));
+        $student = Auth::user()->std;
+
+        $studentArray = json_decode($student, true);
+
+        $allTopics = [];
+        foreach ($studentArray as $data) {
+            $topics = Topic::where('std', $data)->get();
+            foreach ($topics as $topic) {
+                $allTopics[$data][] = $topic->toArray();
+            }
+        }
+
+        return view('student.addtime', compact('time', 'allTopics'));
     }
 
     public function reportQuestion(Request $request)

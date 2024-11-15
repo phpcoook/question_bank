@@ -51,11 +51,20 @@
                         <div class="form-group">
                             <label for="sub_topics">Topics</label>
                             <div class="mx-2">
-                                @foreach($topics as $topic)
+                                @foreach($allTopics as $year => $topics)
                                     <div class="form-check">
-                                        <input type="checkbox" name="topics[]" class="form-check-input" id="topic_{{$topic->id}}"
-                                               value="{{$topic->id}}" {{ (old('topics') && in_array($topic->id, old('topics'))) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="topic_{{$topic->id}}">{{$topic->title}}</label>
+                                        <p class="m-1"><b>{{ str_replace('_', ' ', $year) }}</b></p>
+                                        <div class="mx-5">
+                                            @foreach($topics as $topic)
+                                                <div>
+                                                    <input type="checkbox" name="topics[]" class="form-check-input"
+                                                           id="topic_{{$topic['id']}}"
+                                                           value="{{$topic['id']}}" {{ (old('topics') && in_array($topic['id'], old('topics'))) ? 'checked' : '' }}>
+                                                    <label class="form-check-label"
+                                                           for="topic_{{$topic['id']}}">{{$topic['title']}}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
