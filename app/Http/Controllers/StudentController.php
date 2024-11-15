@@ -175,28 +175,38 @@ class StudentController extends Controller
     {
         $std = Auth::user()->std ?? 1;
         $userId = Auth::user()->id;
-        $topics = Topic::where('std', $std)->get();
+
+        $studentArray = json_decode($std, true);
+
+        $topics = [];
+        foreach ($studentArray as $data) {
+            $queriedTopics = Topic::where('std', $data)->get();
+            $topics = array_merge($topics, $queriedTopics->toArray());
+        }
+
         $questions = Question::where(function ($query) use ($topics) {
             foreach ($topics as $topic) {
-                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)]);
+                $query->orWhereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic['id'])]);
             }
         })->where('reported', '0')->pluck('id');
-        $topicData = $topics->map(function ($topic) use ($questions, $userId) {
+
+        $topicData = collect($topics)->map(function ($topic) use ($questions, $userId) {
             $totalQuestions = Question::whereRaw('JSON_CONTAINS(topic_id, ?)',
-                [json_encode((string)$topic->id)])->where('reported', '0')->count();
+                [json_encode((string)$topic['id'])])->where('reported', '0')->count();
             $attemptedQuestions = Quiz::whereIn('question_id', $questions)
                 ->where('user_id', $userId)
                 ->whereIn('question_id',
-                    Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic->id)])->pluck('id'))
+                    Question::whereRaw('JSON_CONTAINS(topic_id, ?)', [json_encode((string)$topic['id'])])->pluck('id'))
                 ->count();
 
             return [
-                'id' => $topic->id,
-                'title' => $topic->title,
+                'id' => $topic['id'],
+                'title' => $topic['title'],
                 'total_questions' => $totalQuestions,
                 'attempted_questions' => $attemptedQuestions,
             ];
         });
+
         $subscription = Subscription::where('user_id', Auth::user()->id)->whereDate('end_date', '>', now())->first();
         $setting = Setting::find(1);
         $subscriptionStatus = CustomService::checkSubscription();
