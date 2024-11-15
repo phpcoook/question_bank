@@ -53,10 +53,9 @@
                             <div class="mx-2">
                                 @foreach($topics as $topic)
                                     <div class="form-check">
-                                        <input type="checkbox" name="topics[]" class="form-check-input"
-                                               value="{{$topic->id}}"
-                                            {{ (old('topics') && in_array($topic->id, old('topics'))) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="topics">{{$topic->title}}</label>
+                                        <input type="checkbox" name="topics[]" class="form-check-input" id="topic_{{$topic->id}}"
+                                               value="{{$topic->id}}" {{ (old('topics') && in_array($topic->id, old('topics'))) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="topic_{{$topic->id}}">{{$topic->title}}</label>
                                     </div>
                                 @endforeach
                             </div>
