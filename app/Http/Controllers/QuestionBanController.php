@@ -49,7 +49,7 @@ class QuestionBanController extends Controller
                 // Handle question images
                 if ($request->hasFile('questionimage')) {
                     foreach ($request->file('questionimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_question_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -63,7 +63,7 @@ class QuestionBanController extends Controller
                 // Handle solution images
                 if ($request->hasFile('solutionimage')) {
                     foreach ($request->file('solutionimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_solution_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -77,7 +77,7 @@ class QuestionBanController extends Controller
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     foreach ($request->file('answerimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_answer_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
