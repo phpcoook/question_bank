@@ -204,22 +204,14 @@ class QuestionBanController extends Controller
     {
         try {
             $data = Question::find($id);
-            Log::info('$data');
-            Log::info($data->std);
-
             $stdArray = is_string($data->std) ? explode(',', $data->std) : (array)$data->std;
-
             $topics = collect();
+
             foreach ($stdArray as $item){
-
                 $cleanItem = trim($item, '[]"');
-
                 $topicResults = Topic::where('std', $cleanItem)->get();
                 $topics = $topics->merge($topicResults);
             }
-
-            Log::info('$topics');
-            Log::info($topics);
 
             $images = QuestionImage::where('question_id', $id)->get();
             return view('question.edit', compact('data', 'images', 'topics'));
@@ -299,7 +291,7 @@ class QuestionBanController extends Controller
                 // Handle question images
                 if ($request->hasFile('questionimage')) {
                     foreach ($request->file('questionimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_question_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -313,7 +305,7 @@ class QuestionBanController extends Controller
                 // Handle answer images
                 if ($request->hasFile('solutionimage')) {
                     foreach ($request->file('solutionimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_solution_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -327,7 +319,7 @@ class QuestionBanController extends Controller
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     foreach ($request->file('answerimage') as $image) {
-                        $imageName = time() . '_' . $image->getClientOriginalName();
+                        $imageName = time() . '_answer_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();

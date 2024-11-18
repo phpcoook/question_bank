@@ -518,7 +518,6 @@
             $.validator.addMethod("atLeastOneImage", function (value, element, params) {
                 let isAnyFilled = false;
 
-                // Check if any image input field is filled (new or existing images)
                 $("input[name='questionimage[]']").each(function () {
                     if ($(this).val()) {
                         isAnyFilled = true;
@@ -526,7 +525,6 @@
                     }
                 });
 
-                // Check if any existing question images are provided
                 if ($('[name="existing_question_images[]"]').length > 0 && $('[name="existing_question_images[]"]:not(:empty)').length > 0) {
                     isAnyFilled = true;
                 }
@@ -575,7 +573,6 @@
             $(document).on('click', '.remove-image-row', function() {
                 var row = $(this).closest('.input-group');
                 row.remove();
-                // Update the validation by triggering re-validation after row is removed
                 $('#question-edit').valid();
             });
         });
