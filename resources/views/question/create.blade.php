@@ -56,18 +56,50 @@
                         <div class="form-group">
                             <label for="std">Year</label>
                             <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
-                                <option value="7_maths" {{ in_array('7_maths', old('std', [])) ? 'selected' : '' }}>Year 7 Maths</option>
-                                <option value="8_maths" {{ in_array('8_maths', old('std', [])) ? 'selected' : '' }}>Year 8 Maths</option>
-                                <option value="9_maths" {{ in_array('9_maths', old('std', [])) ? 'selected' : '' }}>Year 9 Maths</option>
-                                <option value="10_maths" {{ in_array('10_maths', old('std', [])) ? 'selected' : '' }}>Year 10 Maths</option>
-                                <option value="11_standard_maths" {{ in_array('11_standard_maths', old('std', [])) ? 'selected' : '' }}>Year 11 Standard Maths</option>
-                                <option value="11_2u_maths" {{ in_array('11_2u_maths', old('std', [])) ? 'selected' : '' }}>Year 11 2U Maths</option>
-                                <option value="11_3u_maths" {{ in_array('11_3u_maths', old('std', [])) ? 'selected' : '' }}>Year 11 3U Maths</option>
-                                <option value="12_standard_1_maths" {{ in_array('12_standard_1_maths', old('std', [])) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
-                                <option value="12_standard_2_maths" {{ in_array('12_standard_2_maths', old('std', [])) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
-                                <option value="12_2u_maths" {{ in_array('12_2u_maths', old('std', [])) ? 'selected' : '' }}>Year 12 2U Maths</option>
-                                <option value="12_3u_maths" {{ in_array('12_3u_maths', old('std', [])) ? 'selected' : '' }}>Year 12 3U Maths</option>
-                                <option value="12_4u_maths" {{ in_array('12_4u_maths', old('std', [])) ? 'selected' : '' }}>Year 12 4U Maths</option>
+                                <option value="7_maths" {{ in_array('7_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    7 Maths
+                                </option>
+                                <option value="8_maths" {{ in_array('8_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    8 Maths
+                                </option>
+                                <option value="9_maths" {{ in_array('9_maths', old('std', [])) ? 'selected' : '' }}>Year
+                                    9 Maths
+                                </option>
+                                <option value="10_maths" {{ in_array('10_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 10 Maths
+                                </option>
+                                <option
+                                    value="11_standard_maths" {{ in_array('11_standard_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 Standard Maths
+                                </option>
+                                <option
+                                    value="11_2u_maths" {{ in_array('11_2u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 2U Maths
+                                </option>
+                                <option
+                                    value="11_3u_maths" {{ in_array('11_3u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 11 3U Maths
+                                </option>
+                                <option
+                                    value="12_standard_1_maths" {{ in_array('12_standard_1_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 Standard 1 Maths
+                                </option>
+                                <option
+                                    value="12_standard_2_maths" {{ in_array('12_standard_2_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 Standard 2 Maths
+                                </option>
+                                <option
+                                    value="12_2u_maths" {{ in_array('12_2u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 2U Maths
+                                </option>
+                                <option
+                                    value="12_3u_maths" {{ in_array('12_3u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 3U Maths
+                                </option>
+                                <option
+                                    value="12_4u_maths" {{ in_array('12_4u_maths', old('std', [])) ? 'selected' : '' }}>
+                                    Year 12 4U Maths
+                                </option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
@@ -380,7 +412,7 @@
 
             // Validate image file (type and size)
             function validateImageFile(file) {
-                const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png','image/gif','image/webp'];
+                const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 const maxSize = 5 * 1024 * 1024; // 5MB
                 return allowedTypes.includes(file.type) && file.size <= maxSize;
             }
@@ -429,6 +461,18 @@
 
     <script>
         $(document).ready(function () {
+            $.validator.addMethod("atLeastOneImage", function (value, element, params) {
+                let isAnyFilled = false;
+                $("[name='questionimage[]']").each(function () {
+                    if ($(this).val()) {
+                        isAnyFilled = true;
+                        return false;
+                    }
+                });
+                return isAnyFilled;
+            }, "Please upload at least one question image");
+
+        // Apply validation
             $("#question-form").validate({
                 rules: {
                     question: {
@@ -436,8 +480,8 @@
                         minlength: 10
                     },
                     'questionimage[]': {
-                        required: true,
-                        extension: "jpg,jpeg,png,gif"
+                        atLeastOneImage: true,
+                        extension: "jpg,jpeg,png,gif,webp"
                     }
                 },
                 messages: {
@@ -446,7 +490,6 @@
                         minlength: "Your question must be at least 10 characters long"
                     },
                     'questionimage[]': {
-                        required: "Please upload at least one question image",
                         extension: "Only image files (jpg, jpeg, png, gif, webp) are allowed"
                     }
                 },
@@ -462,11 +505,12 @@
                     $(element).removeClass('is-invalid');
                 }
             });
+
         });
     </script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.select2').select2({
                 placeholder: "Select Year(s)",
                 allowClear: true
