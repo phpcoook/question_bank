@@ -141,7 +141,7 @@
                                                 </div>
                                                 <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}" data-filename="{{ $image->image_name }}" data-filedname="question">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -514,47 +514,19 @@
 
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
-        $(document).ready(function () {
-            $.validator.addMethod("atLeastOneImage", function (value, element, params) {
-                let isAnyFilled = false;
-
-                $("input[name='questionimage[]']").each(function () {
-                    if ($(this).val()) {
-                        isAnyFilled = true;
-                        return false;
-                    }
-                });
-
-                if ($('[name="existing_question_images[]"]').length > 0 && $('[name="existing_question_images[]"]:not(:empty)').length > 0) {
-                    isAnyFilled = true;
-                }
-
-                return isAnyFilled;
-            }, "Please upload at least one question image");
+        $(document).ready(function () {        
             $("#question-edit").validate({
                 rules: {
                     question: {
                         required: true,
                         minlength: 10
-                    },
-                    'questionimage[]': {
-                        required: function (element) {
-                            // Ensure the validation only triggers if no image is uploaded yet
-                            return $('#image-rows input[type="file"]').filter(function() { return this.value }).length === 0 && $('[name="existing_question_images[]"]').length === 0;
-                        },
-                        atLeastOneImage: true,
-                        extension: "jpg|jpeg|png|gif|webp"
-                    }
+                    },                
                 },
                 messages: {
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
-                    },
-                    'questionimage[]': {
-                        required: "Please upload at least one image",
-                        extension: "Please upload a valid image file (jpg, jpeg, png, gif, webp)"
-                    }
+                    },                
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {
@@ -570,8 +542,8 @@
             });
 
             // Remove image input rows
-            $(document).on('click', '.remove-image-row', function() {
-                var row = $(this).closest('.input-group');
+            $(document).on('click', '.remove-image-row', function () {
+                $(this).closest('.input-group').remove();
                 row.remove();
                 $('#question-edit').valid();
             });

@@ -112,15 +112,15 @@
                                 <small class="badge badge-primary">{{ str_replace('_', ' ', $std) }}</small>
                             @endforeach
                         </h4>
-                    @if(!empty($subscription))
-                            <p class="mb-3"><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}}  On
+                        @if(!empty($subscription))
+                            <p><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}} On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
                             </p>
                             @if(!$subscriptionStatus)
                                 <p class="mb-3 text-danger"><strong>Your Subscription Disable by Owner</strong></p>
                             @endif
                         @endif
-                        <div class="card p-3 box-shadow" style="display: {{ empty($subscription) ? 'none' : 'block' }}">
+                        <div class="card p-3 box-shadow mt-3">
                             @foreach($topicData as $topicItem)
                                 <div class="progress-group">
                                     {{$topicItem['title']}}
