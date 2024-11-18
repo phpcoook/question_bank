@@ -203,8 +203,24 @@ class QuestionBanController extends Controller
     public function edit($id)
     {
         try {
-            $topics = Topic::all();
             $data = Question::find($id);
+            Log::info('$data');
+            Log::info($data->std);
+
+            $stdArray = is_string($data->std) ? explode(',', $data->std) : (array)$data->std;
+
+            $topics = collect();
+            foreach ($stdArray as $item){
+
+                $cleanItem = trim($item, '[]"');
+
+                $topicResults = Topic::where('std', $cleanItem)->get();
+                $topics = $topics->merge($topicResults);
+            }
+
+            Log::info('$topics');
+            Log::info($topics);
+
             $images = QuestionImage::where('question_id', $id)->get();
             return view('question.edit', compact('data', 'images', 'topics'));
         } catch (\Exception $e) {

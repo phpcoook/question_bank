@@ -101,7 +101,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="topics[]" value="{{ $topic->id }}" id="topic_{{ $topic->id }}"
                                             {{ (in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="sub_topic_{{ $topic->id }}">{{ $topic->title }}</label>
+                                        <label class="form-check-label" for="topic_{{ $topic->id }}">{{ $topic->title }}</label>
                                     </div>
                                 @endforeach
                             </div>
