@@ -145,6 +145,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/student/start-quiz/time', [QuizController::class, 'addTime'])->name('student.start-quiz.addtime');
     Route::middleware(['tutor'])->group(function () {
         Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
+        Route::get('/question/details', [TutorController::class, 'QuestionDetails'])->name('question.details');
     });
 
     // question

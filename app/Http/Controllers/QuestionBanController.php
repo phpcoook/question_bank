@@ -204,6 +204,9 @@ class QuestionBanController extends Controller
     {
         try {
             $data = Question::find($id);
+            if (!$data) {
+                return redirect()->back()->with('error', 'Question not found.');
+            }
             $stdArray = is_string($data->std) ? explode(',', $data->std) : (array)$data->std;
             $topics = collect();
 
@@ -384,8 +387,6 @@ class QuestionBanController extends Controller
             } else {
                 return view('question.report');
             }
-
-
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');

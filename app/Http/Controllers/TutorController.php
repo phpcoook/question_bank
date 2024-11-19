@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Mail\Register;
 use App\Models\Question;
+use App\Models\QuestionImage;
+use App\Models\SubTopic;
+use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -135,7 +138,7 @@ class TutorController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $questions = Question::select(['id', 'code', 'difficulty', 'time'])->get();
+                $questions = Question::get();
                 return DataTables::of($questions)
                     ->addIndexColumn()
                     ->addColumn('code', function ($row) {
@@ -147,6 +150,37 @@ class TutorController extends Controller
                     ->addColumn('time', function ($row) {
                         return $row->time;
                     })
+                    ->addColumn('topic_id', function ($row) {
+                        $topicId = str_replace(['[', ']', '"'], '', $row->topic_id);
+                        $topic = Topic::where('id', $topicId)->first();
+                        return $topic
+                            ? '<small class="badge badge-primary">' . $topic->title . '</small>'
+                            : '<small class="badge badge-secondary">Unknown</small>';
+                    })
+                    ->addColumn('std', function ($row) {
+                        $student = str_replace(['[', ']', '"'], '', $row->std);
+                        $student = str_replace('_', ' ', $student);
+                        return $student
+                            ? '<small class="badge badge-primary">' . $student . '</small>'
+                            : '<small class="badge badge-secondary">Unknown</small>';
+                    })
+                    ->addColumn('subtopic_id', function ($row) {
+                        $subtopicIds = json_decode($row->subtopic_id);
+
+                        if (empty($subtopicIds)) {
+                            return '<small class="badge badge-secondary">Unknown</small>';
+                        }
+                        $subTopics = SubTopic::whereIn('id', $subtopicIds)->get();
+                        $subtopicTitle = '';
+                        foreach ($subTopics as $subTopic) {
+                            $subtopicTitle .= '<small class="badge badge-primary">' . $subTopic->title . '</small> ';
+                        }
+                        return $subtopicTitle ?: '<small class="badge badge-secondary">Unknown</small>';
+                    })
+                    ->addColumn('actions', function ($row) {
+                        return '<button class="btn btn-primary btn-sm view-details" data-id="' . $row->id . '">View</button>';
+                    })
+                    ->rawColumns(['topic_id', 'std', 'subtopic_id','actions'])
                     ->make(true);
             }
             return response()->json(['error' => 'Invalid request'], 400);
@@ -155,4 +189,26 @@ class TutorController extends Controller
             return response()->json(['error' => 'Something went wrong!'], 500);
         }
     }
+
+    public function QuestionDetails(Request $request)
+    {
+        try {
+            $question = Question::find($request->id);
+
+            if (!$question) {
+                return response()->json(['error' => 'Question not found'], 404);
+            }
+
+            $images = QuestionImage::where('question_id', $request->id)->get(['image_name', 'type']);
+
+            return response()->json([
+                'details' => $question->details,
+                'images' => $images
+            ]);
+        } catch (\Exception $e) {
+            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
+            return response()->json(['error' => 'Something went wrong!'], 500);
+        }
+    }
+
 }
