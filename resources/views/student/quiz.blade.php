@@ -249,10 +249,64 @@
         .content .container {
             max-width: 1024px;
         }
-    </style>
 
+        .popthumb {
+            cursor: pointer;
+        }
+        .popoverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popoverlay img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .popclose {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function loadPopup() {
+            const popthumbs = document.querySelectorAll('.popthumb');
+            const popoverlay = document.getElementById('popoverlay');
+            const popupImage = document.getElementById('popupImage');
+            const popcloseBtn = document.getElementById('popcloseBtn');
+            popthumbs.forEach(popthumb => {
+                popthumb.onclick = function() {
+                    popoverlay.style.display = "flex";
+                    popupImage.src = popthumb.src.replace("-popthumb", "");
+                };
+            });
+            popcloseBtn.onclick = function() {
+                popoverlay.style.display = "none";
+            };
+            popoverlay.onclick = function(event) {
+                if (event.target === popoverlay) {
+                    popoverlay.style.display = "none";
+                }
+            };
+        }
+
+    </script>
 @endsection
 @section('content')
+    <div class="popoverlay" id="popoverlay">
+        <span class="popclose" id="popcloseBtn">&times;</span>
+        <img src="" id="popupImage" alt="Popup Image">
+    </div>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -572,7 +626,7 @@
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
-                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300"></div>';
+                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
             });
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
@@ -594,7 +648,7 @@
             if (questionData.solutionImages.length > 0) {
                 var solutionImagesHtml = '<div class="row">';
                 $.each(questionData.solutionImages, function (imgIndex, image) {
-                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
                 });
                 solutionImagesHtml += '</div>';
                 document.getElementById('solution_images').innerHTML = solutionImagesHtml;
@@ -604,13 +658,14 @@
                 var answerImagesHtml = '<div class="row mb-4">';
 
                 $.each(questionData.answerImages, function (imgIndex, image) {
-                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150"></div>';
+                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
                 });
                 answerImagesHtml += '</div>';
                 document.getElementById('answer_images').innerHTML = answerImagesHtml;
             }
 
             startTimer(questionData.time); // Start the timer for the current question
+            loadPopup()
         }
 
         function sendReport() {
@@ -631,6 +686,7 @@
                     } else {
                         toastr.error(`Not Reported! Something went Wrong.`);
                     }
+
                 },
                 error: function (error) {
                     toastr.error(`Not Reported! Something went Wrong.`);
@@ -727,7 +783,7 @@
                         nextQuestion();
                     });
             }
-
+            loadPopup()
             updateTotalCounts();
         }
 
