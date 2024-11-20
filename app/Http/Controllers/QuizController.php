@@ -56,7 +56,7 @@ class QuizController extends Controller
                         return $query->with('solutionImage');
                     })
                     ->with('answerImage')
-                    ->select('id', 'time', 'code')
+                    ->select('id', 'time', 'code','difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
                         foreach ($stdValues as $stdValue) {
@@ -76,7 +76,7 @@ class QuizController extends Controller
                         return $query->with('solutionImage');
                     })
                     ->with('answerImage')
-                    ->select('id', 'time', 'code')
+                    ->select('id', 'time', 'code','difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
                         foreach ($stdValues as $stdValue) {

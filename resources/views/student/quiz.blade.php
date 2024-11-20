@@ -312,7 +312,8 @@
                         </div>
                         <div class="question-code-box" id="question-code-box">
                             <h6>
-                                Question – <span id="question-code"></span>
+                                Question – <span id="question-code"></span><br>
+                                Difficulty – <span id="question-difficulty"></span>
                             </h6>
                             <h3 class="mt-5">Stage <span id="count-question">1</span> Question</h3>
 
@@ -505,6 +506,7 @@
         const questionsrow = [
                 @foreach($randomCombination as $question)
             {
+                difficulty: '{{ $question["difficulty"] }}',
                 code: '{{ $question["code"] }}',
                 id: {{ $question['id'] }},
                 time: {{ $question['time'] / 60 }},
@@ -569,6 +571,7 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             $('#question-code').html(questionData.code);
+            $('#question-difficulty').html(questionData.difficulty);
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
