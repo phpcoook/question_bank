@@ -121,6 +121,25 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <label for="difficulty">Difficulty</label>
+                            <select name="difficulty" class="form-control" required tabindex="6">
+                                <option value="">Select Difficulty</option>
+                                <option value="foundation" {{ old('difficulty') == 'foundation' ? 'selected' : '' }}>
+                                    Foundation
+                                </option>
+                                <option
+                                    value="intermediate" {{ old('difficulty') == 'intermediate' ? 'selected' : '' }}>
+                                    Intermediate
+                                </option>
+                                <option value="challenging" {{ old('difficulty') == 'challenging' ? 'selected' : '' }}>
+                                    Challenging
+                                </option>
+                            </select>
+                            @error('difficulty')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control"
                                    placeholder="Enter Code" value="{{ old('code') }}" required tabindex="7">
@@ -475,6 +494,9 @@
         // Apply validation
             $("#question-form").validate({
                 rules: {
+                    difficulty: {
+                        required: true
+                    },
                     question: {
                         required: true,
                         minlength: 10
@@ -485,6 +507,9 @@
                     }
                 },
                 messages: {
+                    difficulty: {
+                        required: "Please select the difficulty level"
+                    },
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"

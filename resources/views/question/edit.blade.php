@@ -117,6 +117,25 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <label for="difficulty">Difficulty</label>
+                            <select name="difficulty" class="form-control" required tabindex="6">
+                                <option value="">Select Difficulty</option>
+                                <option value="foundation" {{ $data->difficulty == 'foundation' ? 'selected' : '' }}>
+                                    Foundation
+                                </option>
+                                <option
+                                    value="intermediate" {{ $data->difficulty == 'intermediate' ? 'selected' : '' }}>
+                                    Intermediate
+                                </option>
+                                <option value="challenging" {{ $data->difficulty == 'challenging' ? 'selected' : '' }}>
+                                    Challenging
+                                </option>
+                            </select>
+                            @error('difficulty')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label for="code">Code</label>
                             <input type="text" name="code" id="code" class="form-control" value="{{$data->code}}"
                                    placeholder="Enter Code" required tabindex="7">
@@ -514,19 +533,25 @@
 
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
-        $(document).ready(function () {        
+        $(document).ready(function () {
             $("#question-edit").validate({
                 rules: {
+                    difficulty: {
+                        required: true
+                    },
                     question: {
                         required: true,
                         minlength: 10
-                    },                
+                    },
                 },
                 messages: {
+                    difficulty: {
+                        required: "Please select the difficulty level"
+                    },
                     question: {
                         required: "Please enter a question",
                         minlength: "Your question must be at least 10 characters long"
-                    },                
+                    },
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {
