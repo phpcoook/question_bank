@@ -103,7 +103,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url:   `${window.location.origin}/question/data`,
+                    url: "{{ url('question/data') }}",
                     type: "POST",
                 },
                 columns: [
