@@ -60,12 +60,15 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin + '/question_bank';
+    </script>
+    <script>
         $(document).ready(function () {
             $('#Student-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{env('AJAX_URL')}}'+'student/previous-quiz',
+                    url: baseUrl +'/student/previous-quiz',
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'

@@ -222,6 +222,9 @@
             referrerpolicy="origin"></script>
     <script src="https://www.wiris.net/demo/plugins/app/WIRISplugins.js?viewer=image"></script>
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
+    <script>
+        var baseUrl = window.location.origin + '/question_bank';
+    </script>
 
     <script>
         document.querySelectorAll('#question, #answer, #solution').forEach(function (element) {
@@ -234,7 +237,7 @@
                 let selectedStandard = $(this).val();
                 if (selectedStandard && selectedStandard.length > 0) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}' + 'getTopics',
+                        url: baseUrl + '/getTopics',
                         type: 'POST',
                         data: {
                             'std': selectedStandard,
@@ -459,7 +462,7 @@
 
             if (selectedTopics.length > 0) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                    url: baseUrl + '/getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': selectedTopics,
