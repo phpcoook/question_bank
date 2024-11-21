@@ -74,15 +74,16 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         $(document).ready(function () {
-
-
             $('#Sub-topic-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 10,
                 allowHTML: true,
-                ajax: '{{env('AJAX_URL')}}'+'sub-topics/data',
+                ajax: baseUrl +'/sub-topics/data',
                 columns: [
                     {data: 'no', searchable: false},
                     {data: 'topic'},
@@ -90,12 +91,12 @@
                     {data: 'actions', name: 'actions', orderable: false, searchable: false}
                 ]
             });
-            
+
             $('#Sub-topic-table').on('click', '.delete-sub-topic', function () {
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}'+'sub-topic/'+id,
+                        url: baseUrl +'/sub-topic/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

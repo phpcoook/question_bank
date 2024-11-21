@@ -79,6 +79,9 @@
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         $(document).ready(function () {
             $('.select2').select2()
             $('#Subscriber-table').DataTable({
@@ -87,7 +90,7 @@
                 pageLength: 10,
                 allowHTML: true,
                 ajax: {
-                    url: '{{env('AJAX_URL')}}' + 'payment_history',
+                    url: baseUrl + '/payment_history',
                     data: function (d) {
                         d.filter = $('#status').val();
                         d.user = ('{{auth()->user()->role == 'admin'}}')? $('#user').val():0
@@ -126,7 +129,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}' + 'student/' + id,
+                        url: baseUrl + '/student/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

@@ -74,6 +74,9 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         $(document).ready(function () {
             $('#Pricing-table').DataTable({
                 processing: true,
@@ -92,7 +95,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}' +'pricing/' + id,
+                        url: baseUrl +'/pricing/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

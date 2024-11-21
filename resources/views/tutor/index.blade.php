@@ -62,11 +62,14 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         $(document).ready(function () {
             $('#Tutor-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{env('AJAX_URL')}}'+"tutor/data",
+                ajax: baseUrl +"/tutor/data",
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'first_name', name: 'first_name'},
@@ -82,7 +85,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}'+'tutor/'+id,
+                        url: baseUrl +'/tutor/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

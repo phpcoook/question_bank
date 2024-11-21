@@ -87,6 +87,9 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         $(document).ready(function () {
             $('#Question-table').DataTable({
                 processing: true,
@@ -94,7 +97,7 @@
                 pageLength: 10,
                 allowHTML: true,
                 ajax: {
-                    url: '{{env('AJAX_URL')}}'+'questions/data',
+                    url: baseUrl +'/questions/data',
                     data: function (d) {
                         d.filter = $('#difficulty').val();
                     }
@@ -118,7 +121,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}'+'question/'+id,
+                        url: baseUrl +'/question/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
