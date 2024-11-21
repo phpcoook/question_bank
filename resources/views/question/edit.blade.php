@@ -279,7 +279,7 @@
                 let selectedStandard = $(this).val();
                 if (selectedStandard && selectedStandard.length > 0) {
                     $.ajax({
-                        url: baseUrl + '/getTopics',
+                        url: '{{env('AJAX_URL')}}' + 'getTopics',
                         type: 'POST',
                         data: {
                             'std': selectedStandard,
