@@ -32,6 +32,7 @@ class QuizController extends Controller
                     ->whereBetween('quiz.created_at', [$startDate, $endDate])
                     ->join('question', 'question.id', 'quiz.question_id')
                     ->sum('question.time');
+                $totalMinutes = $totalMinutes / 60;
                 if ($totalMinutes >= $time->no_of_questions) {
                     $validity = false;
                     $randomCombination = [];
@@ -51,12 +52,12 @@ class QuizController extends Controller
             if ($attended->count() > 0) {
                 $notIn = $attended->pluck('question_id');
 
-                $questions = Question::with('quizImage')
+                $questionsQuery = Question::with('quizImage')
                     ->when(CustomService::checkSubscription(), function ($query) {
                         return $query->with('solutionImage');
                     })
                     ->with('answerImage')
-                    ->select('id', 'time', 'code','difficulty')
+                    ->select('id', 'time', 'code', 'difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
                         foreach ($stdValues as $stdValue) {
@@ -68,15 +69,20 @@ class QuizController extends Controller
                         foreach ($subTopics as $sub_topic) {
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
-                    })
-                    ->get();
+                    });
+
+                if (CustomService::checkSubscription()) {
+                    $questionsQuery->with('solutionImage');
+                }
+
+                $questions = $questionsQuery->get();  // Convert the query into a collection
             } else {
-                $questions = Question::with('quizImage')
+                $questionsQuery = Question::with('quizImage')
                     ->when(CustomService::checkSubscription(), function ($query) {
                         return $query->with('solutionImage');
                     })
                     ->with('answerImage')
-                    ->select('id', 'time', 'code','difficulty')
+                    ->select('id', 'time', 'code', 'difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
                         foreach ($stdValues as $stdValue) {
@@ -88,15 +94,15 @@ class QuizController extends Controller
                             $query->orWhereRaw('JSON_CONTAINS(subtopic_id, ?)', [json_encode($sub_topic)]);
                         }
                     });
+
+                if (CustomService::checkSubscription()) {
+                    $questionsQuery->with('solutionImage');
+                }
+
+                $questions = $questionsQuery->get();  // Convert the query into a collection
             }
 
-            if (CustomService::checkSubscription()) {
-                $questions->with('solutionImage');
-            }
-            $questions->with('answerImage')->get();
-
-
-            $result = $this->findCombinations($questions->get()->toArray(), $target * 60);
+            $result = $this->findCombinations($questions->toArray(), $target * 60);
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);

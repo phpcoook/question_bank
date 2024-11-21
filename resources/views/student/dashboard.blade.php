@@ -107,11 +107,11 @@
                 <div class="row m-3">
 
                     <div class="col-md-6 m-auto">
-                        <h4 class="mb-1">
-                            @foreach (json_decode(Auth::user()->std) as $std)
-                                <small class="badge badge-primary">{{ str_replace('_', ' ', $std) }}</small>
-                            @endforeach
-                        </h4>
+{{--                        <h4 class="mb-1">--}}
+{{--                            @foreach (json_decode(Auth::user()->std) as $std)--}}
+{{--                                <small class="badge badge-primary">{{ str_replace('_', ' ', $std) }}</small>--}}
+{{--                            @endforeach--}}
+{{--                        </h4>--}}
                         @if(!empty($subscription))
                             <p><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}} On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
@@ -122,12 +122,13 @@
                         @endif
                         <div class="card p-3 box-shadow mt-3">
                             @foreach($topicData as $topicItem)
-                                <div class="progress-group">
+                                <h4><small class="badge badge-primary">{{ str_replace('_', ' ', $topicItem['std']) }}</small></h4>
+                                <div class="progress-group mb-4">
                                     {{$topicItem['title']}}
                                     <span class="float-right">
-                                    <b>{{$topicItem['attempted_questions']}}</b>/
+                                        <b>{{$topicItem['attempted_questions']}}</b>/
                                         {{$topicItem['total_questions']}}
-                                </span>
+                                    </span>
                                     <div class="progress progress-md">
                                         @if($topicItem['total_questions'] > 0)
                                             <div class="progress-bar bg-success"

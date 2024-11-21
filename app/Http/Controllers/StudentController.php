@@ -200,6 +200,7 @@ class StudentController extends Controller
                 ->count();
 
             return [
+                'std' => $topic['std'],
                 'id' => $topic['id'],
                 'title' => $topic['title'],
                 'total_questions' => $totalQuestions,
