@@ -97,8 +97,10 @@
     <link rel="stylesheet" href="{{url('assets/plugins/toastr/toastr.css')}}">
     <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
     <script>
+        var baseUrl = window.location.origin + '/question_bank';
+    </script>
+    <script>
         $(document).ready(function () {
-            var baseUrl = window.location.origin + '/question_bank';
             $('#question-table').DataTable({
                 processing: true,
                 serverSide: true,
