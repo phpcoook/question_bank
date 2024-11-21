@@ -265,6 +265,9 @@
 
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin + '/question_bank';
+    </script>
+    <script>
         document.querySelectorAll('#question, #answer, #solution').forEach(function(element) {
             element.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -302,7 +305,7 @@
                 }).get();
 
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSelectedSubTopicData',
+                    url: baseUrl + '/getSelectedSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids':selectedTopics,
@@ -507,7 +510,7 @@
 
             if (selectedTopics.length > 0) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                    url: baseUrl + '/getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': selectedTopics,

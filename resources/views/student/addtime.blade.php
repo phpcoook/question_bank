@@ -104,6 +104,9 @@
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
+        var baseUrl = window.location.origin + '/question_bank';
+    </script>
+    <script>
         $(document).ready(function () {
 
             $('.select2').select2();
@@ -113,7 +116,7 @@
         $(document).ready(function () {
             if ($('#topics').val()) {
                 $.ajax({
-                    url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                    url: baseUrl + '/getSubTopicData',
                     type: 'POST',
                     data: {
                         'topic_ids': $('#topics').val(), // Send as array
@@ -138,7 +141,7 @@
 
                 if (selectedTopics.length > 0) {
                     $.ajax({
-                        url: '{{env('AJAX_URL')}}' + 'getSubTopicData',
+                        url: baseUrl + '/getSubTopicData',
                         type: 'POST',
                         data: {
                             'topic_ids': selectedTopics,
