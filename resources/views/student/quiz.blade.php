@@ -555,7 +555,7 @@
 @endsection
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin ;
+        var baseUrl = window.location.origin + '/question_bank';
     </script>
     <script>
         var user_id = 0;

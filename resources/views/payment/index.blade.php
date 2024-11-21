@@ -79,7 +79,7 @@
     <link rel="stylesheet" href="{{url('assets/plugins/select2/css/select2.css')}}">
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
-        var baseUrl = window.location.origin ;
+        var baseUrl = window.location.origin + '/question_bank';
     </script>
     <script>
         $(document).ready(function () {
