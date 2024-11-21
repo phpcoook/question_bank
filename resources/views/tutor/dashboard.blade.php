@@ -98,12 +98,12 @@
     <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
     <script>
         $(document).ready(function () {
-            var baseUrl = '{{url('/')}}'+'/';
+            var baseUrl = window.location.origin;
             $('#question-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ env('APP_URL') }}",
+                    url: baseUrl+ '/question/data',
                     type: "POST",
                 },
                 columns: [
