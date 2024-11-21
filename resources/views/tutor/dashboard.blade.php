@@ -103,7 +103,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url:   '{{ route('question.data') }}',
+                    url:   `${window.location.origin}/question/data`,
                     type: "POST",
                 },
                 columns: [
@@ -142,7 +142,7 @@
                         console.log('test----'+response.images.length);
                         response.images.forEach(function (image) {
                             {{--const baseUrl = '{{ url('/') }}';--}}
-                            const imageUrl = `{{env('AJAX_URL')}}/storage/images/${image.image_name}`;
+                            const imageUrl = `${window.location.origin}/storage/images/${image.image_name}`;
 
                             $('#imageContainer').append(
                                 `<div style="display: inline-block; text-align: center; margin: 5px;">
