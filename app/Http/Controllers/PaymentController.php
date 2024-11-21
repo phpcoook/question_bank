@@ -65,7 +65,7 @@ class PaymentController extends Controller
                             return $row->index + 1;
                         })
                         ->addColumn('subscriber', function ($row) {
-                            return $row->user->email;
+                            return $row->user && $row->user->email ? $row->user->email : 'N/A';
                         })
                         ->addColumn('plan_start_date', function ($row) {
                             return $row->start_date;
@@ -99,7 +99,7 @@ class PaymentController extends Controller
                             return $row->index + 1;
                         })
                         ->addColumn('subscriber', function ($row) {
-                            return $row->email;
+                            return $row->email ? $row->email : 'N/A';
                         })
                         ->addColumn('plan_start_date', function ($row) {
                             return $row->start_date;
