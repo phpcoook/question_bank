@@ -98,7 +98,7 @@
     <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
     <script>
         $(document).ready(function () {
-            var baseUrl = window.location.origin;
+            var baseUrl = window.location.origin + '/question_bank';
             $('#question-table').DataTable({
                 processing: true,
                 serverSide: true,
