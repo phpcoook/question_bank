@@ -103,7 +103,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url:   '{{env('AJAX_URL')}}'+'question/data',
+                    url:   '{{ route('question.data') }}',
                     type: "POST",
                 },
                 columns: [
