@@ -555,6 +555,9 @@
 @endsection
 @section('page-script')
     <script>
+        var baseUrl = window.location.origin ;
+    </script>
+    <script>
         var user_id = 0;
         var totalTime = 0;
         const questionsrow = [
@@ -627,7 +630,7 @@
             $('#question-code').html(questionData.code);
             $('#question-difficulty').html(questionData.difficulty);
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-                var baseUrl = '{{url('/')}}' + '/';
+                {{--var baseUrl = '{{url('/')}}' + '/';--}}
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
             });
@@ -676,7 +679,7 @@
             let qid = questionData.id
             let report_text = $('#report_text').val()
             $.ajax({
-                url: '{{env('AJAX_URL')}}' + 'question-report',
+                url: baseUrl + '/question-report',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -762,7 +765,7 @@
                     quiz_id: '{{$quiz_id}}'
                 };
 
-                fetch('{{env('AJAX_URL')}}' + 'student/save-quiz', {
+                fetch(baseUrl + '/student/save-quiz', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
