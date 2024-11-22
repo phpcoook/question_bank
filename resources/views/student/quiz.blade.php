@@ -632,7 +632,7 @@
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 {{--var baseUrl = '{{url('/')}}' + '/';--}}
             $.each(questionData.images, function (imgIndex, image) {
-                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
+                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
             });
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
@@ -654,7 +654,7 @@
             if (questionData.solutionImages.length > 0) {
                 var solutionImagesHtml = '<div class="row">';
                 $.each(questionData.solutionImages, function (imgIndex, image) {
-                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
                 });
                 solutionImagesHtml += '</div>';
                 document.getElementById('solution_images').innerHTML = solutionImagesHtml;
@@ -664,7 +664,7 @@
                 var answerImagesHtml = '<div class="row mb-4">';
 
                 $.each(questionData.answerImages, function (imgIndex, image) {
-                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + 'storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
                 });
                 answerImagesHtml += '</div>';
                 document.getElementById('answer_images').innerHTML = answerImagesHtml;

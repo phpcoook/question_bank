@@ -68,20 +68,20 @@ class PaymentController extends Controller
                             return $row->user && $row->user->email ? $row->user->email : 'N/A';
                         })
                         ->addColumn('plan_start_date', function ($row) {
-                            return $row->start_date;
+                            return $row->start_date ? $row->start_date : 'N/A' ;
                         })
                         ->addColumn('plan_end_date', function ($row) {
-                            return $row->end_date;
+                            return $row->end_date ? $row->end_date : 'N/A' ;
                         })
                         ->addColumn('amount', function ($row) {
-                            return '$' . $row->amount;
+                            return $row->amount ? '$' . $row->amount : 'N/A';
                         })
                         ->addColumn('status', function ($row) {
                             $currentDate = now();
                             return $row->end_date < $currentDate ? '<span class="text-danger">Expired</span>' : '<span class="text-success">Active</span>';
                         })
                         ->addColumn('stripe_id', function ($row) {
-                            return $row->stripe_subscription_id;
+                            return $row->stripe_subscription_id ? $row->stripe_subscription_id : 'N/A';
                         })
                         ->rawColumns([
                             'no',
