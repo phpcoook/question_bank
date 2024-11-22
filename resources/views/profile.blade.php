@@ -146,21 +146,26 @@
                 <div class="card card-primary">
                     <div class="card-body">
                         <div class="form-group">
-                            <label class="form-label" for="old_password">Subscription Start : <span class="text-gray">{{$subscription['startDate']}}</span> </label>
+                            <label class="form-label" for="old_password">Subscription Start : <span class="text-gray">{{$subscription->status =='cancel' ? date('jS M - Y h:i A', strtotime($subscription->start_date)) :$subscription['startDate']}}</span> </label>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="new_password">Subscription End :  <span class="text-gray">{{$subscription['endDate']}}</span></label>
+                            <label class="form-label" for="new_password">Subscription End :  <span class="text-gray">{{$subscription->status =='cancel' ? date('jS M - Y h:i A', strtotime($subscription->end_date)) : $subscription['endDate']}}</span></label>
                         </div>
                         <div class="form-group">
-                            <label class="form-label" for="confirm_password">Your Subscription Renewal On :  <span class="text-gray">{{$subscription['renewalDate']}}</span></label>
+                            <label class="form-label" for="confirm_password">Your Subscription Renewal On :  <span class="text-gray">{{ $subscription->status =='cancel' ? 'Plan Cancel' : $subscription['renewalDate']}}</span></label>
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-end">
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#success_tic">
+                        <button
+                            type="button"
+                            class="btn btn-danger {{ $subscription->status == 'cancel' ? 'disabled-button' : '' }}"
+                            data-toggle="modal"
+                            data-target="#success_tic"
+                            id="cancel-button"
+                        >
                             Cancel Subscription Renewal
                         </button>
                     </div>
-
                 </div>
             </section>
         @endif
@@ -261,7 +266,6 @@
                 }
             });
         });
-
     </script>
     <style>
         .modal-content {
@@ -321,6 +325,12 @@
         }
 
     </style>
+    <style>
+        .disabled-button {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
     <div id="success_tic" class="modal fade success_tic" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -335,11 +345,14 @@
                         </div>
                     </h1>
                     <br>
-                    <p class="mb-0">Are you sure you want to cancel your subscription? Please note that after cancellation, you will no longer have access to our paid services once your plan ends.</p>
+                    <p class="mb-0">
+                        Are you sure you want to cancel your subscription?
+                        Please note that after cancellation, you will no longer have access to our paid services once your plan ends.
+                    </p>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <a href="{{url('cancel-subscription')}}" class="btn btn-danger text-white">Cancel Renewal</a>
+                    <a href="{{ url('cancel-subscription') }}" class="btn btn-danger text-white">Cancel Renewal</a>
                 </div>
             </div>
         </div>
