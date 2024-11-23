@@ -33,9 +33,9 @@
         @endif
 
         <section class="content m-2 ">
-            <div class="card card-primary {{empty($subscription)?'':' d-none'}}">
+            <div class="card card-primary {{ isset($subscription['status']) && $subscription['status'] === 'active' ? 'd-none' : '' }}">
                 <div class="row m-3">
-                    <div class="col-md-{{empty($subscription)?'12':'12 d-none'}}">
+                    <div class="col-md-12">
                         <h4>Subscription Plan</h4>
                         <div class="card-deck mb-3 text-center">
                             <div class="card mb-4 box-shadow">
