@@ -50,8 +50,9 @@ class QuestionBanController extends Controller
 
                 // Handle question images
                 if ($request->hasFile('questionimage')) {
+                    $index = 1;
                     foreach ($request->file('questionimage') as $image) {
-                        $imageName = time() . '_question_' . $image->getClientOriginalName();
+                        $imageName = time() . '_question_'.$index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -59,13 +60,15 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'question'; // Mark it as a question image
                         $questionImage->save();
+                        $index++;
                     }
                 }
 
                 // Handle solution images
                 if ($request->hasFile('solutionimage')) {
+                    $index = 1;
                     foreach ($request->file('solutionimage') as $image) {
-                        $imageName = time() . '_solution_' . $image->getClientOriginalName();
+                        $imageName = time() . '_solution_'.$index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -73,13 +76,15 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'solution'; // Mark it as an answer image
                         $questionImage->save();
+                        $index++;
                     }
                 }
 
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
+                    $index = 1;
                     foreach ($request->file('answerimage') as $image) {
-                        $imageName = time() . '_answer_' . $image->getClientOriginalName();
+                        $imageName = time() . '_answer_'. $index. '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -87,6 +92,7 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'answer';
                         $questionImage->save();
+                        $index++;
                     }
                 }
 
@@ -303,8 +309,9 @@ class QuestionBanController extends Controller
 
                 // Handle question images
                 if ($request->hasFile('questionimage')) {
+                    $index = 1;
                     foreach ($request->file('questionimage') as $image) {
-                        $imageName = time() . '_question_' . $image->getClientOriginalName();
+                        $imageName = time() . '_question_'.$index. '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -312,13 +319,15 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'question'; // Mark it as a question image
                         $questionImage->save();
+                        $index++;
                     }
                 }
 
-                // Handle answer images
+                // Handle solution images
                 if ($request->hasFile('solutionimage')) {
+                    $index = 1;
                     foreach ($request->file('solutionimage') as $image) {
-                        $imageName = time() . '_solution_' . $image->getClientOriginalName();
+                        $imageName = time() . '_solution_'.$index.'_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -326,13 +335,15 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'solution'; // Mark it as an answer image
                         $questionImage->save();
+                        $index++;
                     }
                 }
 
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
+                    $index = 1;
                     foreach ($request->file('answerimage') as $image) {
-                        $imageName = time() . '_answer_' . $image->getClientOriginalName();
+                        $imageName = time() . '_answer_'.$index.'_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -340,6 +351,7 @@ class QuestionBanController extends Controller
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'answer';
                         $questionImage->save();
+                        $index++;
                     }
                 }
 

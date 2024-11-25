@@ -717,33 +717,25 @@
             document.getElementById('wrong-total-count').innerText = totalWrong;
         }
 
-
         function handleAnswer(response) {
-            const collapseThrees = document.getElementById('collapseThrees');
-            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
-            if (collapseThrees) {
-                collapseThrees.classList.remove('show');
-            }
-            if (collapseThreeSolution) {
-                collapseThreeSolution.classList.remove('show');
-            }
-
             const questionData = questions[currentQuestionIndex];
             const questionId = questionData.id;
 
+            // Ensure questionStatus exists for this question
             if (!questionStatus[questionId]) {
-                questionStatus[questionId] = {correct: 0, wrong: 0, status: ''};
+                questionStatus[questionId] = { correct: 0, wrong: 0, status: '' };
             }
 
             const currentStatus = questionStatus[questionId].status;
 
-            if (response === 'correct') {
+            // Update status based on the response
+            if (response === 'correct' && currentStatus !== 'correct') {
                 if (currentStatus === 'wrong') {
                     questionStatus[questionId].wrong -= 1;
                 }
                 questionStatus[questionId].correct += 1;
                 questionStatus[questionId].status = 'correct';
-            } else if (response === 'wrong') {
+            } else if (response === 'wrong' && currentStatus !== 'wrong') {
                 if (currentStatus === 'correct') {
                     questionStatus[questionId].correct -= 1;
                 }
@@ -751,46 +743,51 @@
                 questionStatus[questionId].status = 'wrong';
             }
 
+            // Handle report case
             if (response === 'report') {
                 $('#reportModal').modal('show');
                 questionStatus[questionId].status = 'report';
-            } else {
-                const timeTaken = (questionData.time * 60) - remainingTime;
-                totalTime += timeTaken;
-
-                const payload = {
-                    user_id: user_id,
-                    question_id: questionId,
-                    time_taken: timeTaken,
-                    quiz_id: '{{$quiz_id}}'
-                };
-
-                fetch(baseUrl + '/student/save-quiz', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    body: JSON.stringify({response, ...payload}),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success === true) {
-                            toastr.success(`Your answer has been saved.`);
-                            nextQuestion();
-                            updateActiveStep();
-                            updateProgressBar();
-                        } else {
-                            toastr.error(`Something went wrong! Your answer was not saved.`);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        nextQuestion();
-                    });
+                return; // Skip sending data for a report
             }
-            loadPopup()
+
+            // Save the response
+            const timeTaken = (questionData.time * 60) - remainingTime;
+            totalTime += timeTaken;
+
+            const payload = {
+                user_id: user_id,
+                question_id: questionId,
+                time_taken: timeTaken,
+                quiz_id: '{{$quiz_id}}',
+                response: response,
+            };
+
+            fetch(baseUrl + '/student/save-quiz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                },
+                body: JSON.stringify(payload),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success === true) {
+                        toastr.success('Your answer has been saved.');
+                        nextQuestion();
+                        updateActiveStep();
+                        updateProgressBar();
+                    } else {
+                        toastr.error('Something went wrong! Your answer was not saved.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    nextQuestion();
+                });
+
             updateTotalCounts();
+            loadPopup();
         }
 
 
@@ -841,34 +838,20 @@
 
 
         function previousQuestion() {
-            const collapseThrees = document.getElementById('collapseThrees');
-            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
-
-            if (collapseThrees) {
-                collapseThrees.classList.remove('show');
-            }
-            if (collapseThreeSolution) {
-                collapseThreeSolution.classList.remove('show');
-            }
-
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
                 loadQuestion();
                 updateProgressBar();
 
-                // Update displayed question counters based on the new current index
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 document.getElementById('count-question').innerText = currentQuestionIndex + 1;
 
-                // Re-enable the "Next" button if it was disabled
                 const button = document.getElementById("question-next");
                 button.onclick = questionNext;
                 button.style.cursor = "pointer";
                 button.style.opacity = "1";
                 button.style.pointerEvents = "auto";
                 button.style.backgroundColor = "#C8E7A7";
-            } else {
-                currentQuestionIndex = 0; // Ensure it doesn't go below 0
             }
         }
 
