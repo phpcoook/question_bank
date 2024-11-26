@@ -800,7 +800,7 @@
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
@@ -822,7 +822,7 @@
                 loadQuestion();
                 updateProgressBar(); // Update progress bar on next
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 const button = document.getElementById("question-next");
                 button.onclick = null;
@@ -841,7 +841,7 @@
                 updateProgressBar();
 
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
 
                 const button = document.getElementById("question-next");
                 button.onclick = questionNext;
