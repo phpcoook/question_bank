@@ -627,7 +627,7 @@
             $('#question-code').html(questionData.code);
             $('#question-difficulty').html(questionData.difficulty);
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-                {{--var baseUrl = '{{url('/')}}' + '/';--}}
+                var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
             });
