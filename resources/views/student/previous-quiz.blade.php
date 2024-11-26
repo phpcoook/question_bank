@@ -60,15 +60,12 @@
 
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-    <script>
         $(document).ready(function () {
             $('#Student-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: baseUrl +'/student/previous-quiz',
+                    url: '{{env('AJAX_URL')}}' +'/student/previous-quiz',
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -90,7 +87,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: baseUrl +'/student/'+id,
+                        url: '{{env('AJAX_URL')}}' +'/student/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

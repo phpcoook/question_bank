@@ -61,14 +61,11 @@
 
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-    <script>
         $(document).ready(function () {
             $('#reports-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl +'/questions/report',
+                ajax: '{{env('AJAX_URL')}}' +'/questions/report',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_text', name: 'report_text' },

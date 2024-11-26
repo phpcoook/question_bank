@@ -74,16 +74,13 @@
 
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-    <script>
         $(document).ready(function () {
             $('#Sub-topic-table').DataTable({
                 processing: true,
                 serverSide: true,
                 pageLength: 10,
                 allowHTML: true,
-                ajax: baseUrl +'/sub-topics/data',
+                ajax: '{{env('AJAX_URL')}}' +'/sub-topics/data',
                 columns: [
                     {data: 'no', searchable: false},
                     {data: 'topic'},
@@ -96,7 +93,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: baseUrl +'/sub-topic/'+id,
+                        url: '{{env('AJAX_URL')}}' +'/sub-topic/'+id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

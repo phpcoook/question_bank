@@ -97,15 +97,12 @@
     <link rel="stylesheet" href="{{url('assets/plugins/toastr/toastr.css')}}">
     <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-    <script>
         $(document).ready(function () {
             $('#question-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: baseUrl+ '/question/data',
+                    url: '{{env('AJAX_URL')}}'+ '/question/data',
                     type: "POST",
                 },
                 columns: [

@@ -555,9 +555,6 @@
 @endsection
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-    <script>
         var user_id = 0;
         var totalTime = 0;
         const questionsrow = [
@@ -679,7 +676,7 @@
             let qid = questionData.id
             let report_text = $('#report_text').val()
             $.ajax({
-                url: baseUrl + '/question-report',
+                url: '{{env('AJAX_URL')}}' + '/question-report',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -762,7 +759,7 @@
                 response: response,
             };
 
-            fetch(baseUrl + '/student/save-quiz', {
+            fetch('{{env('AJAX_URL')}}' + '/student/save-quiz', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

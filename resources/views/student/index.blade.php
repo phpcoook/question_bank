@@ -64,15 +64,11 @@
 
 @section('page-script')
     <script>
-        var baseUrl = window.location.origin + '/question_bank';
-    </script>
-
-    <script>
         $(document).ready(function () {
             $('#Student-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/student/data',
+                ajax: '{{env('AJAX_URL')}}' + '/student/data',
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'first_name', name: 'first_name'},
@@ -97,7 +93,7 @@
                 var id = $(this).data('id');
                 if (confirm('Are you sure you want to delete this item?')) {
                     $.ajax({
-                        url: baseUrl + '/student/' + id,
+                        url: '{{env('AJAX_URL')}}' + '/student/' + id,
                         type: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -116,7 +112,7 @@
             $('.custom-control-input').on('change', function (event, state) {
                 var id = $(this).data('id');
                 $.ajax({
-                    url: baseUrl + '/student/subscription/' + id,
+                    url: '{{env('AJAX_URL')}}' + '/student/subscription/' + id,
                     type: 'get',
                     success: function (result) {
                         toastr.success('Subscription has been Updated!')
