@@ -409,12 +409,12 @@
                              id="nex-previous-btn">
                             <div onclick="questionNext()" id="question-next"
                                  class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
-                                 style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                                 style="cursor: pointer; background: #C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
                                 Next
                             </div>
-                            <div onclick="previousQuestion()"
+                            <div onclick="previousQuestion()" id="question-prev"
                                  class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
-                                 style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                                 style="cursor: pointer; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
                                 Previous
                             </div>
                         </div>
@@ -627,7 +627,7 @@
             $('#question-code').html(questionData.code);
             $('#question-difficulty').html(questionData.difficulty);
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-                var baseUrl = '{{url('/')}}' + '/';
+                var baseUrl = '{{url('/')}}';
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
             });
@@ -800,7 +800,7 @@
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
@@ -822,8 +822,9 @@
                 loadQuestion();
                 updateProgressBar(); // Update progress bar on next
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
+                console.log('next---');
                 const button = document.getElementById("question-next");
                 button.onclick = null;
                 button.style.cursor = "not-allowed";
@@ -841,8 +842,9 @@
                 updateProgressBar();
 
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                document.getElementById('count-question').innerText = currentQuestionIndex + 1;
+                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
 
+                console.log('previous---');
                 const button = document.getElementById("question-next");
                 button.onclick = questionNext;
                 button.style.cursor = "pointer";
