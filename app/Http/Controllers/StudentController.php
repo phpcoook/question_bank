@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Reported;
 use App\Models\Setting;
 use App\Models\Topic;
 use App\Models\Pricing;
@@ -164,6 +165,7 @@ class StudentController extends Controller
         try {
             $school = User::findOrFail($id);
             $school->delete();
+            Reported::where('user_id', $id)->delete();
             return response()->json(['success' => 'Record deleted successfully']);
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
