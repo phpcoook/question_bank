@@ -367,9 +367,9 @@
                         <div class="question-code-box" id="question-code-box">
                             <h6>
                                 Question – <span id="question-code"></span><br>
-                                Difficulty – <span id="question-difficulty"></span>
                             </h6>
-                            <h3 class="mt-5">Stage <span id="count-question">1</span> Question</h3>
+
+                            <h3>Difficulty – <span id="question-difficulty"></span></h3>
 
                             <div class="d-flex justify-content-end">
                                 <div class="timer" id="timer">
@@ -629,7 +629,7 @@
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 var baseUrl = '{{url('/')}}' + '/';
             $.each(questionData.images, function (imgIndex, image) {
-                imagesHtml += '<div class="col-md-6 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
+                imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="400" height="300" class="popthumb"></div>';
             });
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
