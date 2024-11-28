@@ -191,6 +191,7 @@ class PaymentController extends Controller
                 $subscription->current_period_start, $subscription->current_period_end,'save');
             \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');
             \Illuminate\Support\Facades\Session::put('status', 'success');
+            User::where('id', auth()->user()->id)->update(['subscription_status' => '1']);
             return redirect('student/dashboard');
         } catch (\Stripe\Exception\InvalidRequestException $exception) {
             \Illuminate\Support\Facades\Session::forget('CHECKOUT_SESSION_ID');

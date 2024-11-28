@@ -33,7 +33,7 @@
         @endif
 
         <section class="content m-2 ">
-            <div class="card card-primary {{Auth::user()->subscription_status ? 'd-none' : ''}}">
+            <div class="card card-primary {{$subscription ? 'd-none' : ''}}">
                 <div class="row m-3">
                     <div class="col-md-12">
                         <h4>Subscription Plan</h4>
