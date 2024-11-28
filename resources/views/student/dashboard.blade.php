@@ -48,7 +48,7 @@
                                     <ul>
                                        <li>
                                            <i class="fa fa-check text-success"></i>
-                                           Test your knowledge with one
+                                           Test your knowledge with {{$setting->no_of_questions}} minutes this week!
                                        </li>
                                         <li>
                                             <i class="fa fa-check text-success"></i>
@@ -57,10 +57,6 @@
                                         <li>
                                             <i class="fa fa-check text-success"></i>
                                             Work on speed to never run out of time in exams.
-                                        </li>
-                                        <li>
-                                            <i class="fa fa-times text-danger"></i>
-                                            minute quiz once a week.
                                         </li>
                                     </ul>
                                     <button disabled type="button" class="btn btn-lg btn-block btn-primary">
@@ -107,11 +103,6 @@
                 <div class="row m-3">
 
                     <div class="col-md-6 m-auto">
-{{--                        <h4 class="mb-1">--}}
-{{--                            @foreach (json_decode(Auth::user()->std) as $std)--}}
-{{--                                <small class="badge badge-primary">{{ str_replace('_', ' ', $std) }}</small>--}}
-{{--                            @endforeach--}}
-{{--                        </h4>--}}
                         @if(!empty($subscription))
                             <p><strong>Your Plan {{$subscription->status == 'active' ? 'Renewal':'End'}} On
                                     : </strong> {{ !empty($subscription) ? date('d-m-Y',strtotime($subscription->end_date)):'' }}
@@ -121,14 +112,25 @@
                             @endif
                         @endif
                         <div class="card p-3 box-shadow mt-3">
+                            @php
+                                $displayedStandards = [];
+                            @endphp
                             @foreach($topicData as $topicItem)
-                                <h4><small class="badge badge-primary">{{ str_replace('_', ' ', $topicItem['std']) }}</small></h4>
+                                @if(!in_array($topicItem['std'], $displayedStandards))
+                                    @php
+                                        $displayedStandards[] = $topicItem['std'];
+                                    @endphp
+                                    <h4><small
+                                            class="badge badge-primary">{{ str_replace('_', ' ', $topicItem['std']) }}</small>
+                                    </h4>
+                                @endif
+
                                 <div class="progress-group mb-4">
                                     {{$topicItem['title']}}
                                     <span class="float-right">
-                                        <b>{{$topicItem['attempted_questions']}}</b>/
-                                        {{$topicItem['total_questions']}}
-                                    </span>
+            <b>{{$topicItem['attempted_questions']}}</b>/
+            {{$topicItem['total_questions']}}
+        </span>
                                     <div class="progress progress-md">
                                         @if($topicItem['total_questions'] > 0)
                                             <div class="progress-bar bg-success"

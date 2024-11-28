@@ -126,7 +126,7 @@
             $('#imageContainer').empty();
 
             $.ajax({
-                url: baseUrl+ '/question/details',
+                url: '{{env('AJAX_URL')}}'+ '/question/details',
                 type: 'GET',
                 data: { id: rowId },
                 success: function (response) {
@@ -138,10 +138,9 @@
                     $('#imageContainer').empty();
 
                     if (response.images && response.images.length > 0) {
-                        console.log('test----'+response.images.length);
+                        const AJAX_URL = "{{ env('AJAX_URL') }}";
                         response.images.forEach(function (image) {
-                            const imageUrl = `${baseUrl}/storage/images/${image.image_name}`;
-
+                            const imageUrl = `${AJAX_URL}/storage/images/${image.image_name}`;
                             $('#imageContainer').append(
                                 `<div style="display: inline-block; text-align: center; margin: 5px;">
                                      <img src="${imageUrl}" alt="${image.type}" class="img-thumbnail image-clickable" style="max-width: 100px; cursor: pointer;" data-image-url="${imageUrl}">

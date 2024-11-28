@@ -252,6 +252,7 @@
 
         .popthumb {
             cursor: pointer;
+            width: 100%;
         }
         .popoverlay {
             display: none;
@@ -625,7 +626,11 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             $('#question-code').html(questionData.code);
-            $('#question-difficulty').html(questionData.difficulty);
+
+            let difficulty = questionData.difficulty;
+            let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            $('#question-difficulty').html(modifiedDifficulty);
+
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 var baseUrl = '{{url('/')}}';
             $.each(questionData.images, function (imgIndex, image) {
@@ -817,6 +822,13 @@
                 collapseThreeSolution.classList.remove('show');
             }
 
+            // Calculate time taken for the current question
+            if (currentQuestionIndex < questions.length) {
+                const questionData = questions[currentQuestionIndex];
+                const timeTaken = (questionData.time * 60) - remainingTime;
+                totalTime += timeTaken;
+            }
+
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
@@ -824,7 +836,6 @@
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
-                console.log('next---');
                 const button = document.getElementById("question-next");
                 button.onclick = null;
                 button.style.cursor = "not-allowed";
@@ -837,6 +848,10 @@
 
         function previousQuestion() {
             if (currentQuestionIndex > 0) {
+                const questionData = questions[currentQuestionIndex];
+                const timeTaken = (questionData.time * 60) - remainingTime;
+                totalTime += timeTaken;
+
                 currentQuestionIndex--;
                 loadQuestion();
                 updateProgressBar();

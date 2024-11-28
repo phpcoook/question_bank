@@ -53,6 +53,7 @@ class StudentController extends Controller
                 $user->date_of_birth = $request->date_of_birth;
                 $user->email_verified_at = '2024-09-18';
                 $user->role = 'student';
+                $user->subscription_status = '0';
                 $user->save();
 
                 // Send the registration email
