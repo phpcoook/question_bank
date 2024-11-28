@@ -14,6 +14,9 @@ class CustomService
     {
         try {
             $user = Auth::user();
+            if($user->subscription_status){
+                return true;
+            }
             $subscription = Subscription::where('user_id', $user->id)
                 ->whereDate('end_date', '>', now())
                 ->first();

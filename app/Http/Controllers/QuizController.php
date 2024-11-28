@@ -32,7 +32,7 @@ class QuizController extends Controller
                     ->whereBetween('quiz.created_at', [$startDate, $endDate])
                     ->join('question', 'question.id', 'quiz.question_id')
                     ->sum('question.time');
-                $totalMinutes = $totalMinutes / 60;
+
                 if ($totalMinutes >= $time->no_of_questions) {
                     $validity = false;
                     $randomCombination = [];
