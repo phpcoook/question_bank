@@ -839,6 +839,7 @@
 
             // Handle report case
             if (response === 'report') {
+                $("#report_text").val('');
                 $('#reportModal').modal('show');
                 questionStatus[questionId].status = 'report';
                 return; // Skip sending data for a report
