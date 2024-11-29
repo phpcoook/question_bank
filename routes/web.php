@@ -119,6 +119,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
         Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
+        Route::post('/question/previous/ans', [QuizController::class, 'QuestionPreviousAns']);
 
         Route::get('/payment', [PaymentController::class, 'index']);
         Route::get('/payment/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->name('payment.createCheckoutSession');

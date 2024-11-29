@@ -252,7 +252,8 @@
 
         .popthumb {
             cursor: pointer;
-            width: 100%;
+            object-fit: contain;
+            border: 1px solid  rgb(206,206,206);
         }
         .popoverlay {
             display: none;
@@ -279,6 +280,59 @@
             cursor: pointer;
         }
     </style>
+    <style>
+        .question-box-progress{
+            position: relative;
+        }
+        .progress-box {
+            position: absolute;
+            top: 45px;
+            left: 40px;
+        }
+        .progress-box li {
+            border: none !important;
+        }
+        .progress-box li:last-child {
+            display: none;
+        }
+        span.progress-circle {
+            width: 45px;
+            height: 45px;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+        .progress-circle p {
+            margin: 0;
+            font-size: 20px;
+            color: #222;
+            font-weight: 900;
+        }
+        .progress-line {
+            border-left: 3px dashed #000;
+            width: 5px;
+            display: block;
+            height: 30px;
+            margin: 0 auto;
+        }
+        .progress-circle.answer-correct p {
+            color: #28a745;
+        }
+        .progress-circle.answer-wrong p {
+            color: #C10505;
+        }
+        .progress-circle.answer-correct {
+            background-color: #c8e7a7;
+            border-color: #28a745;
+        }
+        .progress-circle.answer-wrong {
+            background-color: #f08d8d;
+            border-color: #C10505;
+        }
+    </style>
     <script>
         function loadPopup() {
             const popthumbs = document.querySelectorAll('.popthumb');
@@ -300,7 +354,6 @@
                 }
             };
         }
-
     </script>
 @endsection
 @section('content')
@@ -339,7 +392,7 @@
         @endif
 
         <section class="content m-2">
-            <div class="card card-primary text-center">
+            <div class="card card-primary text-center question-box-progress">
                 <div class="container">
                     @if(!empty($randomCombination))
                         <div class="form-wizard" style="display: none;">
@@ -498,7 +551,7 @@
                         @endif
                     @endif
 
-                    @if(!empty($question['solution_image']))
+                    @if(Auth::user()->subscription_status)
                         <div class="d-flex justify-content-lg-start p-4" id="accordion">
                             <div class="card card-success solution-question">
                                 <div class="card-header bg-success">
@@ -519,6 +572,22 @@
                         </div>
                     @endif
                 </div>
+
+                    <div class="question-progress-view" id="question-progress-view">
+                        <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
+                            role="menu" data-accordion="false">
+                            @foreach ($randomCombination as $item)
+                                <li class="nav-item">
+                                    <span class="progress-circle id=" item-{{$item['id']}}">
+                                    <p>{{ $loop->index + 1 }}</p>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span class="progress-line"></span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
 
                 <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
                     <div class="question-answer">
@@ -719,7 +788,30 @@
             document.getElementById('wrong-total-count').innerText = totalWrong;
         }
 
+        function getpreviousAns(questions) {
+            console.log('test---');
+            $.ajax({
+                url: '{{ env('AJAX_URL') }}' + '/question/previous/ans',
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    'question': questions,
+                },
+                success: function (result) {
+                    if(result.html) {
+                        $('.question-progress-view').html(result.html);
+                        console.log('Success');
+                    } else {
+                        console.log('No HTML returned.');
+                    }
+                },
+                error: function (error) {
+                    toastr.error('Not Reported! Something went Wrong.');
+                }
+            });
+        }
         function handleAnswer(response) {
+
             const questionData = questions[currentQuestionIndex];
             const questionId = questionData.id;
 
@@ -788,6 +880,8 @@
                     nextQuestion();
                 });
 
+
+            getpreviousAns(questions);
             updateTotalCounts();
             loadPopup();
         }
@@ -879,6 +973,7 @@
                 lastLi.classList.add('active');
             }
             document.getElementById('totalTime').style.display = 'block';
+            document.getElementById('question-progress-view').style.display = 'none'
             document.getElementById('images').innerHTML = '';
 
             document.getElementById('question-code-box').innerHTML = '';

@@ -106,7 +106,6 @@ class QuizController extends Controller
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-
             return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
@@ -286,6 +285,48 @@ class QuizController extends Controller
             } else {
                 return response()->json(['success' => false]);
             }
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function QuestionPreviousAns(Request $request)
+    {
+        try {
+            $quizData = '';
+            $html = '<ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview" role="menu" data-accordion="false">';
+
+            foreach ($request->question as $index=>$question) {
+                $questionId = $question['id'];
+                $quizData = Quiz::where('user_id', Auth::user()->id)->where('question_id',$questionId)->first();
+                if($quizData){
+                    $class = 'answer-wrong';
+                    if($quizData->answer == 'correct'){
+                        $class = 'answer-correct';
+                    }
+                    $html .= '<li class="nav-item">
+                    <span class="progress-circle '.$class.'" id="item-' . $question['id'] . '">
+                        <p>' . ($index + 1) . '</p>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="progress-line"></span>
+                  </li>';
+                }else{
+                    $html .= '<li class="nav-item">
+                    <span class="progress-circle" id="item-' . $question['id'] . '">
+                        <p>' . ($index + 1) . '</p>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="progress-line"></span>
+                  </li>';
+                }
+
+            }
+            $html .= '</ul>';
+            return response()->json(['html' => $html]);
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             return response()->json(['success' => false]);
