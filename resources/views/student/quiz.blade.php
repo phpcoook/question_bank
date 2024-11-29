@@ -240,7 +240,7 @@
         }
 
         .question-answer {
-            margin-left: 7rem;
+            margin-left: 5.5rem;
         }
 
         .solution-question {
@@ -287,7 +287,7 @@
         .progress-box {
             position: absolute;
             top: 45px;
-            left: 40px;
+            left: 10px;
         }
         .progress-box li {
             border: none !important;
