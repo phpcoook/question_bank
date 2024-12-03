@@ -41,6 +41,37 @@
             list-style: none;
         }
     </style>
+    <style>
+        .popthumb {
+            cursor: pointer;
+            object-fit: contain;
+            border: 1px solid  rgb(206,206,206);
+        }
+        .popoverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .popoverlay img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .popclose {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
     @yield('page-style')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -51,7 +82,6 @@
 
     <!-- Menu -->
 @include('layouts.menu')
-
     <!-- Content -->
     @yield('content')
 
@@ -106,7 +136,32 @@
 <!-- jquery validation -->
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="{{url('assets/plugins/toastr/toastr.min.js')}}"></script>
-@yield('page-script')
 
+@yield('page-script')
+<script>
+    $('.popthumb').on('click', function () {
+        loadPopup()
+    });
+    function loadPopup() {
+        const popthumbs = document.querySelectorAll('.popthumb');
+        const popoverlay = document.getElementById('popoverlay');
+        const popupImage = document.getElementById('popupImage');
+        const popcloseBtn = document.getElementById('popcloseBtn');
+        popthumbs.forEach(popthumb => {
+            popthumb.onclick = function() {
+                popoverlay.style.display = "flex";
+                popupImage.src = popthumb.src.replace("-popthumb", "");
+            };
+        });
+        popcloseBtn.onclick = function() {
+            popoverlay.style.display = "none";
+        };
+        popoverlay.onclick = function(event) {
+            if (event.target === popoverlay) {
+                popoverlay.style.display = "none";
+            }
+        };
+    }
+</script>
 </body>
 </html>

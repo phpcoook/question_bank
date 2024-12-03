@@ -157,4 +157,33 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+            $("#time-add-form").validate({
+                rules: {
+                    time: {
+                        required: true,
+                        min: 10,
+                    },
+                },
+                messages: {
+                    time: {
+                        required: "Please enter the Time",
+                        min: "The time must be at least 10",
+                    },
+                },
+                errorElement: 'div',
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+    </script>
 @endsection

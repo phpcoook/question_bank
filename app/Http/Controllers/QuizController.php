@@ -280,6 +280,9 @@ class QuizController extends Controller
                 ]
 
             );
+
+            Question::where('id', $request->question_id)->update(['reported' => '1']);
+
             if ($report) {
                 return response()->json(['success' => true]);
             } else {

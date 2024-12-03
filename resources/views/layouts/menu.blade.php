@@ -93,11 +93,6 @@
                             &nbsp;<p>Start Quiz</p>
                         </a>
 
-                        <a href="{{ route('student.wrong-question') }}"
-                           class="nav-link {{ request()->routeIs('student.wrong-question') ? 'active' : '' }}">
-                            <i class="fas fa-times-circle nav-icon " style=" font-size: larger; "></i>
-                            &nbsp;<p>Wrong Question</p>
-                        </a>
                         <a href="{{ url('/student/previous-quiz') }}"
                            class="nav-link {{ request()->is('/student/previous-quiz') ? 'active' : '' }}">
                             <i class="far fa-arrow-alt-circle-left" style=" font-size: larger; "></i>

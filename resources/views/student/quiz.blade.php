@@ -244,40 +244,10 @@
         }
 
         .solution-question {
-            max-width: 50%;
+            max-width: 100%;
         }
         .content .container {
             max-width: 1024px;
-        }
-
-        .popthumb {
-            cursor: pointer;
-            object-fit: contain;
-            border: 1px solid  rgb(206,206,206);
-        }
-        .popoverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
-        .popoverlay img {
-            max-width: 80%;
-            max-height: 80%;
-        }
-        .popclose {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 30px;
-            color: white;
-            cursor: pointer;
         }
     </style>
     <style>
@@ -333,28 +303,6 @@
             border-color: #C10505;
         }
     </style>
-    <script>
-        function loadPopup() {
-            const popthumbs = document.querySelectorAll('.popthumb');
-            const popoverlay = document.getElementById('popoverlay');
-            const popupImage = document.getElementById('popupImage');
-            const popcloseBtn = document.getElementById('popcloseBtn');
-            popthumbs.forEach(popthumb => {
-                popthumb.onclick = function() {
-                    popoverlay.style.display = "flex";
-                    popupImage.src = popthumb.src.replace("-popthumb", "");
-                };
-            });
-            popcloseBtn.onclick = function() {
-                popoverlay.style.display = "none";
-            };
-            popoverlay.onclick = function(event) {
-                if (event.target === popoverlay) {
-                    popoverlay.style.display = "none";
-                }
-            };
-        }
-    </script>
 @endsection
 @section('content')
     <div class="popoverlay" id="popoverlay">
@@ -550,27 +498,6 @@
 
                         @endif
                     @endif
-
-                    @if(Auth::user()->subscription_status)
-                        <div class="d-flex justify-content-lg-start p-4" id="accordion">
-                            <div class="card card-success solution-question">
-                                <div class="card-header bg-success">
-                                    <h4 class="card-title w-100">
-                                        <a class="d-block w-100 text-white collapsed px-4"
-                                           style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
-                                           data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
-                                            See Solution
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
-                                    <div class="card-body images" id="solution_images">
-                                        No Solution Available for this Question
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
                 </div>
 
                     <div class="question-progress-view" id="question-progress-view">
@@ -594,6 +521,26 @@
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
                         @endif
+                            @if(Auth::user()->subscription_status)
+                                <div id="accordion">
+                                    <div class="card card-success solution-question">
+                                        <div class="card-header bg-success">
+                                            <h4 class="card-title w-100">
+                                                <a class="d-block w-100 text-white collapsed px-4"
+                                                   style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
+                                                   data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
+                                                    See Solution
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
+                                            <div class="card-body images" id="solution_images">
+                                                No Solution Available for this Question
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @if(!empty($question['answer_image']))
                             <div id="accordions">
                                 <div class="card card-success mb-0">
@@ -601,7 +548,7 @@
                                         <h4 class="card-title w-100">
                                             <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
                                                href="#collapseThrees" aria-expanded="false">
-                                                See Answer
+                                                See Working Out
                                             </a>
                                         </h4>
                                     </div>
@@ -742,7 +689,7 @@
             }
 
             startTimer(questionData.time); // Start the timer for the current question
-            loadPopup()
+
         }
 
         function sendReport() {
@@ -942,6 +889,17 @@
 
 
         function previousQuestion() {
+
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+
+            if (collapseThrees) {
+                collapseThrees.classList.remove('show');
+            }
+            if (collapseThreeSolution) {
+                collapseThreeSolution.classList.remove('show');
+            }
+
             if (currentQuestionIndex > 0) {
                 const questionData = questions[currentQuestionIndex];
                 const timeTaken = (questionData.time * 60) - remainingTime;
@@ -954,7 +912,6 @@
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
                 // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
 
-                console.log('previous---');
                 const button = document.getElementById("question-next");
                 button.onclick = questionNext;
                 button.style.cursor = "pointer";

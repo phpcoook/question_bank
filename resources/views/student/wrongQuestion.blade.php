@@ -12,6 +12,10 @@
     </style>
 @endsection
 @section('content')
+    <div class="popoverlay" id="popoverlay">
+        <span class="popclose" id="popcloseBtn">&times;</span>
+        <img src="" id="popupImage" alt="Popup Image">
+    </div>
     <div class="content-wrapper">
         <div class="content-header">
             <div class="container-fluid">
@@ -59,14 +63,14 @@
                             <div class="question mb-4">
                                 <h4>Question Code: {{ $question->code }}</h4>
                                 <p>Difficulty: {{ $question->difficulty }}</p>
-                                <p>Time: {{ $question->time }} minute</p>
+                                <p>Time: {{ $question->time / 60 }} minute</p>
                                 <h5>Images:</h5>
                                 <div class="images d-flex flex-wrap">
                                     @if($question->quizImage->isNotEmpty())
                                         @foreach ($question->quizImage as $image)
                                             <div class="input_image_div">
                                                 <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image"
-                                                     class="input_image">
+                                                     class="input_image popthumb">
                                             </div>
                                         @endforeach
                                     @else
