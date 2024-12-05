@@ -246,6 +246,7 @@
         .solution-question {
             max-width: 100%;
         }
+
         .content .container {
             max-width: 1024px;
         }
@@ -254,17 +255,21 @@
         .question-box-progress {
             position: relative;
         }
+
         .progress-box {
             position: absolute;
             top: 45px;
             left: 10px;
         }
+
         .progress-box li {
             border: none !important;
         }
+
         .progress-box li:last-child {
             display: none;
         }
+
         span.progress-circle {
             width: 45px;
             height: 45px;
@@ -274,13 +279,16 @@
             justify-content: center;
             align-items: center;
             margin: 0 auto;
+            cursor: pointer;
         }
+
         .progress-circle p {
             margin: 0;
             font-size: 20px;
             color: #222;
             font-weight: 900;
         }
+
         .progress-line {
             border-left: 3px dashed #000;
             width: 5px;
@@ -288,16 +296,20 @@
             height: 30px;
             margin: 0 auto;
         }
+
         .progress-circle.answer-correct p {
             color: #28a745;
         }
+
         .progress-circle.answer-wrong p {
             color: #C10505;
         }
+
         .progress-circle.answer-correct {
             background-color: #c8e7a7;
             border-color: #28a745;
         }
+
         .progress-circle.answer-wrong {
             background-color: #f08d8d;
             border-color: #C10505;
@@ -458,19 +470,19 @@
                             <div class="d-flex justify-content-center quiz-info-total">
                                 <div class="correct-total-box align-items-center">
                                     <div class="correct-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                            class="font-weight-bold" id="correct-total-count">0</h1></div>
+                                                class="font-weight-bold" id="correct-total-count">0</h1></div>
                                     <div
-                                        class="d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
-                                        style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
+                                            class="d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
+                                            style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
                                         Correct
                                     </div>
                                 </div>
                                 <div class="wrong-total-box align-items-center">
                                     <div class="wrong-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                            class="font-weight-bold" id="wrong-total-count">0</h1></div>
+                                                class="font-weight-bold" id="wrong-total-count">0</h1></div>
                                     <div
-                                        class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
-                                        style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
+                                            class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
+                                            style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
                                         Wrong
                                     </div>
                                 </div>
@@ -503,8 +515,8 @@
                 <div class="question-progress-view" id="question-progress-view">
                     <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
                         role="menu" data-accordion="false">
-                        @foreach ($randomCombination as $item)
-                            <li class="nav-item">
+                        @foreach ($randomCombination as $index=>$item)
+                            <li onclick="loadSkippedQuestion([{{$index}}])" class="nav-item">
                                 <span class="progress-circle id=" item-{{$item['id']}}">
                                 <p>{{ $loop->index + 1 }}</p>
                                 </span>
@@ -573,7 +585,7 @@
 @endsection
 @section('page-script')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.popthumb').on('click', function () {
                 loadPopup();
             });
@@ -764,6 +776,7 @@
                 }
             });
         }
+
         function handleAnswer(response) {
 
             const questionData = questions[currentQuestionIndex];
@@ -968,6 +981,61 @@
             document.getElementById('accordion').innerHTML = '';
             document.getElementById('accordions').innerHTML = '';
         }
+
+        function loadSkippedQuestion(indexes) {
+
+            indexes.forEach(function (index) {
+                const questionData = questions[index];
+                $('#question-code').html(questionData.code);
+                let difficulty = questionData.difficulty;
+                let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+                $('#question-difficulty').html(modifiedDifficulty);
+                let imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
+                var baseUrl = '{{url('/')}}';
+                $.each(questionData.images, function (imgIndex, image) {
+                    imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
+                });
+                imagesHtml += '</div>';
+                document.getElementById('images').innerHTML = imagesHtml;
+
+                document.getElementById('buttons').innerHTML = `
+            <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
+                <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                    Correct
+                </div>
+                <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                    Wrong
+                </div>
+            </div>
+        `;
+
+                document.getElementById('question-image').innerHTML = `
+            <div onclick="handleAnswer('report')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
+                <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
+            </div>
+        `;
+
+                if (questionData.solutionImages.length > 0) {
+                    var solutionImagesHtml = '<div class="row">';
+                    $.each(questionData.solutionImages, function (imgIndex, image) {
+                        solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                    });
+                    solutionImagesHtml += '</div>';
+                    document.getElementById('solution_images').innerHTML = solutionImagesHtml;
+                }
+
+                if (questionData.answerImages.length > 0) {
+                    var answerImagesHtml = '<div class="row mb-4">';
+                    $.each(questionData.answerImages, function (imgIndex, image) {
+                        answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                    });
+                    answerImagesHtml += '</div>';
+                    document.getElementById('answer_images').innerHTML = answerImagesHtml;
+                }
+                startTimer(questionData.time);
+            });
+        }
+
 
         window.onload = loadQuestion;
     </script>

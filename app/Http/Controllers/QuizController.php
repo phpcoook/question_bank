@@ -308,7 +308,7 @@ class QuizController extends Controller
                     if($quizData->answer == 'correct'){
                         $class = 'answer-correct';
                     }
-                    $html .= '<li class="nav-item">
+                    $html .= '<li onclick="loadSkippedQuestion([{{$index + 1}}])" class="nav-item">
                     <span class="progress-circle '.$class.'" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
@@ -317,7 +317,7 @@ class QuizController extends Controller
                     <span class="progress-line"></span>
                   </li>';
                 }else{
-                    $html .= '<li class="nav-item">
+                    $html .= '<li onclick="loadSkippedQuestion([{{$index + 1}}])" class="nav-item">
                     <span class="progress-circle" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
