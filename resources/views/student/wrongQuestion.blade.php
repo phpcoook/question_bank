@@ -10,6 +10,23 @@
             max-width: 100%;
         }
     </style>
+    <style>
+        .question-list-box {
+            display: grid;
+            grid-template-columns: 30% 70%;
+        }
+        .question-list-box-img {
+            width: 100%;
+            max-width: 100%;
+        }
+        .question-list-box-img img{
+            width: 100%;
+            border-radius: 5px;
+        }
+        .question-list-box h4 {
+            font-size: 26px;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="popoverlay" id="popoverlay">
@@ -60,15 +77,16 @@
                 <div class="col-sm-12" id="byQuiz">
                     @if($questions->isNotEmpty())
                         @foreach ($questions as $question)
-                            <div class="question mb-4">
-                                <h4>Question Code: {{ $question->code }}</h4>
-                                <p>Difficulty: {{ $question->difficulty }}</p>
-                                <p>Time: {{ $question->time / 60 }} minute</p>
-                                <h5>Images:</h5>
+                            <div class="question mb-4 question-list-box">
+                                <div>
+                                    <h4 class="mb-4"><b>Question Code : </b> {{ $question->code }}</h4>
+                                <p><b>Difficulty : </b> {{ $question->difficulty }}</p>
+                                    <p><b>Time : </b> {{ $question->time / 60 }} minute</p>
+                                </div>
                                 <div class="images d-flex flex-wrap">
                                     @if($question->quizImage->isNotEmpty())
                                         @foreach ($question->quizImage as $image)
-                                            <div class="input_image_div">
+                                            <div class="input_image_div question-list-box-img">
                                                 <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image"
                                                      class="input_image popthumb">
                                             </div>
@@ -78,7 +96,6 @@
                                     @endif
                                 </div>
                             </div>
-                            <hr>
                         @endforeach
 
                         <div class="d-flex justify-content-center">

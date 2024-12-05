@@ -55,6 +55,27 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="ResoleveModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Report Question</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="questionID" id="QuestionID">
+                        <p>message</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="cancelModal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="submitModal">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -65,16 +86,51 @@
             $('#reports-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{env('AJAX_URL')}}' +'/questions/report',
+                ajax: '{{env('AJAX_URL')}}' + '/questions/report',
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'report_text', name: 'report_text' },
-                    { data: 'user_name', name: 'user_name' },
-                    { data: 'question_id', name: 'question_id' },
-                    { data: 'actions', name: 'actions', orderable: false, searchable: false },
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'report_text', name: 'report_text'},
+                    {data: 'user_name', name: 'user_name'},
+                    {data: 'question_id', name: 'question_id'},
+                    {data: 'actions', name: 'actions', orderable: false, searchable: false},
                 ],
             });
         });
 
+
+        $(document).on('click', '.Resolve-details', function () {
+            let dataId = $(this).data('id');
+            console.log('test' + dataId);
+            $('#ResoleveModal').modal('show');
+            $('#QuestionID').val(dataId);
+        });
+
+        // Handle the submit button click inside the modal
+        $(document).on('click', '#submitModal', function () {
+            var questionID = $('#QuestionID').val();
+            console.log('test---' + questionID);
+            var data = {
+                questionID: questionID
+            };
+
+            $.ajax({
+                url: '{{env('AJAX_URL')}}' + '/report/resolve',
+                type: 'GET',
+                data: data,
+                success: function (response) {
+                    $('#ResoleveModal').modal('hide');
+                },
+                error: function (error) {
+                    // Handle error
+                    console.error(error);
+                    alert('Something went wrong!');
+                }
+            });
+        });
+
+        // Handle cancel button click
+        $(document).on('click', '#cancelModal', function () {
+            $('#ResoleveModal').modal('hide');
+        });
     </script>
 @endsection

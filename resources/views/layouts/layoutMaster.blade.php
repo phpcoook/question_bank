@@ -139,9 +139,6 @@
 
 @yield('page-script')
 <script>
-    $('.popthumb').on('click', function () {
-        loadPopup()
-    });
     function loadPopup() {
         const popthumbs = document.querySelectorAll('.popthumb');
         const popoverlay = document.getElementById('popoverlay');
@@ -162,6 +159,9 @@
             }
         };
     }
+    $('.popthumb').on('click', function () {
+        loadPopup()
+    });
 </script>
 </body>
 </html>

@@ -70,6 +70,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('questions/data', [QuestionBanController::class, 'getQuestionsData'])->name('questions.data');
 
         Route::get('questions/report', [QuestionBanController::class, 'report'])->name('report');
+        Route::get('/report/resolve', [QuestionBanController::class, 'ReportResolve'])->name('report.resolve');
 
 // student
         Route::get('/create/student', [StudentController::class, 'create'])->name('create.student');
@@ -118,7 +119,6 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['student'])->group(function () {
         Route::get('/student/dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::post('/student/start-quiz', [QuizController::class, 'startQuiz'])->name('student.start-quiz');
-        Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);;
         Route::post('/question/previous/ans', [QuizController::class, 'QuestionPreviousAns']);
 
         Route::get('/payment', [PaymentController::class, 'index']);
@@ -128,8 +128,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/cancel-subscription', [PaymentController::class, 'cancelSubscription']);
         Route::post('/webhook', [PaymentController::class, 'handleWebHook']);
 
-        Route::post('/student/save-quiz',
-            [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+        Route::post('/student/save-quiz', [QuizController::class, 'saveQuiz'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
         Route::get('/student/wrong/question/{quiz_id?}',
             [StudentController::class, 'wrongQuestion'])->name('student.wrong-question');
         Route::post('/question-report', [QuizController::class, 'reportQuestion']);
@@ -146,7 +145,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/student/start-quiz/time', [QuizController::class, 'addTime'])->name('student.start-quiz.addtime');
     Route::middleware(['tutor'])->group(function () {
         Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
-        Route::get('/question/details', [TutorController::class, 'QuestionDetails'])->name('question.details');
+        Route::get('/question/details/{id}', [TutorController::class, 'QuestionDetails'])->name('question.details');
     });
 
     // question

@@ -178,7 +178,7 @@ class TutorController extends Controller
                         return $subtopicTitle ?: '<small class="badge badge-secondary">Unknown</small>';
                     })
                     ->addColumn('actions', function ($row) {
-                        return '<button class="btn btn-primary btn-sm view-details" data-id="' . $row->id . '">View</button>';
+                        return '<a href="' . route('question.details', $row->id) . '" class="btn btn-primary btn-sm">View</a>';
                     })
                     ->rawColumns(['topic_id', 'std', 'subtopic_id','actions'])
                     ->make(true);
@@ -190,21 +190,15 @@ class TutorController extends Controller
         }
     }
 
-    public function QuestionDetails(Request $request)
+    public function QuestionDetails($id)
     {
         try {
-            $question = Question::find($request->id);
-
+            $question = Question::find($id);
             if (!$question) {
-                return response()->json(['error' => 'Question not found'], 404);
+                return redirect()->route('question.details')->with('error', 'Question not found');
             }
-
-            $images = QuestionImage::where('question_id', $request->id)->get(['image_name', 'type']);
-
-            return response()->json([
-                'details' => $question->details,
-                'images' => $images
-            ]);
+            $images = QuestionImage::where('question_id', $id)->get(['image_name', 'type']);
+            return view('tutor.question-details', compact('question', 'images'));
         } catch (\Exception $e) {
             Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
             return response()->json(['error' => 'Something went wrong!'], 500);

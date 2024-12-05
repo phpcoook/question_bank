@@ -401,7 +401,8 @@ class QuestionBanController extends Controller
                     })
                     ->addColumn('actions', function ($report) {
                         $editButton = '<a href="' . route('question.edit',
-                                $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>';
+                                $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>
+                            <button class="btn btn-primary btn-sm Resolve-details" data-id="' . $report->question_id . '">Resolve</button>';
                         return $editButton;
                     })
                     ->rawColumns(['actions'])
@@ -412,6 +413,18 @@ class QuestionBanController extends Controller
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
+        }
+    }
+
+    public function ReportResolve(Request $request)
+    {
+        try {
+            Question::where('id', $request->questionID)->update(['reported' => '0']);
+            Reported::where('question_id',$request->questionID)->delete();
+            return response()->json(['success' => 'Report resolved successfully!'], 200);
+        } catch (\Exception $e) {
+            Log::error('In File: ' . $e->getFile() . ' - Line: ' . $e->getLine() . ' - Message: ' . $e->getMessage() . ' - At Time: ' . now());
+            return response()->json(['error' => 'Something went wrong!'], 500);
         }
     }
 }

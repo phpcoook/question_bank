@@ -251,7 +251,7 @@
         }
     </style>
     <style>
-        .question-box-progress{
+        .question-box-progress {
             position: relative;
         }
         .progress-box {
@@ -500,47 +500,48 @@
                     @endif
                 </div>
 
-                    <div class="question-progress-view" id="question-progress-view">
-                        <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
-                            role="menu" data-accordion="false">
-                            @foreach ($randomCombination as $item)
-                                <li class="nav-item">
-                                    <span class="progress-circle id=" item-{{$item['id']}}">
-                                    <p>{{ $loop->index + 1 }}</p>
-                                    </span>
-                                </li>
-                                <li>
-                                    <span class="progress-line"></span>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                <div class="question-progress-view" id="question-progress-view">
+                    <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
+                        role="menu" data-accordion="false">
+                        @foreach ($randomCombination as $item)
+                            <li class="nav-item">
+                                <span class="progress-circle id=" item-{{$item['id']}}">
+                                <p>{{ $loop->index + 1 }}</p>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="progress-line"></span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
 
                 <div class="imgbox-bottom-btns mb-5 mt-2" id="imgbox-bottom-btns">
                     <div class="question-answer">
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
                         @endif
-                            @if(Auth::user()->subscription_status)
-                                <div id="accordion">
-                                    <div class="card card-success solution-question">
-                                        <div class="card-header bg-success">
-                                            <h4 class="card-title w-100">
-                                                <a class="d-block w-100 text-white collapsed px-4"
-                                                   style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
-                                                   data-toggle="collapse" href="#collapseThreeSolution" aria-expanded="false">
-                                                    See Solution
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
-                                            <div class="card-body images" id="solution_images">
-                                                No Solution Available for this Question
-                                            </div>
+                        @if(Auth::user()->subscription_status)
+                            <div id="accordion">
+                                <div class="card card-success solution-question">
+                                    <div class="card-header bg-success">
+                                        <h4 class="card-title w-100">
+                                            <a class="d-block w-100 text-white collapsed px-4"
+                                               style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
+                                               data-toggle="collapse" href="#collapseThreeSolution"
+                                               aria-expanded="false">
+                                                See Solution
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
+                                        <div class="card-body images" id="solution_images">
+                                            No Solution Available for this Question
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            </div>
+                        @endif
                         @if(!empty($question['answer_image']))
                             <div id="accordions">
                                 <div class="card card-success mb-0">
@@ -572,6 +573,11 @@
 @endsection
 @section('page-script')
     <script>
+        $(document).ready(function() {
+            $('.popthumb').on('click', function () {
+                loadPopup();
+            });
+        });
         var user_id = 0;
         var totalTime = 0;
         const questionsrow = [
@@ -621,6 +627,9 @@
                 remainingTime--;
                 updateTimerDisplay();
             }, 1000);
+            $('.popthumb').on('click', function () {
+                loadPopup();
+            });
         }
 
 
@@ -648,7 +657,7 @@
             $('#question-difficulty').html(modifiedDifficulty);
 
             var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-                var baseUrl = '{{url('/')}}';
+            var baseUrl = '{{url('/')}}';
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
             });
@@ -736,7 +745,6 @@
         }
 
         function getpreviousAns(questions) {
-            console.log('test---');
             $.ajax({
                 url: '{{ env('AJAX_URL') }}' + '/question/previous/ans',
                 type: 'POST',
@@ -745,9 +753,8 @@
                     'question': questions,
                 },
                 success: function (result) {
-                    if(result.html) {
+                    if (result.html) {
                         $('.question-progress-view').html(result.html);
-                        console.log('Success');
                     } else {
                         console.log('No HTML returned.');
                     }
@@ -764,7 +771,7 @@
 
             // Ensure questionStatus exists for this question
             if (!questionStatus[questionId]) {
-                questionStatus[questionId] = { correct: 0, wrong: 0, status: '' };
+                questionStatus[questionId] = {correct: 0, wrong: 0, status: ''};
             }
 
             const currentStatus = questionStatus[questionId].status;
@@ -847,7 +854,6 @@
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 showTotalTime();
             }
@@ -857,67 +863,75 @@
             const collapseThrees = document.getElementById('collapseThrees');
             const collapseThreeSolution = document.getElementById('collapseThreeSolution');
 
-            if (collapseThrees) {
-                collapseThrees.classList.remove('show');
-            }
-            if (collapseThreeSolution) {
-                collapseThreeSolution.classList.remove('show');
-            }
+            if (collapseThrees) collapseThrees.classList.remove('show');
+            if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
-            // Calculate time taken for the current question
-            if (currentQuestionIndex < questions.length) {
+            if (currentQuestionIndex < questions.length - 1) {
+                // Calculate time taken
                 const questionData = questions[currentQuestionIndex];
                 const timeTaken = (questionData.time * 60) - remainingTime;
                 totalTime += timeTaken;
-            }
 
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
+                currentQuestionIndex++; // Move to the next question
                 loadQuestion();
-                updateProgressBar(); // Update progress bar on next
+                updateProgressBar();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
             } else {
                 const button = document.getElementById("question-next");
-                button.onclick = null;
                 button.style.cursor = "not-allowed";
                 button.style.opacity = "0.5";
                 button.style.pointerEvents = "none";
                 button.style.backgroundColor = "#d3d3d3";
+                console.log('Already at the last question.');
             }
-        }
 
+            // Update button states
+            updateButtonStates();
+        }
 
         function previousQuestion() {
 
+            const button = document.getElementById("question-next");
+            button.style.cursor = "pointer";
+            button.style.opacity = "1";
+            button.style.pointerEvents = "auto";
+            button.style.backgroundColor = "#C8E7A7";
+            button.style.Color = "#28a745";
             const collapseThrees = document.getElementById('collapseThrees');
             const collapseThreeSolution = document.getElementById('collapseThreeSolution');
 
-            if (collapseThrees) {
-                collapseThrees.classList.remove('show');
-            }
-            if (collapseThreeSolution) {
-                collapseThreeSolution.classList.remove('show');
-            }
+            if (collapseThrees) collapseThrees.classList.remove('show');
+            if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
             if (currentQuestionIndex > 0) {
+                // Calculate time taken
                 const questionData = questions[currentQuestionIndex];
                 const timeTaken = (questionData.time * 60) - remainingTime;
                 totalTime += timeTaken;
 
-                currentQuestionIndex--;
+                currentQuestionIndex--; // Move to the previous question
                 loadQuestion();
                 updateProgressBar();
 
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
-                // document.getElementById('count-question').innerText = currentQuestionIndex + 1;
 
-                const button = document.getElementById("question-next");
-                button.onclick = questionNext;
-                button.style.cursor = "pointer";
-                button.style.opacity = "1";
-                button.style.pointerEvents = "auto";
-                button.style.backgroundColor = "#C8E7A7";
+            } else {
+                console.log('Already at the first question.');
+            }
+
+            // Update button states
+            updateButtonStates();
+        }
+
+        function updateButtonStates() {
+            const nextButton = document.getElementById('next-button');
+            const previousButton = document.getElementById('previous-button');
+
+            if (nextButton) {
+                nextButton.disabled = currentQuestionIndex >= questions.length - 1;
+            }
+            if (previousButton) {
+                previousButton.disabled = currentQuestionIndex <= 0;
             }
         }
 
