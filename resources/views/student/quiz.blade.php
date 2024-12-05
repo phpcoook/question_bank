@@ -315,6 +315,12 @@
             border-color: #C10505;
         }
     </style>
+    <style>
+        .custom-btn-size {
+            max-width: 170px;
+            width: 170px;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="popoverlay" id="popoverlay">
@@ -422,12 +428,12 @@
                         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column"
                              id="nex-previous-btn">
                             <div onclick="questionNext()" id="question-next"
-                                 class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
+                                 class="custom-btn-size d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
                                  style="cursor: pointer; background: #C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
                                 Next
                             </div>
                             <div onclick="previousQuestion()" id="question-prev"
-                                 class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
+                                 class="custom-btn-size d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
                                  style="cursor: pointer; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
                                 Previous
                             </div>
@@ -470,19 +476,19 @@
                             <div class="d-flex justify-content-center quiz-info-total">
                                 <div class="correct-total-box align-items-center">
                                     <div class="correct-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                                class="font-weight-bold" id="correct-total-count">0</h1></div>
+                                            class="font-weight-bold" id="correct-total-count">0</h1></div>
                                     <div
-                                            class="d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
-                                            style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
+                                        class="custom-btn-size d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
+                                        style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
                                         Correct
                                     </div>
                                 </div>
-                                <div class="wrong-total-box align-items-center">
+                                <div class="custom-btn-size wrong-total-box align-items-center">
                                     <div class="wrong-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                                class="font-weight-bold" id="wrong-total-count">0</h1></div>
+                                            class="font-weight-bold" id="wrong-total-count">0</h1></div>
                                     <div
-                                            class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
-                                            style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
+                                        class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
+                                        style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
                                         Wrong
                                     </div>
                                 </div>
@@ -677,10 +683,10 @@
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
-            <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+            <div onclick="handleAnswer('correct')" class="custom-btn-size d-flex btn-success rounded-sm justify-content-center p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; color: #28a745 !important;">
                 Correct
             </div>
-            <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+            <div onclick="handleAnswer('wrong')" class="custom-btn-size d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
                 Wrong
             </div>
         </div>
@@ -756,13 +762,14 @@
             document.getElementById('wrong-total-count').innerText = totalWrong;
         }
 
-        function getpreviousAns(questions) {
+        function getpreviousAns(questions, quiz_id) {
             $.ajax({
                 url: '{{ env('AJAX_URL') }}' + '/question/previous/ans',
                 type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content'),
                     'question': questions,
+                    'quiz_id': quiz_id,
                 },
                 success: function (result) {
                     if (result.html) {
@@ -839,17 +846,19 @@
                         nextQuestion();
                         updateActiveStep();
                         updateProgressBar();
+
                     } else {
                         toastr.error('Something went wrong! Your answer was not saved.');
                     }
-                })
+                }).then((data) => {
+                    getpreviousAns(questions,'{{$quiz_id}}');
+            })
                 .catch((error) => {
                     console.error('Error:', error);
                     nextQuestion();
                 });
 
 
-            getpreviousAns(questions);
             updateTotalCounts();
             loadPopup();
         }
@@ -903,7 +912,6 @@
         }
 
         function previousQuestion() {
-
             const button = document.getElementById("question-next");
             button.style.cursor = "pointer";
             button.style.opacity = "1";

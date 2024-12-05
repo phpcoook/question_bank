@@ -302,13 +302,13 @@ class QuizController extends Controller
 
             foreach ($request->question as $index=>$question) {
                 $questionId = $question['id'];
-                $quizData = Quiz::where('user_id', Auth::user()->id)->where('question_id',$questionId)->first();
+                $quizData = Quiz::where('user_id', Auth::user()->id)->where('question_id',$questionId)->where('quiz_id',$request->quiz_id)->first();
                 if($quizData){
                     $class = 'answer-wrong';
                     if($quizData->answer == 'correct'){
                         $class = 'answer-correct';
                     }
-                    $html .= '<li onclick="loadSkippedQuestion([{{$index + 1}}])" class="nav-item">
+                    $html .= '<li onclick="loadSkippedQuestion(['.($index + 1).'])" class="nav-item">
                     <span class="progress-circle '.$class.'" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
@@ -317,7 +317,7 @@ class QuizController extends Controller
                     <span class="progress-line"></span>
                   </li>';
                 }else{
-                    $html .= '<li onclick="loadSkippedQuestion([{{$index + 1}}])" class="nav-item">
+                    $html .= '<li onclick="loadSkippedQuestion(['.($index + 1).'}])" class="nav-item">
                     <span class="progress-circle" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
