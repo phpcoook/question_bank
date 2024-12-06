@@ -321,6 +321,32 @@
             width: 170px;
         }
     </style>
+    <style>
+        /* Basic styling for the modal */
+        #skipModal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            z-index: 999;
+            height: 100%;
+            width: 100%;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .modal-buttons {
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            margin: 0 10px;
+        }
+    </style>
 @endsection
 @section('content')
     <div class="popoverlay" id="popoverlay">
@@ -429,12 +455,12 @@
                              id="nex-previous-btn">
                             <div onclick="questionNext()" id="question-next"
                                  class="custom-btn-size d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5"
-                                 style="cursor: pointer; background: #C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                                 style="cursor: pointer; background: #fff !important; font-weight: 600; width: fit-content; color: grey !important; border: 2px solid gray">
                                 Next
                             </div>
                             <div onclick="previousQuestion()" id="question-prev"
                                  class="custom-btn-size d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5"
-                                 style="cursor: pointer; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                                 style="cursor: pointer; color: #000; font-weight: 600; background-color: darkgrey !important;">
                                 Previous
                             </div>
                         </div>
@@ -518,10 +544,11 @@
                     @endif
                 </div>
 
+                <input type="hidden" id="question-skipp" value="{{ json_encode(array_map(fn($item, $index) => $index, $randomCombination, array_keys($randomCombination))) }}">
                 <div class="question-progress-view" id="question-progress-view">
                     <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
                         role="menu" data-accordion="false">
-                        @foreach ($randomCombination as $index=>$item)
+                    @foreach ($randomCombination as $index=>$item)
                             <li onclick="loadSkippedQuestion([{{$index}}])" class="nav-item">
                                 <span class="progress-circle id=" item-{{$item['id']}}">
                                 <p>{{ $loop->index + 1 }}</p>
@@ -583,6 +610,17 @@
                     @if(!empty($randomCombination))
                         <div class="buttons" id="buttons"></div>
                     @endif
+                </div>
+            </div>
+
+            <!-- Skip Modal -->
+            <div id="skipModal">
+                <div class="modal-content" style="margin:100px auto; width: 30%">
+                    <p>You have skipped some questions without answering. Do you want to attempt them now? Press 'Attempt Skipped Questions' to complete them or 'End Quiz' to finish.</p>
+                    <div class="modal-buttons">
+                        <button class=" btn btn-primary rounded-sm " id="skip-yes">Attempt Skipped Questions</button>
+                        <button class=" btn btn-danger rounded-sm " id="skip-no">End Quiz</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -785,6 +823,11 @@
         }
 
         function handleAnswer(response) {
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+
+            if (collapseThrees) collapseThrees.classList.remove('show');
+            if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
             const questionData = questions[currentQuestionIndex];
             const questionId = questionData.id;
@@ -846,7 +889,6 @@
                         nextQuestion();
                         updateActiveStep();
                         updateProgressBar();
-
                     } else {
                         toastr.error('Something went wrong! Your answer was not saved.');
                     }
@@ -871,13 +913,55 @@
             }
         }
 
+        function getSkippedModel() {
+            // Get the current skipp value from the input field
+            const skippValue = JSON.parse($('#question-skipp').val());
+            const updatedSkippValue = skippValue.filter(index => index !== currentQuestionIndex-1);
+            $('#question-skipp').val(JSON.stringify(updatedSkippValue));
+
+            const skippInput = document.getElementById('question-skipp');
+            let skippIndexes = JSON.parse(skippInput.value);
+
+            // Check if skippIndexes is not null and not empty
+            if (skippIndexes && Array.isArray(skippIndexes) && skippIndexes.length > 0) {
+                // Show modal to ask if the user wants to skip the current question
+                document.getElementById('skipModal').style.display = 'block';
+
+                // Handle the "Yes" button click
+                document.getElementById('skip-yes').addEventListener('click', function() {
+                    let minQuestionIndex = Math.min(...skippIndexes);
+                    loadSkippedQuestion([minQuestionIndex]  );
+                    document.getElementById('skipModal').style.display = 'none'; // Close the modal
+                });
+
+                // Handle the "No" button click
+                document.getElementById('skip-no').addEventListener('click', function() {
+                    document.getElementById('skipModal').style.display = 'none'; // Close the modal
+                    showTotalTime(); // Show the total time if they decide not to skip
+
+                });
+
+            } else {
+                // If the skippIndexes is empty or null, directly show the total time
+                showTotalTime();
+                console.log('The value is null or an empty array.');
+            }
+        }
+
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
+
+                // Get the current skipp value from the input field
+                console.log(currentQuestionIndex-1);
+                const skippValue = JSON.parse($('#question-skipp').val());
+                const updatedSkippValue = skippValue.filter(index => index !== currentQuestionIndex-1);
+                $('#question-skipp').val(JSON.stringify(updatedSkippValue));
+
             } else {
-                showTotalTime();
+                getSkippedModel()
             }
         }
 
@@ -888,7 +972,7 @@
             if (collapseThrees) collapseThrees.classList.remove('show');
             if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
-            if (currentQuestionIndex < questions.length - 1) {
+            if (currentQuestionIndex <= questions.length-2) {
                 // Calculate time taken
                 const questionData = questions[currentQuestionIndex];
                 const timeTaken = (questionData.time * 60) - remainingTime;
@@ -900,10 +984,8 @@
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
             } else {
                 const button = document.getElementById("question-next");
-                button.style.cursor = "not-allowed";
-                button.style.opacity = "0.5";
-                button.style.pointerEvents = "none";
-                button.style.backgroundColor = "#d3d3d3";
+                button.innerHTML = "Skip";
+                button.onclick = getSkippedModel;
                 console.log('Already at the last question.');
             }
 
@@ -913,11 +995,8 @@
 
         function previousQuestion() {
             const button = document.getElementById("question-next");
-            button.style.cursor = "pointer";
-            button.style.opacity = "1";
-            button.style.pointerEvents = "auto";
-            button.style.backgroundColor = "#C8E7A7";
-            button.style.Color = "#28a745";
+            button.innerHTML = "Next";
+            button.onclick = questionNext;
             const collapseThrees = document.getElementById('collapseThrees');
             const collapseThreeSolution = document.getElementById('collapseThreeSolution');
 

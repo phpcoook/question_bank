@@ -67,11 +67,11 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="questionID" id="QuestionID">
-                        <p>message</p>
+                        <p>Question is resolve or not?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="cancelModal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="submitModal">Submit</button>
+                        <button type="button" class="btn btn-secondary" id="cancelModal">No</button>
+                        <button type="button" class="btn btn-primary" id="submitModal">Yes</button>
                     </div>
                 </div>
             </div>
@@ -108,7 +108,6 @@
         // Handle the submit button click inside the modal
         $(document).on('click', '#submitModal', function () {
             var questionID = $('#QuestionID').val();
-            console.log('test---' + questionID);
             var data = {
                 questionID: questionID
             };
@@ -119,6 +118,7 @@
                 data: data,
                 success: function (response) {
                     $('#ResoleveModal').modal('hide');
+                    window.location.reload();
                 },
                 error: function (error) {
                     // Handle error
