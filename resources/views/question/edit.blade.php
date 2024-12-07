@@ -7,15 +7,17 @@
             max-width: 41px;
             margin-right: 12px;
         }
+
         .input_image {
             max-width: -webkit-fill-available;
         }
+
         ::file-selector-button {
             display: none;
         }
     </style>
     <style>
-        .popup-image{
+        .popup-image {
             max-width: 450px;
         }
     </style>
@@ -63,6 +65,7 @@
             <div class="card card-primary">
                 <form id="question-edit" action="{{ route('question.update', $data->id) }}" method="POST"
                       enctype="multipart/form-data">
+                    <input type="hidden" name="last_index" value="{{$last_index}}">
                     @csrf
                     @method('PUT')
                     <div class="card-body">
@@ -78,18 +81,45 @@
                             @endphp
                             <select name="std[]" id="std" class="form-control select2" multiple required tabindex="1">
                                 <option value="">Select Year</option>
-                                <option value="7_maths" {{ in_array('7_maths', $stdArray) ? 'selected' : '' }}>Year 7 Maths</option>
-                                <option value="8_maths" {{ in_array('8_maths', $stdArray) ? 'selected' : '' }}>Year 8 Maths</option>
-                                <option value="9_maths" {{ in_array('9_maths', $stdArray) ? 'selected' : '' }}>Year 9 Maths</option>
-                                <option value="10_maths" {{ in_array('10_maths', $stdArray) ? 'selected' : '' }}>Year 10 Maths</option>
-                                <option value="11_standard_maths" {{ in_array('11_standard_maths', $stdArray) ? 'selected' : '' }}>Year 11 Standard Maths</option>
-                                <option value="11_2u_maths" {{ in_array('11_2u_maths', $stdArray) ? 'selected' : '' }}>Year 11 2U Maths</option>
-                                <option value="11_3u_maths" {{ in_array('11_3u_maths', $stdArray) ? 'selected' : '' }}>Year 11 3U Maths</option>
-                                <option value="12_standard_1_maths" {{ in_array('12_standard_1_maths', $stdArray) ? 'selected' : '' }}>Year 12 Standard 1 Maths</option>
-                                <option value="12_standard_2_maths" {{ in_array('12_standard_2_maths', $stdArray) ? 'selected' : '' }}>Year 12 Standard 2 Maths</option>
-                                <option value="12_2u_maths" {{ in_array('12_2u_maths', $stdArray) ? 'selected' : '' }}>Year 12 2U Maths</option>
-                                <option value="12_3u_maths" {{ in_array('12_3u_maths', $stdArray) ? 'selected' : '' }}>Year 12 3U Maths</option>
-                                <option value="12_4u_maths" {{ in_array('12_4u_maths', $stdArray) ? 'selected' : '' }}>Year 12 4U Maths</option>
+                                <option value="7_maths" {{ in_array('7_maths', $stdArray) ? 'selected' : '' }}>Year 7
+                                    Maths
+                                </option>
+                                <option value="8_maths" {{ in_array('8_maths', $stdArray) ? 'selected' : '' }}>Year 8
+                                    Maths
+                                </option>
+                                <option value="9_maths" {{ in_array('9_maths', $stdArray) ? 'selected' : '' }}>Year 9
+                                    Maths
+                                </option>
+                                <option value="10_maths" {{ in_array('10_maths', $stdArray) ? 'selected' : '' }}>Year 10
+                                    Maths
+                                </option>
+                                <option
+                                    value="11_standard_maths" {{ in_array('11_standard_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 11 Standard Maths
+                                </option>
+                                <option value="11_2u_maths" {{ in_array('11_2u_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 11 2U Maths
+                                </option>
+                                <option value="11_3u_maths" {{ in_array('11_3u_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 11 3U Maths
+                                </option>
+                                <option
+                                    value="12_standard_1_maths" {{ in_array('12_standard_1_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 12 Standard 1 Maths
+                                </option>
+                                <option
+                                    value="12_standard_2_maths" {{ in_array('12_standard_2_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 12 Standard 2 Maths
+                                </option>
+                                <option value="12_2u_maths" {{ in_array('12_2u_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 12 2U Maths
+                                </option>
+                                <option value="12_3u_maths" {{ in_array('12_3u_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 12 3U Maths
+                                </option>
+                                <option value="12_4u_maths" {{ in_array('12_4u_maths', $stdArray) ? 'selected' : '' }}>
+                                    Year 12 4U Maths
+                                </option>
                             </select>
                             @error('std')
                             <div class="text-danger">{{ $message }}</div>
@@ -100,9 +130,11 @@
                             <div id="topics" class="mx-3">
                                 @foreach($topics as $topic)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="topics[]" value="{{ $topic->id }}" id="topic_{{ $topic->id }}"
+                                        <input class="form-check-input" type="checkbox" name="topics[]"
+                                               value="{{ $topic->id }}" id="topic_{{ $topic->id }}"
                                             {{ (in_array($topic->id, json_decode($data->topic_id, true) ?? [])) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="topic_{{ $topic->id }}">{{ $topic->title }}</label>
+                                        <label class="form-check-label"
+                                               for="topic_{{ $topic->id }}">{{ $topic->title }}</label>
                                     </div>
                                 @endforeach
                             </div>
@@ -149,21 +181,29 @@
                             <label for="image">Question Images</label>
                             <div id="image-rows">
                                 <div class="input-group">
-                                    <input type="file" class="form-control" name="questionimage[]" id="question" tabindex="8">
-                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question Image</button>
+                                    <input type="file" class="form-control" name="questionimage[]" id="question"
+                                           tabindex="8">
+{{--                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
-                                @if(!empty($images))
-                                    @foreach($images as $image)
-                                        @if(!empty($image->type) && $image->type == 'question')
-                                            <div class="input-group mt-3">
-                                                <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
-                                                </div>
-                                                <input type="text" class="form-control" name="existing_question_images[]" value="{{ $image->image_name }}" readonly>
-                                                <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                            @if(!empty($images))
+                                @foreach($images as $image) <!-- Reverse the images collection -->
+                                    @if(!empty($image->type) && $image->type == 'question')
+                                        <div class="input-group mt-3">
+                                            <div class="input_image_div">
+                                                <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                     alt="image" class="input_image" onclick="openImageModal(this)"
+                                                     data-toggle="modal" data-target="#modal-default"><p>{{$image->index}}</p>
                                             </div>
-                                        @endif
+                                            <input type="text" class="form-control" name="existing_question_images[]"
+                                                   value="{{ $image->image_name }}" readonly>
+                                            <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
+                                            <button type="button" class="btn btn-danger remove-image-row"
+                                                    data-image-id="{{ $image->id }}">Remove
+                                            </button>
+                                        </div>
+                                    @endif
                                     @endforeach
                                 @endif
                                 <div class="image-preview mt-3" id="question-image"></div>
@@ -179,19 +219,27 @@
                             <label for="solutionimage">Solution</label>
                             <div id="solution-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9" id="solution">
-                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution Image</button>
+                                    <input type="file" class="form-control" name="solutionimage[]" tabindex="9"
+                                           id="solution">
+{{--                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'solution')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                         alt="image" class="input_image" onclick="openImageModal(this)"
+                                                         data-toggle="modal" data-target="#modal-default">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
+                                                       readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row"
+                                                        data-image-id="{{ $image->id }}">Remove
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -206,19 +254,27 @@
                             <label for="answerimage">Answer</label>
                             <div id="answer-image-rows">
                                 <div class="input-group mb-3">
-                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10" id="answer">
-                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer Image</button>
+                                    <input type="file" class="form-control" name="answerimage[]" tabindex="10"
+                                           id="answer">
+{{--                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
                                 @if(!empty($images))
                                     @foreach($images as $image)
                                         @if(!empty($image->type) && $image->type == 'answer')
                                             <div class="input-group mb-3">
                                                 <div class="input_image_div">
-                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}" alt="image" class="input_image" onclick="openImageModal(this)" data-toggle="modal" data-target="#modal-default">
+                                                    <img src="{{ asset('storage/images/' . $image->image_name) }}"
+                                                         alt="image" class="input_image" onclick="openImageModal(this)"
+                                                         data-toggle="modal" data-target="#modal-default">
                                                 </div>
-                                                <input type="text" class="form-control" value="{{ $image->image_name }}" readonly>
+                                                <input type="text" class="form-control" value="{{ $image->image_name }}"
+                                                       readonly>
                                                 <input type="hidden" name="existing_images[]" value="{{ $image->id }}">
-                                                <button type="button" class="btn btn-danger remove-image-row" data-image-id="{{ $image->id }}">Remove</button>
+                                                <button type="button" class="btn btn-danger remove-image-row"
+                                                        data-image-id="{{ $image->id }}">Remove
+                                                </button>
                                             </div>
                                         @endif
                                     @endforeach
@@ -244,7 +300,8 @@
                     </div>
                 </form>
 
-                <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+                     aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -266,8 +323,8 @@
 
 @section('page-script')
     <script>
-        document.querySelectorAll('#question, #answer, #solution').forEach(function(element) {
-            element.addEventListener('click', function(event) {
+        document.querySelectorAll('#question, #answer, #solution').forEach(function (element) {
+            element.addEventListener('click', function (event) {
                 event.preventDefault();
             });
         });
@@ -298,7 +355,7 @@
             });
 
             if ($('input[name="topics[]"]:checked').length > 0) {
-                let selectedTopics = $('input[name="topics[]"]:checked').map(function() {
+                let selectedTopics = $('input[name="topics[]"]:checked').map(function () {
                     return $(this).val();
                 }).get();
 
@@ -306,7 +363,7 @@
                     url: '{{env('AJAX_URL')}}' + '/getSelectedSubTopicData',
                     type: 'POST',
                     data: {
-                        'topic_ids':selectedTopics,
+                        'topic_ids': selectedTopics,
                         'selected': '{{$data->subtopic_id}}',
                         _token: '{{ csrf_token() }}'
                     },
@@ -342,6 +399,7 @@
                     $(containerId).append(newRow);
                 });
             }
+
             addImageRow('#image-rows', 'questionimage', '.add-question-image-row');
             addImageRow('#solution-image-rows', 'solutionimage', '.add-solution-image-row');
             addImageRow('#answer-image-rows', 'answerimage', '.add-answer-image-row');
@@ -415,7 +473,7 @@
                     // Create a remove button for the image preview
                     const removeButton = document.createElement('button');
                     removeButton.type = 'button';
-                    removeButton.setAttribute('data-imageId',i);
+                    removeButton.setAttribute('data-imageId', i);
                     removeButton.setAttribute('data-fileName', file.name);
                     removeButton.setAttribute('data-filedName', currentInputId);
                     removeButton.classList.add('btn', 'btn-danger', 'remove-image-row');
@@ -426,8 +484,11 @@
                     fileContainer.appendChild(input);
                     fileContainer.appendChild(removeButton);
 
-                    // Append the file container to the preview container
-                    previewContainer.appendChild(fileContainer);
+                    if (previewContainer.firstChild) {
+                        previewContainer.insertBefore(fileContainer, previewContainer.firstChild);
+                    } else {
+                        previewContainer.appendChild(fileContainer);
+                    }
 
                     // Add event listener to the remove button
                     removeButton.addEventListener('click', function () {
@@ -450,9 +511,8 @@
 
             inputFile.addEventListener('change', (event) => {
                 const files = event.target.files;
-                updatePreview(previewContainer, files,'answer-image');
+                updatePreview(previewContainer, files, 'answer-image');
             });
-
 
 
             // Handle paste event for images
@@ -481,7 +541,7 @@
 
                     // Update preview based on the input index
                     const inputIndex = Array.from(document.querySelectorAll('input[type="file"]')).indexOf(currentInput);
-                    updatePreview(previews[inputIndex], dataTransfer.files,currentInput.id);
+                    updatePreview(previews[inputIndex], dataTransfer.files, currentInput.id);
                 }
             });
 
@@ -583,7 +643,7 @@
     </script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.select2').select2({
                 placeholder: "Select Year(s)",
                 allowClear: true

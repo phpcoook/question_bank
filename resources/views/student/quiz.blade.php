@@ -703,25 +703,29 @@
                 document.getElementById('time').classList.remove('extra-time');
             }
         }
+        
+    function loadQuestion() {
+        const questionData = questions[currentQuestionIndex];
+        $('#question-code').html(questionData.code);
+        $('#current_question_index').val(currentQuestionIndex);
 
-        function loadQuestion() {
-            const questionData = questions[currentQuestionIndex];
-            $('#question-code').html(questionData.code);
-            $('#current_question_index').val(currentQuestionIndex);
+        let difficulty = questionData.difficulty;
+        let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+        $('#question-difficulty').html(modifiedDifficulty);
 
-            let difficulty = questionData.difficulty;
-            let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-            $('#question-difficulty').html(modifiedDifficulty);
+        var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
+        var baseUrl = '{{url('/')}}';
 
-            var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-            var baseUrl = '{{url('/')}}';
-            $.each(questionData.images, function (imgIndex, image) {
-                imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
-            });
-            var questionIndex = document.getElementById('current_question_index').value;
-            imagesHtml += '</div>';
-            document.getElementById('images').innerHTML = imagesHtml;
-            document.getElementById('buttons').innerHTML = `
+        // Reverse the order of images
+        var reversedImages = [...questionData.images];
+        $.each(reversedImages, function (imgIndex, image) {
+            imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
+        });
+        var questionIndex = document.getElementById('current_question_index').value;
+        imagesHtml += '</div>';
+        document.getElementById('images').innerHTML = imagesHtml;
+
+        document.getElementById('buttons').innerHTML = `
         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
             <div onclick="handleAnswer('correct', '${questionIndex}')" class="custom-btn-size d-flex btn-success rounded-sm justify-content-center p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; color: #28a745 !important;">
                 Correct
@@ -731,33 +735,36 @@
             </div>
         </div>
     `;
-            document.getElementById('question-image').innerHTML = `
+        document.getElementById('question-image').innerHTML = `
         <div onclick="handleAnswer('report','${questionIndex}')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
             <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
         </div>`;
 
-            if (questionData.solutionImages.length > 0) {
-                var solutionImagesHtml = '<div class="row">';
-                $.each(questionData.solutionImages, function (imgIndex, image) {
-                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
-                });
-                solutionImagesHtml += '</div>';
-                document.getElementById('solution_images').innerHTML = solutionImagesHtml;
-            }
-
-            if (questionData.answerImages.length > 0) {
-                var answerImagesHtml = '<div class="row mb-4">';
-
-                $.each(questionData.answerImages, function (imgIndex, image) {
-                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
-                });
-                answerImagesHtml += '</div>';
-                document.getElementById('answer_images').innerHTML = answerImagesHtml;
-            }
-
-            startTimer(questionData.time); // Start the timer for the current question
-
+        // Reverse the solution images
+        if (questionData.solutionImages.length > 0) {
+            var solutionImagesHtml = '<div class="row">';
+            var reversedSolutionImages = [...questionData.solutionImages];
+            $.each(reversedSolutionImages, function (imgIndex, image) {
+                solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+            });
+            solutionImagesHtml += '</div>';
+            document.getElementById('solution_images').innerHTML = solutionImagesHtml;
         }
+
+        // Reverse the answer images
+        if (questionData.answerImages.length > 0) {
+            var answerImagesHtml = '<div class="row mb-4">';
+            var reversedAnswerImages = [...questionData.answerImages];
+            $.each(reversedAnswerImages, function (imgIndex, image) {
+                answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+            });
+            answerImagesHtml += '</div>';
+            document.getElementById('answer_images').innerHTML = answerImagesHtml;
+        }
+
+        startTimer(questionData.time); // Start the timer for the current question
+    }
+
 
         function sendReport() {
             const questionData = questions[currentQuestionIndex];

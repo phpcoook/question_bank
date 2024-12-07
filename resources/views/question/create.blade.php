@@ -153,9 +153,9 @@
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="questionimage[]" id="question"
                                            tabindex="8">
-                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question
-                                        Image
-                                    </button>
+{{--                                    <button type="button" class="btn btn-primary add-question-image-row">Add Question--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
                             </div>
                             @error('questionimage')
@@ -169,9 +169,9 @@
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="solutionimage[]" tabindex="9"
                                            id="solution">
-                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution
-                                        Image
-                                    </button>
+{{--                                    <button type="button" class="btn btn-primary add-solution-image-row">Add Solution--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
                             </div>
                             @error('solutionimage')
@@ -187,9 +187,9 @@
                                 <div class="input-group mb-3">
                                     <input type="file" class="form-control" name="answerimage[]" tabindex="10"
                                            id="answer">
-                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer
-                                        Image
-                                    </button>
+{{--                                    <button type="button" class="btn btn-primary add-answer-image-row">Add Answer--}}
+{{--                                        Image--}}
+{{--                                    </button>--}}
                                 </div>
                             </div>
                             @error('answerimage')
@@ -323,8 +323,6 @@
                 $(this).closest('.file-preview').remove();
             });
 
-
-            // Function to update the preview with images
             function updatePreview(previewContainer, files, currentInputId) {
                 previewContainer.innerHTML = '';
 
@@ -361,14 +359,17 @@
                     removeButton.classList.add('btn', 'btn-danger', 'remove-image-row');
                     removeButton.textContent = 'Remove';
 
-
                     // Append image, input, and remove button to the file container
                     fileContainer.appendChild(img);
                     fileContainer.appendChild(input);
                     fileContainer.appendChild(removeButton);
 
-                    // Append the file container to the preview container
-                    previewContainer.appendChild(fileContainer);
+                    // This inserts it before the current first child, or at the start if the container is empty
+                    if (previewContainer.firstChild) {
+                        previewContainer.insertBefore(fileContainer, previewContainer.firstChild);
+                    } else {
+                        previewContainer.appendChild(fileContainer);
+                    }
 
                     // Add event listener to the remove button
                     removeButton.addEventListener('click', function () {

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Models\QuestionImage;
 use Yajra\DataTables\DataTables;
+use function Termwind\ValueObjects\m;
 
 class QuestionBanController extends Controller
 {
@@ -38,7 +39,6 @@ class QuestionBanController extends Controller
             if ($validator->fails()) {
                 return back()->withInput()->withErrors($validator);
             } else {
-
                 $question = new Question();
                 $question->code = $request->code;
                 $question->difficulty = $request->difficulty;
@@ -51,13 +51,14 @@ class QuestionBanController extends Controller
                 // Handle question images
                 if ($request->hasFile('questionimage')) {
                     $index = 1;
-                    foreach ($request->file('questionimage') as $image) {
+                    foreach (collect($request->file('questionimage'))->reverse() as $image) {
                         $imageName = time() . '_question_'.$index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
+                        $questionImage->index = $index;
                         $questionImage->type = 'question'; // Mark it as a question image
                         $questionImage->save();
                         $index++;
@@ -67,7 +68,7 @@ class QuestionBanController extends Controller
                 // Handle solution images
                 if ($request->hasFile('solutionimage')) {
                     $index = 1;
-                    foreach ($request->file('solutionimage') as $image) {
+                    foreach (collect($request->file('solutionimage'))->reverse() as $image) {
                         $imageName = time() . '_solution_'.$index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
@@ -75,6 +76,7 @@ class QuestionBanController extends Controller
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'solution'; // Mark it as an answer image
+                        $questionImage->index = $index; // Mark it as an answer image
                         $questionImage->save();
                         $index++;
                     }
@@ -83,7 +85,7 @@ class QuestionBanController extends Controller
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     $index = 1;
-                    foreach ($request->file('answerimage') as $image) {
+                    foreach (collect($request->file('answerimage'))->reverse() as $image) {
                         $imageName = time() . '_answer_'. $index. '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
@@ -91,6 +93,7 @@ class QuestionBanController extends Controller
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'answer';
+                        $questionImage->index = $index;
                         $questionImage->save();
                         $index++;
                     }
@@ -231,8 +234,13 @@ class QuestionBanController extends Controller
                 $topics = $topics->merge($topicResults);
             }
 
-            $images = QuestionImage::where('question_id', $id)->get();
-            return view('question.edit', compact('data', 'images', 'topics','reportId'));
+            $images = QuestionImage::where('question_id', $id)->orderBy('index' ,'ASC')->get();
+            $last_index = 1;
+            $imagesCount = QuestionImage::where('question_id', $id)->orderBy('index' ,'DESC')->first();
+            if($imagesCount){
+                $last_index = $imagesCount->index;
+            }
+            return view('question.edit', compact('data', 'images', 'topics','reportId','last_index'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
@@ -309,9 +317,15 @@ class QuestionBanController extends Controller
                 }
 
                 // Handle question images
+                $last_index = $request->last_index;
                 if ($request->hasFile('questionimage')) {
                     $index = 1;
-                    foreach ($request->file('questionimage') as $image) {
+                    $last_index = 1;
+                    foreach (collect($request->file('questionimage'))->reverse() as $image) {
+                        $imagesCount = QuestionImage::where('question_id', $id)->orderBy('index' ,'DESC')->first();
+                        if($imagesCount){
+                            $last_index = $imagesCount->index;
+                        }
                         $imageName = time() . '_question_'.$index. '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
@@ -319,6 +333,7 @@ class QuestionBanController extends Controller
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'question'; // Mark it as a question image
+                        $questionImage->index = $last_index+1; // Mark it as a question image
                         $questionImage->save();
                         $index++;
                     }
@@ -327,7 +342,12 @@ class QuestionBanController extends Controller
                 // Handle solution images
                 if ($request->hasFile('solutionimage')) {
                     $index = 1;
-                    foreach ($request->file('solutionimage') as $image) {
+                    $last_index = 1;
+                    foreach (collect($request->file('solutionimage'))->reverse() as $image) {
+                        $imagesCount = QuestionImage::where('question_id', $id)->orderBy('index' ,'DESC')->first();
+                        if($imagesCount){
+                            $last_index = $imagesCount->index;
+                        }
                         $imageName = time() . '_solution_'.$index.'_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
@@ -335,6 +355,7 @@ class QuestionBanController extends Controller
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'solution'; // Mark it as an answer image
+                        $questionImage->index = $last_index+1;
                         $questionImage->save();
                         $index++;
                     }
@@ -343,7 +364,12 @@ class QuestionBanController extends Controller
                 // Handle answer images
                 if ($request->hasFile('answerimage')) {
                     $index = 1;
-                    foreach ($request->file('answerimage') as $image) {
+                    $last_index = 1;
+                    foreach (collect($request->file('answerimage'))->reverse() as $image) {
+                        $imagesCount = QuestionImage::where('question_id', $id)->orderBy('index' ,'DESC')->first();
+                        if($imagesCount){
+                            $last_index = $imagesCount->index;
+                        }
                         $imageName = time() . '_answer_' . $index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
@@ -351,6 +377,7 @@ class QuestionBanController extends Controller
                         $questionImage->question_id = $question->id;
                         $questionImage->image_name = $imageName;
                         $questionImage->type = 'answer';
+                        $questionImage->index = $last_index+1;
                         $questionImage->save();
                         $index++;
                     }

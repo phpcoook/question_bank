@@ -19,17 +19,17 @@ class Question extends Model
 
     public function quizImage()
     {
-        return $this->hasMany(QuestionImage::class)->where('type', 'question');
+        return $this->hasMany(QuestionImage::class)->where('type', 'question')->orderBy('index','ASC');
     }
 
     public function solutionImage()
     {
-        return $this->hasMany(QuestionImage::class)->where('type', 'solution');
+        return $this->hasMany(QuestionImage::class)->where('type', 'solution')->orderBy('index','ASC');
     }
 
     public function answerImage()
     {
-        return $this->hasMany(QuestionImage::class)->where('type', 'answer');
+        return $this->hasMany(QuestionImage::class)->where('type', 'answer')->orderBy('index','ASC');
     }
 
     public function topic()
