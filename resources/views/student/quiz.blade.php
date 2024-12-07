@@ -544,7 +544,7 @@
                     @endif
                 </div>
 
-                <input type="hidden" id="question-skipp" value="{{ json_encode(array_map(fn($item, $index) => $index, $randomCombination, array_keys($randomCombination))) }}">
+                <input type="text" id="question-skipp" value="{{ json_encode(array_map(fn($item, $index) => $index, $randomCombination, array_keys($randomCombination))) }}">
                 <div class="question-progress-view" id="question-progress-view">
                     <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
                         role="menu" data-accordion="false">
@@ -623,9 +623,9 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" id="current_question_index" value="0">
         </section>
     </div>
-
 @endsection
 @section('page-script')
     <script>
@@ -707,6 +707,7 @@
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
             $('#question-code').html(questionData.code);
+            $('#current_question_index').val(currentQuestionIndex);
 
             let difficulty = questionData.difficulty;
             let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
@@ -717,20 +718,21 @@
             $.each(questionData.images, function (imgIndex, image) {
                 imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
             });
+            var questionIndex = document.getElementById('current_question_index').value;
             imagesHtml += '</div>';
             document.getElementById('images').innerHTML = imagesHtml;
             document.getElementById('buttons').innerHTML = `
         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
-            <div onclick="handleAnswer('correct')" class="custom-btn-size d-flex btn-success rounded-sm justify-content-center p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; color: #28a745 !important;">
+            <div onclick="handleAnswer('correct', '${questionIndex}')" class="custom-btn-size d-flex btn-success rounded-sm justify-content-center p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; color: #28a745 !important;">
                 Correct
             </div>
-            <div onclick="handleAnswer('wrong')" class="custom-btn-size d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+            <div onclick="handleAnswer('wrong','${questionIndex}')" class="custom-btn-size d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
                 Wrong
             </div>
         </div>
     `;
             document.getElementById('question-image').innerHTML = `
-        <div onclick="handleAnswer('report')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
+        <div onclick="handleAnswer('report','${questionIndex}')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
             <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
         </div>`;
 
@@ -822,14 +824,30 @@
             });
         }
 
-        function handleAnswer(response) {
+        function handleAnswer(response,questionIndex) {
+            if (document.getElementById('question-skipp')) {
+                let removeQuestionIndex = document.getElementById('question-skipp').value;
+                if (!removeQuestionIndex || removeQuestionIndex === 'null' || removeQuestionIndex === '') {
+                    console.warn('question-skipp is not properly initialized');
+                } else {
+                    try {
+                        let NewRemoveQuestionIndex = JSON.parse(removeQuestionIndex);
+                        NewRemoveQuestionIndex = NewRemoveQuestionIndex.filter(index => Number(index) !== Number(questionIndex));
+                        document.getElementById('question-skipp').value = JSON.stringify(NewRemoveQuestionIndex);
+                    } catch (error) {
+                        console.error('Error parsing question-skipp value:', error);
+                    }
+                }
+            } else {
+                console.error('Element with id "question-skipp" not found in the DOM.');
+            }
             const collapseThrees = document.getElementById('collapseThrees');
             const collapseThreeSolution = document.getElementById('collapseThreeSolution');
 
             if (collapseThrees) collapseThrees.classList.remove('show');
             if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
-            const questionData = questions[currentQuestionIndex];
+            const questionData = questions[questionIndex];
             const questionId = questionData.id;
 
             // Ensure questionStatus exists for this question
@@ -926,11 +944,11 @@
             if (skippIndexes && Array.isArray(skippIndexes) && skippIndexes.length > 0) {
                 // Show modal to ask if the user wants to skip the current question
                 document.getElementById('skipModal').style.display = 'block';
-
                 // Handle the "Yes" button click
                 document.getElementById('skip-yes').addEventListener('click', function() {
                     let minQuestionIndex = Math.min(...skippIndexes);
-                    loadSkippedQuestion([minQuestionIndex]  );
+                    $('#current_question_index').val(minQuestionIndex);
+                    loadSkippedQuestion([minQuestionIndex]);
                     document.getElementById('skipModal').style.display = 'none'; // Close the modal
                 });
 
@@ -955,12 +973,18 @@
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
 
                 // Get the current skipp value from the input field
-                console.log(currentQuestionIndex-1);
                 const skippValue = JSON.parse($('#question-skipp').val());
                 const updatedSkippValue = skippValue.filter(index => index !== currentQuestionIndex-1);
                 $('#question-skipp').val(JSON.stringify(updatedSkippValue));
 
             } else {
+                if (document.getElementById('question-skipp').value !== 'null' && document.getElementById('question-skipp').value !== '') {
+                    let removeQuestionIndex = document.getElementById('question-skipp').value;
+                    let NewRemoveQuestionIndex = JSON.parse(removeQuestionIndex);
+
+                    NewRemoveQuestionIndex = NewRemoveQuestionIndex.filter(index => index !== currentQuestionIndex);
+                    document.getElementById('question-skipp').value = JSON.stringify(NewRemoveQuestionIndex);
+                }
                 getSkippedModel()
             }
         }
@@ -1070,8 +1094,8 @@
         }
 
         function loadSkippedQuestion(indexes) {
-
             indexes.forEach(function (index) {
+                $('#current_question_index').val(index);
                 const questionData = questions[index];
                 $('#question-code').html(questionData.code);
                 let difficulty = questionData.difficulty;
@@ -1087,17 +1111,17 @@
 
                 document.getElementById('buttons').innerHTML = `
             <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
-                <div onclick="handleAnswer('correct')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
+                <div onclick="handleAnswer('correct','${index}')" class="d-flex btn-success rounded-sm justify-content-center w-25 p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; width: fit-content; color: #28a745 !important;">
                     Correct
                 </div>
-                <div onclick="handleAnswer('wrong')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
+                <div onclick="handleAnswer('wrong','${index}')" class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; margin-left: 0; color: #C10505; font-weight: 600; background-color: #F08D8D !important;">
                     Wrong
                 </div>
             </div>
         `;
 
                 document.getElementById('question-image').innerHTML = `
-            <div onclick="handleAnswer('report')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
+            <div onclick="handleAnswer('report','${index}')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
                 <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
             </div>
         `;
