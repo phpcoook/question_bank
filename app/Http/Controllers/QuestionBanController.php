@@ -214,9 +214,10 @@ class QuestionBanController extends Controller
         }
     }
 
-    public function edit($id)
+    public function edit($id, Request $request)
     {
         try {
+            $reportId = $request->report_id;
             $data = Question::find($id);
             if (!$data) {
                 return redirect()->back()->with('error', 'Question not found.');
@@ -231,7 +232,7 @@ class QuestionBanController extends Controller
             }
 
             $images = QuestionImage::where('question_id', $id)->get();
-            return view('question.edit', compact('data', 'images', 'topics'));
+            return view('question.edit', compact('data', 'images', 'topics','reportId'));
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
             return redirect()->back()->with('error', 'An error occurred. Please try again.');
@@ -343,7 +344,7 @@ class QuestionBanController extends Controller
                 if ($request->hasFile('answerimage')) {
                     $index = 1;
                     foreach ($request->file('answerimage') as $image) {
-                        $imageName = time() . '_answer_'.$index.'_' . $image->getClientOriginalName();
+                        $imageName = time() . '_answer_' . $index . '_' . $image->getClientOriginalName();
                         $image->storeAs('public/images', $imageName);
 
                         $questionImage = new QuestionImage();
@@ -354,8 +355,11 @@ class QuestionBanController extends Controller
                         $index++;
                     }
                 }
-
-                return redirect()->route('question.index')->with('success', 'Question Update successfully.');
+                if ($request->report_id) {
+                    return redirect()->route('report')->with('success', 'Question Update successfully.');
+                } else {
+                    return redirect()->route('question.index')->with('success', 'Question Update successfully.');
+                }
             }
         } catch (\Exception $e) {
             Log::info('In File : ' . $e->getFile() . ' - Line : ' . $e->getLine() . ' - Message : ' . $e->getMessage() . ' - At Time : ' . date('Y-m-d H:i:s'));
@@ -400,10 +404,13 @@ class QuestionBanController extends Controller
                         return $report->user->first_name . ' ' . $report->user->last_name;
                     })
                     ->addColumn('actions', function ($report) {
-                        $editButton = '<a href="' . route('question.edit',
-                                $report->question_id) . '" class="btn btn-primary btn-sm edit-question" data-id="' . $report->question_id . '">Edit</a>
-                            <button class="btn btn-primary btn-sm Resolve-details" data-id="' . $report->question_id . '">Resolve</button>';
-                        return $editButton;
+                        $editUrl = route('question.edit', ['id' => $report->question_id]) . '?report_id=' . $report->id;
+                        $editButton = '<a href="' . $editUrl . '"
+                   class="btn btn-primary btn-sm edit-question"
+                   data-id="' . $report->question_id . '">Edit</a>';
+                        $resolveButton = '<button class="btn btn-primary btn-sm Resolve-details"
+                      data-id="' . $report->question_id . '">Resolve</button>';
+                        return $editButton . ' ' . $resolveButton;
                     })
                     ->rawColumns(['actions'])
                     ->make(true);

@@ -100,7 +100,6 @@
 
         $(document).on('click', '.Resolve-details', function () {
             let dataId = $(this).data('id');
-            console.log('test' + dataId);
             $('#ResoleveModal').modal('show');
             $('#QuestionID').val(dataId);
         });

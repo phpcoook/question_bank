@@ -66,6 +66,7 @@
                     @csrf
                     @method('PUT')
                     <div class="card-body">
+                        <input type="hidden" name="report_id" value="{{$reportId}}">
                         <div class="form-group">
                             <label for="std">Year</label>
                             @php

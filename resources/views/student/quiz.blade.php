@@ -544,7 +544,7 @@
                     @endif
                 </div>
 
-                <input type="text" id="question-skipp" value="{{ json_encode(array_map(fn($item, $index) => $index, $randomCombination, array_keys($randomCombination))) }}">
+                <input type="hidden" id="question-skipp" value="{{ json_encode(array_map(fn($item, $index) => $index, $randomCombination, array_keys($randomCombination))) }}">
                 <div class="question-progress-view" id="question-progress-view">
                     <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
                         role="menu" data-accordion="false">
@@ -960,9 +960,7 @@
                 });
 
             } else {
-                // If the skippIndexes is empty or null, directly show the total time
                 showTotalTime();
-                console.log('The value is null or an empty array.');
             }
         }
 
