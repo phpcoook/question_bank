@@ -194,7 +194,7 @@
                                             <div class="input_image_div">
                                                 <img src="{{ asset('storage/images/' . $image->image_name) }}"
                                                      alt="image" class="input_image" onclick="openImageModal(this)"
-                                                     data-toggle="modal" data-target="#modal-default"><p>{{$image->index}}</p>
+                                                     data-toggle="modal" data-target="#modal-default">
                                             </div>
                                             <input type="text" class="form-control" name="existing_question_images[]"
                                                    value="{{ $image->image_name }}" readonly>

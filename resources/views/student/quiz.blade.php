@@ -939,11 +939,6 @@
         }
 
         function getSkippedModel() {
-            // Get the current skipp value from the input field
-            const skippValue = JSON.parse($('#question-skipp').val());
-            const updatedSkippValue = skippValue.filter(index => index !== currentQuestionIndex-1);
-            $('#question-skipp').val(JSON.stringify(updatedSkippValue));
-
             const skippInput = document.getElementById('question-skipp');
             let skippIndexes = JSON.parse(skippInput.value);
 
