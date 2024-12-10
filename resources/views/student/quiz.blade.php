@@ -627,12 +627,21 @@
                 </div>
             </div>
             <input type="hidden" id="current_question_index" value="0">
+            <input type="hidden" id="counterValue" name="counterValue" value="0">
         </section>
     </div>
+
 @endsection
 @section('page-script')
     <script>
         $(document).ready(function () {
+            let counter = 0;
+            const counterField = document.getElementById('counterValue');
+            setInterval(() => {
+                counter++;
+                counterField.value = counter;
+            }, 1000);
+
             $('.popthumb').on('click', function () {
                 loadPopup();
             });
@@ -706,7 +715,7 @@
                 document.getElementById('time').classList.remove('extra-time');
             }
         }
-        
+
     function loadQuestion() {
         const questionData = questions[currentQuestionIndex];
         $('#question-code').html(questionData.code);
@@ -1054,7 +1063,8 @@
 
         function showTotalTime() {
             clearInterval(timer);
-            const roundedTotalTime = Math.round(totalTime);
+            var counterValue = $('#counterValue').val();
+            const roundedTotalTime = Math.round(counterValue);
             const totalMinutes = Math.floor(roundedTotalTime / 60);
             const totalSeconds = roundedTotalTime % 60;
             const lastLi = document.querySelector('#li-steps li:last-child');
