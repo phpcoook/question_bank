@@ -37,7 +37,7 @@ class SettingController extends Controller
                 $price = Price::create([
                     'product' => $product->id,
                     'unit_amount' => $request->input('subscription_charge') * 100, // Amount in cents
-                    'currency' => 'usd',
+                    'currency' => 'aud',
                     'recurring' => [
                         'interval' => 'month',
                     ],

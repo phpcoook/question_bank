@@ -15,13 +15,21 @@
             display: grid;
             grid-template-columns: 30% 70%;
         }
+        .question-images-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+        }
         .question-list-box-img {
             width: 100%;
             max-width: 100%;
         }
-        .question-list-box-img img{
-            width: 100%;
-            border-radius: 5px;
+        .question-list-box-img img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            height: 180px;
+            object-fit: cover;
         }
         .question-list-box h4 {
             font-size: 26px;
@@ -83,7 +91,7 @@
                                 <p><b>Difficulty : </b> {{ $question->difficulty }}</p>
                                     <p><b>Time : </b> {{ $question->time / 60 }} minute</p>
                                 </div>
-                                <div class="images d-flex flex-wrap">
+                                <div class="question-images-box">
                                     @if($question->quizImage->isNotEmpty())
                                         @foreach ($question->quizImage as $image)
                                             <div class="input_image_div question-list-box-img">

@@ -447,6 +447,9 @@
                             </svg>
                                     <span id="time">0:00</span>
                                 </div>
+                                <div onclick="getSkippedModel()" id="end-quiz" class="ml-3 d-flex align-items-center justify-content-center btn-danger rounded-sm p-1 mb-2 " style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important; padding: 0px 10px !important; height: 39px; margin-top: 3px">
+                                    End Quiz
+                                </div>
                             </div>
                         </div>
 
@@ -592,7 +595,7 @@
                                 <div class="card card-success mb-0">
                                     <div class="card-header bg-success">
                                         <h4 class="card-title w-100">
-                                            <a class="d-block w-100 text-white collapsed" data-toggle="collapse"
+                                            <a class="d-block w-100 text-white collapsed" style="font-weight: 700" data-toggle="collapse"
                                                href="#collapseThrees" aria-expanded="false">
                                                 See Working Out
                                             </a>
@@ -957,7 +960,9 @@
                 // Handle the "No" button click
                 document.getElementById('skip-no').addEventListener('click', function() {
                     document.getElementById('skipModal').style.display = 'none'; // Close the modal
-                    showTotalTime(); // Show the total time if they decide not to skip
+                    if(confirm("You have skipped some questions without answering. Do you want to attempt them now? Press 'Attempt Skipped Questions' to complete them or 'End Quiz' to finish.")){
+                        showTotalTime(); // Show the total time if they decide not to skip
+                    }
 
                 });
 
@@ -974,18 +979,10 @@
 
                 // Get the current skipp value from the input field
                 const skippValue = JSON.parse($('#question-skipp').val());
-                const updatedSkippValue = skippValue.filter(index => index !== currentQuestionIndex-1);
-                $('#question-skipp').val(JSON.stringify(updatedSkippValue));
+                $('#question-skipp').val(JSON.stringify(skippValue));
 
             } else {
-                if (document.getElementById('question-skipp').value !== 'null' && document.getElementById('question-skipp').value !== '') {
-                    let removeQuestionIndex = document.getElementById('question-skipp').value;
-                    let NewRemoveQuestionIndex = JSON.parse(removeQuestionIndex);
-
-                    NewRemoveQuestionIndex = NewRemoveQuestionIndex.filter(index => index !== currentQuestionIndex);
-                    document.getElementById('question-skipp').value = JSON.stringify(NewRemoveQuestionIndex);
-                }
-                getSkippedModel()
+                console.log('No question nex');
             }
         }
 
@@ -1003,14 +1000,12 @@
                 totalTime += timeTaken;
 
                 currentQuestionIndex++; // Move to the next question
+
                 loadQuestion();
                 updateProgressBar();
                 document.getElementById('try-solution').innerText = currentQuestionIndex + 1;
             } else {
-                const button = document.getElementById("question-next");
-                button.innerHTML = "Skip";
-                button.onclick = getSkippedModel;
-                console.log('Already at the last question.');
+                console.log('No question nex');
             }
 
             // Update button states
@@ -1018,9 +1013,6 @@
         }
 
         function previousQuestion() {
-            const button = document.getElementById("question-next");
-            button.innerHTML = "Next";
-            button.onclick = questionNext;
             const collapseThrees = document.getElementById('collapseThrees');
             const collapseThreeSolution = document.getElementById('collapseThreeSolution');
 
@@ -1028,12 +1020,13 @@
             if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
             if (currentQuestionIndex > 0) {
+                currentQuestionIndex = document.getElementById('current_question_index').value;
                 // Calculate time taken
                 const questionData = questions[currentQuestionIndex];
                 const timeTaken = (questionData.time * 60) - remainingTime;
                 totalTime += timeTaken;
 
-                currentQuestionIndex--; // Move to the previous question
+                currentQuestionIndex--;
                 loadQuestion();
                 updateProgressBar();
 
@@ -1094,7 +1087,13 @@
         }
 
         function loadSkippedQuestion(indexes) {
+            const collapseThrees = document.getElementById('collapseThrees');
+            const collapseThreeSolution = document.getElementById('collapseThreeSolution');
+            if (collapseThrees) collapseThrees.classList.remove('show');
+            if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
+            let updatedText = '';
             indexes.forEach(function (index) {
+                updatedText += `${index + 1} `;
                 $('#current_question_index').val(index);
                 const questionData = questions[index];
                 $('#question-code').html(questionData.code);
@@ -1145,6 +1144,9 @@
                 }
                 startTimer(questionData.time);
             });
+            document.getElementById('try-solution').innerText = updatedText.trim();
+            let progressWidth = updatedText / questions.length * 100; // Calculate progress
+            $('#progress-bar').css('width', progressWidth + '%');
         }
 
 
