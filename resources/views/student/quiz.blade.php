@@ -1002,6 +1002,7 @@
             if (collapseThrees) collapseThrees.classList.remove('show');
             if (collapseThreeSolution) collapseThreeSolution.classList.remove('show');
 
+            currentQuestionIndex = document.getElementById('current_question_index').value;
             if (currentQuestionIndex <= questions.length-2) {
                 // Calculate time taken
                 const questionData = questions[currentQuestionIndex];
