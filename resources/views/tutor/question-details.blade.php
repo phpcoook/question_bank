@@ -3,17 +3,33 @@
 @section('page-style')
     <style>
         .question-details {
-            display: grid;
-            width: 100%;
-            gap: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem; /* Adds spacing between each section (Question, Solution, Answer) */
         }
 
-        .question-details img {
-            margin: 0 auto;
-            width: 70%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        .question-details div {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Maximum 4 images in one row */
+            gap: 1rem; /* Space between images */
+            justify-items: center; /* Centers images horizontally */
+            align-items: center; /* Centers images vertically */
         }
+
+        .popthumb {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd; /* Adds a border around the images */
+            border-radius: 5px; /* Slight rounding of the edges */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        .popthumb:hover {
+            transform: scale(1.05); /* Slight zoom effect on hover */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Emphasized shadow on hover */
+        }
+
     </style>
 @endsection
 @section('content')
@@ -59,8 +75,8 @@
                 @endphp
 
                 @foreach($groupedImages as $type => $group)
-                    <div class="d-flex justify-content-center flex-column">
-                        <h3 class="text-center mb-4">{{ ucfirst($type) }} Image</h3>
+                    <h3 class="text-center mb-4">{{ ucfirst($type) }} Image</h3>
+                    <div class="">
                         @foreach($group as $image)
                             <img src="{{ asset('storage/images/' . $image['image_name']) }}" alt="{{ $type }}" class="img-fluid pb-4 popthumb">
                         @endforeach
