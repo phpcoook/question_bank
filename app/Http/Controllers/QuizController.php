@@ -336,4 +336,18 @@ class QuizController extends Controller
         }
     }
 
+    public function closeQuiz($id)
+    {
+        try {
+             Quiz::where('user_id', $id)->delete();
+             Reported::where('user_id', $id)->delete();
+
+            return redirect()->back()->with('success', 'Quiz and reported data have been reset successfully.');
+        } catch (\Exception $e) {
+            Log::info($e->getMessage());
+            return response()->json(['success' => false]);
+        }
+    }
+
+
 }

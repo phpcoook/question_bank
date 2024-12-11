@@ -157,4 +157,5 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/pricing/{id}', [PricingController::class, 'destroy'])->name('pricing.destroy');
     Route::get('pricing/data', [PricingController::class, 'getPricingData'])->name('pricing.data');
 
+    Route::get('/close-quiz/{id}', [QuizController::class, 'closeQuiz'])->name('close-quiz');
 });
