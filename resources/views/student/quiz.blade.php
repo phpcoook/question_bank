@@ -731,7 +731,7 @@
         // Reverse the order of images
         var reversedImages = [...questionData.images];
         $.each(reversedImages, function (imgIndex, image) {
-            imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
+            imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" style="width:100%" class="popthumb"></div>';
         });
         var questionIndex = document.getElementById('current_question_index').value;
         imagesHtml += '</div>';
@@ -1114,7 +1114,7 @@
                 let imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
                 var baseUrl = '{{url('/')}}';
                 $.each(questionData.images, function (imgIndex, image) {
-                    imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" class="popthumb"></div>';
+                    imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" style="width:100%" class="popthumb"></div>';
                 });
                 imagesHtml += '</div>';
                 document.getElementById('images').innerHTML = imagesHtml;
