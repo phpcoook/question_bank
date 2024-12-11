@@ -29,7 +29,6 @@
             border-radius: 10px;
             margin-bottom: 10px;
             height: 180px;
-            object-fit: cover;
         }
         .question-list-box h4 {
             font-size: 26px;
