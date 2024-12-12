@@ -302,12 +302,12 @@ class PaymentController extends Controller
 
         // Save payment history
         $paymentHistory = new \App\Models\PaymentHistory();
-        $localSubscription->user_id = $user_id;
-        $localSubscription->stripe_subscription_id = $subscriptionId;
-        $localSubscription->payment_status = '1';
-        $localSubscription->amount = $amount / 100;
-        $localSubscription->start_date = date('Y-m-d H:i:s', $current_period_start);
-        $localSubscription->end_date = date('Y-m-d H:i:s', $current_period_end);
+        $paymentHistory->user_id = $user_id;
+        $paymentHistory->stripe_subscription_id = $subscriptionId;
+        $paymentHistory->payment_status = '1';
+        $paymentHistory->amount = $amount / 100;
+        $paymentHistory->start_date = date('Y-m-d H:i:s', $current_period_start);
+        $paymentHistory->end_date = date('Y-m-d H:i:s', $current_period_end);
         $paymentHistory->save();
     }
 

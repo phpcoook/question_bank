@@ -11,9 +11,11 @@
                     <div class="col-sm-12 col-md-4 form-group">
                         <select id="user" class="text-left form-control select2">
                             <option value="">Filter By User</option>
+                            @if(!empty($users->user))
                             @foreach($users as $user)
                                 <option value="{{$user->user->id}}">{{$user->user->email}}</option>
                             @endforeach
+                            @endif
                         </select>
                     </div>
                     <div class="col-sm-12 col-md-4 text-right">
