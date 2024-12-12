@@ -37,11 +37,7 @@
                       enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
-                        @if(Auth::user()->role == 'student')
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ route('close-quiz', Auth::user()->id) }}" class="btn btn-danger" style="color: #ffffff">Reset Quiz</a>
-                        </div>
-                        @endif
+
                         <div class="form-group">
                             <label class="form-label" for="first_name">First Name</label>
                             <div class="controls">
