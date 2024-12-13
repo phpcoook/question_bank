@@ -564,7 +564,7 @@
                     </ul>
                 </div>
 
-                <div class="imgbox-bottom-btns mb-5 mt-2 {{ !$validity ? 'd-none' : '' }}" id="imgbox-bottom-btns">
+                <div class="imgbox-bottom-btns mb-5 mt-2 {{ empty($randomCombination) ? 'd-none' : '' }}" id="imgbox-bottom-btns">
                     <div class="question-answer">
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
