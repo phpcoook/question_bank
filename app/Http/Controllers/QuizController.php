@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\QuizTime;
 use App\Models\Reported;
 use App\Models\Setting;
 use App\Models\Subscription;
@@ -28,16 +29,25 @@ class QuizController extends Controller
                 $currentDates = Carbon::now();
                 $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
                 $startDate = $startOfWeek->toDateTimeString();
-                $totalMinutes = Quiz::where('user_id', Auth::user()->id)
-                    ->whereBetween('quiz.created_at', [$startDate, $endDate])
-                    ->join('question', 'question.id', 'quiz.question_id')
-                    ->sum('question.time');
 
-                if ($totalMinutes >= $time->no_of_questions) {
-                    $validity = false;
-                    $randomCombination = [];
-                    $quiz_id = date('Ymdhis') . rand(0, 1000);
-                    return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+                $userQuizTime = QuizTime::where('user_id', Auth()->user()->id)
+                    ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                    ->first();
+
+                if ($userQuizTime) {
+                    $userQuizTime->time += $request->time;
+                    $userQuizTime->save();
+                    if ($userQuizTime->time >= $time->no_of_questions) {
+                        $validity = false;
+                        $randomCombination = [];
+                        $quiz_id = date('Ymdhis') . rand(0, 1000);
+                        return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+                    }
+                } else {
+                    $quizTime = new QuizTime();
+                    $quizTime->user_id = Auth()->user()->id;
+                    $quizTime->time = $request->time;
+                    $quizTime->save();
                 }
             }
             $target = $request->time ?? 30;

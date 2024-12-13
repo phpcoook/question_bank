@@ -569,7 +569,6 @@
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
                         @endif
-                        @if(Auth::user()->subscription_status)
                             <div id="accordion">
                                 <div class="card card-success solution-question">
                                     <div class="card-header bg-success">
@@ -589,8 +588,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif
-                        @if(!empty($question['answer_image']))
+                        @if(!empty($question['answer_image']) && Auth::user()->subscription_status)
                             <div id="accordions">
                                 <div class="card card-success mb-0">
                                     <div class="card-header bg-success">
