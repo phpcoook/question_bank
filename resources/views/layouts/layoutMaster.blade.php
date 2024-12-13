@@ -60,8 +60,7 @@
             z-index: 9999;
         }
         .popoverlay img {
-            height: 40vw;
-
+            max-width: 99%;
         }
         .popclose {
             position: absolute;

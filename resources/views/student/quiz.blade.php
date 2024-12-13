@@ -762,6 +762,7 @@
         }
 
         // Reverse the answer images
+        @if(!empty($question['answer_image']) && Auth::user()->subscription_status)
         if (questionData.answerImages.length > 0) {
             var answerImagesHtml = '<div class="row mb-4">';
             var reversedAnswerImages = [...questionData.answerImages];
@@ -771,6 +772,7 @@
             answerImagesHtml += '</div>';
             document.getElementById('answer_images').innerHTML = answerImagesHtml;
         }
+        @endif
 
         startTimer(questionData.time); // Start the timer for the current question
     }
