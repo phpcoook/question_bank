@@ -94,7 +94,7 @@ class StudentController extends Controller
                 })
                 ->addColumn('actions', function ($student) {
                     $editButton = '<a href="' . route('student.edit', $student->id) . '" class="btn btn-primary btn-sm example-edit-student" data-id="' . $student->id . '">Edit</a>';
-                    $deleteButton = '<button class="btn btn-danger btn-sm example-delete-student" data-id="' . $student->id . '">Delete</button>';
+                    $deleteButton = '<button class="btn btn-danger btn-sm delete-student" data-id="' . $student->id . '">Delete</button>';
                     $resetButton = '<a href="' . route('close-quiz', $student->id) . '" class="btn btn-warning btn-sm">Reset Quiz</a>';
                     return $editButton . ' ' . $deleteButton . ' ' . $resetButton;
                 })

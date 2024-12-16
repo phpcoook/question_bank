@@ -9,7 +9,7 @@
                         <h1 class="m-0 text-dark">Student Dashboard</h1>
                     </div>
                     <div class="col-sm-6">
-                        @if(!empty($subscription || Auth::user()->subscription_status))
+                        @if(Auth::user()->subscription_status)
                             <div class="d-flex justify-content-end">
                                 <a href="{{ route('close-quiz', Auth::user()->id) }}"  onclick="return confirm('Are you sure. All Previous Quiz data will be deleted!')" class="btn btn-danger" style="color: #ffffff">Reset Quiz</a>
                             </div>
@@ -41,8 +41,7 @@
         @endif
 
         <section class="content m-2 ">
-
-            <div class="card card-primary {{Auth::user()->subscription_status ? 'd-none' : ''}}">
+            <div class="card card-primary {{!empty($subscription) ? 'd-none' : ''}}">
                 <div class="row m-3">
                     <div class="col-md-12">
                         <h4>Subscription Plan</h4>
