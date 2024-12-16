@@ -49,8 +49,12 @@
                     @csrf
                     <div class="card-body">
                         @if(empty(auth()->user()->subscription_status))
-                        <div><b>Note: </b>{{ ($time->no_of_questions - $userQuizTime->time) > 0? 'you have '.($time->no_of_questions - $userQuizTime->time).' minutes left!' : 'This weeks '.$time->no_of_questions.'-minute quiz has concluded! Get ready to start a new quiz next week!'}}</div>
-                        <br>
+                            @if(!empty($userQuizTime))
+                                <div><b>Note: </b>{{ ($time->no_of_questions - $userQuizTime->time) > 0? 'you have '.($time->no_of_questions - $userQuizTime->time).' minutes left!' : 'This weeks '.$time->no_of_questions.'-minute quiz has concluded! Get ready to start a new quiz next week!'}}</div>
+                            @else
+                                <div><b>Note: </b>you have {{$time->no_of_questions}} minutes left for this week!' </div>
+                            @endif
+                            <br>
                         @endif
                         <div class="form-group">
                             <label for="sub_topics">Topics</label>

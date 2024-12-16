@@ -505,19 +505,19 @@
                             <div class="d-flex justify-content-center quiz-info-total">
                                 <div class="correct-total-box align-items-center">
                                     <div class="correct-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                            class="font-weight-bold" id="correct-total-count">0</h1></div>
+                                                class="font-weight-bold" id="correct-total-count">0</h1></div>
                                     <div
-                                        class="custom-btn-size d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
-                                        style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
+                                            class="custom-btn-size d-flex btn-success rounded-sm justify-content-center w-25 p-1  mb-2 px-5 info-button"
+                                            style="margin-right: 0; background:#C8E7A7 !important;  width: fit-content; color: #28a745 !important;">
                                         Correct
                                     </div>
                                 </div>
                                 <div class="custom-btn-size wrong-total-box align-items-center">
                                     <div class="wrong-total d-flex mb-3 justify-content-center align-items-center"><h1
-                                            class="font-weight-bold" id="wrong-total-count">0</h1></div>
+                                                class="font-weight-bold" id="wrong-total-count">0</h1></div>
                                     <div
-                                        class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
-                                        style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
+                                            class="d-flex align-items-center w-25 justify-content-center btn-danger rounded-sm p-1 mb-2 px-5 info-button"
+                                            style="margin-left: 0; background-color: #F08D8D !important; width: fit-content; color: #C10505;">
                                         Wrong
                                     </div>
                                 </div>
@@ -539,7 +539,7 @@
                         @if($validity)
                             <h3 class="m-5">There are no further questions available on this topic.</h3>
                         @else
-                            <h3 class="m-5">This week's {{$time->no_of_questions}}-minute quiz has concluded! Get ready to start a new quiz next
+                            <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
                                 week!</h3>
                             <p>For unlimited quizzes, consider purchasing a paid plan!</p>
 
@@ -551,7 +551,7 @@
                 <div class="question-progress-view" id="question-progress-view">
                     <ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview"
                         role="menu" data-accordion="false">
-                    @foreach ($randomCombination as $index=>$item)
+                        @foreach ($randomCombination as $index=>$item)
                             <li onclick="loadSkippedQuestion([{{$index}}])" class="nav-item">
                                 <span class="progress-circle id=" item-{{$item['id']}}">
                                 <p>{{ $loop->index + 1 }}</p>
@@ -569,25 +569,25 @@
                         @if(!empty($randomCombination))
                             <div id="question-image" class="mb-4"></div>
                         @endif
-                            <div id="accordion">
-                                <div class="card card-success solution-question">
-                                    <div class="card-header bg-success">
-                                        <h4 class="card-title w-100">
-                                            <a class="d-block w-100 text-white collapsed px-4"
-                                               style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
-                                               data-toggle="collapse" href="#collapseThreeSolution"
-                                               aria-expanded="false">
-                                                See Solution
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
-                                        <div class="card-body images" id="solution_images">
-                                            No Solution Available for this Question
-                                        </div>
+                        <div id="accordion">
+                            <div class="card card-success solution-question">
+                                <div class="card-header bg-success">
+                                    <h4 class="card-title w-100">
+                                        <a class="d-block w-100 text-white collapsed px-4"
+                                           style="cursor: pointer;font-weight: 700;width: fit-content !important;padding: 0px 17px !important; margin: 0 auto"
+                                           data-toggle="collapse" href="#collapseThreeSolution"
+                                           aria-expanded="false">
+                                            See Solution
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseThreeSolution" class="collapse" data-parent="#accordion" style="">
+                                    <div class="card-body images" id="solution_images">
+                                        No Solution Available for this Question
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         @if(!empty($question['answer_image']) && Auth::user()->subscription_status)
                             <div id="accordions">
                                 <div class="card card-success mb-0">
@@ -714,28 +714,28 @@
             }
         }
 
-    function loadQuestion() {
-        const questionData = questions[currentQuestionIndex];
-        $('#question-code').html(questionData.code);
-        $('#current_question_index').val(currentQuestionIndex);
+        function loadQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            $('#question-code').html(questionData.code);
+            $('#current_question_index').val(currentQuestionIndex);
 
-        let difficulty = questionData.difficulty;
-        let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-        $('#question-difficulty').html(modifiedDifficulty);
+            let difficulty = questionData.difficulty;
+            let modifiedDifficulty = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            $('#question-difficulty').html(modifiedDifficulty);
 
-        var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
-        var baseUrl = '{{url('/')}}';
+            var imagesHtml = '<div class="row col-md-12 mb-4 justify-content-around">';
+            var baseUrl = '{{url('/')}}';
 
-        // Reverse the order of images
-        var reversedImages = [...questionData.images];
-        $.each(reversedImages, function (imgIndex, image) {
-            imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" style="width:100%" class="popthumb"></div>';
-        });
-        var questionIndex = document.getElementById('current_question_index').value;
-        imagesHtml += '</div>';
-        document.getElementById('images').innerHTML = imagesHtml;
+            // Reverse the order of images
+            var reversedImages = [...questionData.images];
+            $.each(reversedImages, function (imgIndex, image) {
+                imagesHtml += '<div class="col-md-12 mt-5"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="auto" height="300" style="width:100%" class="popthumb"></div>';
+            });
+            var questionIndex = document.getElementById('current_question_index').value;
+            imagesHtml += '</div>';
+            document.getElementById('images').innerHTML = imagesHtml;
 
-        document.getElementById('buttons').innerHTML = `
+            document.getElementById('buttons').innerHTML = `
         <div class="d-flex align-items-center justify-content-between gap-4 mx-4 flex-column">
             <div onclick="handleAnswer('correct', '${questionIndex}')" class="custom-btn-size d-flex btn-success rounded-sm justify-content-center p-2 mb-2 px-5" style="cursor: pointer;margin-right: 0; background:#C8E7A7 !important; font-weight: 600; color: #28a745 !important;">
                 Correct
@@ -745,37 +745,37 @@
             </div>
         </div>
     `;
-        document.getElementById('question-image').innerHTML = `
+            document.getElementById('question-image').innerHTML = `
         <div onclick="handleAnswer('report','${questionIndex}')" class="d-flex align-items-center justify-content-center btn-danger rounded-sm p-2 mb-2 px-5" style="cursor: pointer; color: #C10505; font-weight: 700; background-color: #F08D8D !important;">
             <i class="fa-solid fa fa-flag" style="color: #f70808; margin-right: 10px"></i>Report
         </div>`;
 
-        // Reverse the solution images
-        if (questionData.solutionImages.length > 0) {
-            var solutionImagesHtml = '<div class="row">';
-            var reversedSolutionImages = [...questionData.solutionImages];
-            $.each(reversedSolutionImages, function (imgIndex, image) {
-                solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
-            });
-            solutionImagesHtml += '</div>';
-            document.getElementById('solution_images').innerHTML = solutionImagesHtml;
-        }
+            // Reverse the solution images
+            if (questionData.solutionImages.length > 0) {
+                var solutionImagesHtml = '<div class="row">';
+                var reversedSolutionImages = [...questionData.solutionImages];
+                $.each(reversedSolutionImages, function (imgIndex, image) {
+                    solutionImagesHtml += '<div class="col-md-6 mt-3"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                });
+                solutionImagesHtml += '</div>';
+                document.getElementById('solution_images').innerHTML = solutionImagesHtml;
+            }
 
-        // Reverse the answer images
-        @if(!empty($question['answer_image']) && Auth::user()->subscription_status)
-        if (questionData.answerImages.length > 0) {
-            var answerImagesHtml = '<div class="row mb-4">';
-            var reversedAnswerImages = [...questionData.answerImages];
-            $.each(reversedAnswerImages, function (imgIndex, image) {
-                answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
-            });
-            answerImagesHtml += '</div>';
-            document.getElementById('answer_images').innerHTML = answerImagesHtml;
-        }
-        @endif
+            // Reverse the answer images
+            @if(!empty($question['answer_image']) && Auth::user()->subscription_status)
+            if (questionData.answerImages.length > 0) {
+                var answerImagesHtml = '<div class="row mb-4">';
+                var reversedAnswerImages = [...questionData.answerImages];
+                $.each(reversedAnswerImages, function (imgIndex, image) {
+                    answerImagesHtml += '<div class="col-md-12 mt-4"><img src="' + baseUrl + '/storage/images/' + image.image_name + '" alt="Image ' + imgIndex + '" width="200" height="150" class="popthumb"></div>';
+                });
+                answerImagesHtml += '</div>';
+                document.getElementById('answer_images').innerHTML = answerImagesHtml;
+            }
+            @endif
 
-        startTimer(questionData.time); // Start the timer for the current question
-    }
+            startTimer(questionData.time); // Start the timer for the current question
+        }
 
 
         function sendReport() {
@@ -930,7 +930,7 @@
                         toastr.error('Something went wrong! Your answer was not saved.');
                     }
                 }).then((data) => {
-                    getpreviousAns(questions,'{{$quiz_id}}');
+                getpreviousAns(questions,'{{$quiz_id}}');
             })
                 .catch((error) => {
                     console.error('Error:', error);
