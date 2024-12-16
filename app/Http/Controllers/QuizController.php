@@ -37,7 +37,7 @@ class QuizController extends Controller
                 if ($userQuizTime) {
                     $userQuizTime->time += $request->time;
                     $userQuizTime->save();
-                    if ($userQuizTime->time >= $time->no_of_questions) {
+                    if ($userQuizTime->time > $time->no_of_questions) {
                         $validity = false;
                         $randomCombination = [];
                         $quiz_id = date('Ymdhis') . rand(0, 1000);
@@ -50,7 +50,7 @@ class QuizController extends Controller
                     $quizTime->save();
                 }
             }
-            $target = $request->time ?? 30;
+            $target = $request->time ?? $time->no_of_questions;
 
             $stdValues = is_string(Auth::user()->std) ? json_decode(Auth::user()->std, true) : Auth::user()->std;
             $subTopics = is_array($request->sub_topics) ? $request->sub_topics : json_decode($request->sub_topics, true);
@@ -64,9 +64,9 @@ class QuizController extends Controller
 
                 $questionsQuery = Question::with('quizImage')
                     ->when(CustomService::checkSubscription(), function ($query) {
-                        return $query->with('solutionImage');
+                        return $query->with('answerImage');
                     })
-                    ->with('answerImage')
+                    ->with('solutionImage')
                     ->select('id', 'time', 'code', 'difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
@@ -82,16 +82,16 @@ class QuizController extends Controller
                     });
 
                 if (CustomService::checkSubscription()) {
-                    $questionsQuery->with('solutionImage');
+                    $questionsQuery->with('answerImage');
                 }
 
                 $questions = $questionsQuery->get();  // Convert the query into a collection
             } else {
                 $questionsQuery = Question::with('quizImage')
                     ->when(CustomService::checkSubscription(), function ($query) {
-                        return $query->with('solutionImage');
+                        return $query->with('answerImage');
                     })
-                    ->with('answerImage')
+                    ->with('solutionImage')
                     ->select('id', 'time', 'code', 'difficulty')
                     ->where('reported', '0')
                     ->where(function ($query) use ($stdValues) {
@@ -106,7 +106,7 @@ class QuizController extends Controller
                     });
 
                 if (CustomService::checkSubscription()) {
-                    $questionsQuery->with('solutionImage');
+                    $questionsQuery->with('answerImage');
                 }
 
                 $questions = $questionsQuery->get();  // Convert the query into a collection
@@ -116,13 +116,13 @@ class QuizController extends Controller
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
         }
     }
 
@@ -183,8 +183,12 @@ class QuizController extends Controller
     }
 
 
-    public function startQuizq($target = 30)
+    public function startQuizq($target = 0)
     {
+        if(!$target){
+            $time = Setting::first();
+            $target = $time->no_of_questions;
+        }
         $attended = Quiz::where('user_id', Auth::user()->id)->where('answer', 'correct')->get();
         if ($attended->count() > 0) {
             $notIn = $attended->pluck('question_id');
@@ -271,7 +275,18 @@ class QuizController extends Controller
             }
         }
 
-        return view('student.addtime', compact('time', 'allTopics'));
+        $currentDate = Carbon::now();
+        $endOfWeek = $currentDate->endOfWeek();
+        $endDate = $endOfWeek->toDateTimeString();
+        $currentDates = Carbon::now();
+        $startOfWeek = $currentDates->startOfWeek(Carbon::SUNDAY);
+        $startDate = $startOfWeek->toDateTimeString();
+
+        $userQuizTime = QuizTime::where('user_id', Auth()->user()->id)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->first();
+
+        return view('student.addtime', compact('time', 'allTopics','userQuizTime'));
     }
 
     public function reportQuestion(Request $request)
