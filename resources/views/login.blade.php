@@ -118,7 +118,7 @@
                     </div>
                 </div>
                 <p class="mb-3 text-right">
-                    <a href="{{url('forgot-password')}}">I forgot my password</a>
+                    <a href="#" onclick="alert('Please contact your tutor to reset the password')">I forgot my password</a>
                 </p>
 
                 <div class="row d-flex justify-content-center">

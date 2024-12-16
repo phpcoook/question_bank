@@ -163,6 +163,9 @@
         $(document).ready(function () {
             $("#student-create").validate({
                 rules: {
+                    std: {
+                        required: true
+                    },
                     first_name: {
                         required: true,
                         minlength: 2
@@ -177,23 +180,18 @@
                     },
                     password: {
                         required: true,
-                        minlength: 6
-                    },
-                    grade: {
-                        required: true,
-                        digits: true,
-                        minlength: 1,
-                        maxlength: 2
+                        minlength: 8
                     },
                     date_of_birth: {
                         required: true,
                         date: true
                     },
-                    std: {
-                        required: true
-                    }
+
                 },
                 messages: {
+                    std: {
+                        required: "Please select the Year"
+                    },
                     first_name: {
                         required: "Please enter the first name",
                         minlength: "First name must be at least 2 characters long"
@@ -208,21 +206,12 @@
                     },
                     password: {
                         required: "Please provide a password",
-                        minlength: "Password must be at least 6 characters long"
-                    },
-                    grade: {
-                        required: "Please enter the grad",
-                        digits: "Please enter a valid number",
-                        minlength: "Grad must be at least 1 digit long",
-                        maxlength: "Grad must not exceed 2 digits"
+                        minlength: "Password must be at least 8 characters long"
                     },
                     date_of_birth: {
                         required: "Please select the date of birth",
                         date: "Please enter a valid date"
                     },
-                    std: {
-                        required: "Please select the Year"
-                    }
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {

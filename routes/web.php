@@ -146,6 +146,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['tutor'])->group(function () {
         Route::get('/tutor/dashboard', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
         Route::get('/question/details/{id}', [TutorController::class, 'QuestionDetails'])->name('question.details');
+
+        Route::get('/tutor/update/profile', [UserController::class, 'profile']);
+        Route::post('/tutor/update/profile', [UserController::class, 'updateProfile']);
+        Route::post('/tutor/update/password', [UserController::class, 'updatePassword']);
     });
 
     // question

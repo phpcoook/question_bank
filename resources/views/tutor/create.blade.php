@@ -111,7 +111,7 @@
                     },
                     password: {
                         required: true,
-                        minlength: 6
+                        minlength: 8
                     },
                     date_of_birth: {
                         required: true,
@@ -133,7 +133,7 @@
                     },
                     password: {
                         required: "Please provide a password",
-                        minlength: "Password must be at least 6 characters long"
+                        minlength: "Password must be at least 8 characters long"
                     },
                     date_of_birth: {
                         required: "Please select the date of birth",

@@ -85,54 +85,56 @@
                 </form>
             </div>
         </section>
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1 class="m-0 text-dark">Update Password</h1>
+        @if(Auth::user()->role == 'student' || Auth::user()->role == 'tutor')
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0 text-dark">Update Password</h1>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <section class="content m-2 mb-5">
-            <div class="card card-primary">
-                <form id="student-create" action="{{url('student/update/password')}}" method="POST"
-                      enctype="multipart/form-data">
-                    @csrf
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label class="form-label" for="old_password">Old Password</label>
-                            <div class="controls">
-                                <input type="password" name="old_password" class="form-control">
-                                @error('old_password')
-                                <div class="text-danger">{{ $message }}</div>@enderror
+            <section class="content m-2 mb-5">
+                <div class="card card-primary">
+                    <form id="student-update-password" action="{{url(Auth::user()->role.'/update/password')}}" method="POST"
+                          enctype="multipart/form-data">
+                        @csrf
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label" for="old_password">Old Password</label>
+                                <div class="controls">
+                                    <input type="password" name="old_password" class="form-control">
+                                    @error('old_password')
+                                    <div class="text-danger">{{ $message }}</div>@enderror
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="new_password">New Password</label>
-                            <div class="controls">
-                                <input type="password" name="new_password" class="form-control">
-                                @error('new_password')
-                                <div class="text-danger">{{ $message }}</div>@enderror
+                            <div class="form-group">
+                                <label class="form-label" for="new_password">New Password</label>
+                                <div class="controls">
+                                    <input type="password" name="new_password" class="form-control">
+                                    @error('new_password')
+                                    <div class="text-danger">{{ $message }}</div>@enderror
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="confirm_password">Confirm password</label>
-                            <div class="controls">
-                                <input type="password" name="confirm_password" class="form-control">
-                                @error('confirm_password')
-                                <div class="text-danger">{{ $message }}</div>@enderror
+                            <div class="form-group">
+                                <label class="form-label" for="confirm_password">Confirm password</label>
+                                <div class="controls">
+                                    <input type="password" name="confirm_password" class="form-control">
+                                    @error('confirm_password')
+                                    <div class="text-danger">{{ $message }}</div>@enderror
+                                </div>
                             </div>
+
                         </div>
 
-                    </div>
-
-                    <div class="card-footer d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        @endif
         @if(!empty($subscription))
             <div class="content-header">
                 <div class="container-fluid">
@@ -205,10 +207,6 @@
                         required: true,
                         email: true
                     },
-                    password: {
-                        required: true,
-                        minlength: 6
-                    },
                     grade: {
                         required: true,
                         digits: true,
@@ -236,10 +234,6 @@
                         required: "Please enter an email address",
                         email: "Please enter a valid email address"
                     },
-                    password: {
-                        required: "Please provide a password",
-                        minlength: "Password must be at least 6 characters long"
-                    },
                     grade: {
                         required: "Please enter the grad",
                         digits: "Please enter a valid number",
@@ -253,6 +247,41 @@
                     std: {
                         required: "Please select the Year"
                     }
+                },
+                errorElement: 'div',
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            //update password
+            $("#student-update-password").validate({
+                rules: {
+                    old_password: {
+                        required: true,
+                        minlength: 8
+                    },
+                    new_password: {
+                        required: true,
+                        minlength: 8
+                    },
+                },
+                messages: {
+                    old_password: {
+                        required: "Please provide a password",
+                        minlength: "Password must be at least 8 characters long"
+                    },
+                    new_password: {
+                        required: "Please provide a new password",
+                        minlength: "Password must be at least 8 characters long"
+                    },
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {

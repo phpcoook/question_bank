@@ -33,7 +33,7 @@
 
         <section class="content m-2">
             <div class="card card-primary">
-                <form id="tutor-create" action="{{ route('tutor.update', $data->id) }}" method="POST"
+                <form id="tutor-edit" action="{{ route('tutor.update', $data->id) }}" method="POST"
                       enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -100,7 +100,7 @@
 @section('page-script')
     <script>
         $(document).ready(function () {
-            $("#tutor-create").validate({
+            $("#tutor-edit").validate({
                 rules: {
                     first_name: {
                         required: true,
@@ -113,6 +113,9 @@
                     email: {
                         required: true,
                         email: true
+                    },
+                    password: {
+                        minlength: 8
                     },
                     date_of_birth: {
                         required: true,
@@ -131,6 +134,9 @@
                     email: {
                         required: "Please enter an email address",
                         email: "Please enter a valid email address"
+                    },
+                    password: {
+                        minlength: "Password must be at least 8 characters long"
                     },
                     date_of_birth: {
                         required: "Please select the date of birth",

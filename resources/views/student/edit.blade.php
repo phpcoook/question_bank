@@ -43,7 +43,7 @@
 
         <section class="content m-2">
             <div class="card card-primary">
-                <form id="student-create" action="{{ route('student.update', $data->id) }}" method="POST"
+                <form id="student-edit" action="{{ route('student.update', $data->id) }}" method="POST"
                       enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -138,8 +138,11 @@
     <script src="{{url('assets/plugins/select2/js/select2.full.js')}}"></script>
     <script>
         $(document).ready(function () {
-            $("#student-create").validate({
+            $("#student-edit").validate({
                 rules: {
+                    std: {
+                        required: true
+                    },
                     first_name: {
                         required: true,
                         minlength: 2
@@ -152,21 +155,18 @@
                         required: true,
                         email: true
                     },
-                    grade: {
-                        required: true,
-                        digits: true,
-                        minlength: 1,
-                        maxlength: 2
+                    password: {
+                        minlength: 8
                     },
                     date_of_birth: {
                         required: true,
                         date: true
                     },
-                    std: {
-                        required: true
-                    }
                 },
                 messages: {
+                    std: {
+                        required: "Please select the Year"
+                    },
                     first_name: {
                         required: "Please enter the first name",
                         minlength: "First name must be at least 2 characters long"
@@ -179,19 +179,13 @@
                         required: "Please enter an email address",
                         email: "Please enter a valid email address"
                     },
-                    grade: {
-                        required: "Please enter the grad",
-                        digits: "Please enter a valid number",
-                        minlength: "Grad must be at least 1 digit long",
-                        maxlength: "Grad must not exceed 2 digits"
+                    password: {
+                        minlength: "Password must be at least 8 characters long"
                     },
                     date_of_birth: {
                         required: "Please select the date of birth",
                         date: "Please enter a valid date"
                     },
-                    std: {
-                        required: "Please select the Year"
-                    }
                 },
                 errorElement: 'div',
                 errorPlacement: function (error, element) {
