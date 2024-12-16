@@ -116,13 +116,13 @@ class QuizController extends Controller
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
         }
     }
 
@@ -364,8 +364,8 @@ class QuizController extends Controller
     public function closeQuiz($id)
     {
         try {
-             Quiz::where('user_id', $id)->delete();
-             Reported::where('user_id', $id)->delete();
+            Quiz::where('user_id', $id)->delete();
+            Reported::where('user_id', $id)->delete();
 
             return redirect()->back()->with('success', 'All Previous Quiz data reset successfully');
         } catch (\Exception $e) {
