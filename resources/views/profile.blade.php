@@ -85,7 +85,6 @@
                 </form>
             </div>
         </section>
-        @if(Auth::user()->role == 'student' || Auth::user()->role == 'tutor')
             <div class="content-header">
                 <div class="container-fluid">
                     <div class="row mb-2">
@@ -134,7 +133,6 @@
                     </form>
                 </div>
             </section>
-        @endif
         @if(!empty($subscription))
             <div class="content-header">
                 <div class="container-fluid">
