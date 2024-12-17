@@ -15,7 +15,7 @@
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                Hello {{auth()->user()->first_name}},  <i class="fas fa-user-shield nav-icon border-1 border-solid" style="color:#007bff; border: 2px solid;border-radius: 55%;padding: 6px;"></i>
+                Hello {{auth()->user()->first_name}}  <i class="fas fa-user-shield nav-icon border-1 border-solid" style="color:#007bff; border: 2px solid;border-radius: 55%;padding: 6px;"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <span class="dropdown-item dropdown-header">Profile Setting</span>
