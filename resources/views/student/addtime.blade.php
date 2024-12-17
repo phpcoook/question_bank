@@ -50,9 +50,9 @@
                     <div class="card-body">
                         @if(empty(auth()->user()->subscription_status))
                             @if(!empty($userQuizTime))
-                                <div><b>Note: </b>{{ ($time->no_of_questions - $userQuizTime->time) > 0? 'you have '.($time->no_of_questions - $userQuizTime->time).' minutes left!' : 'This weeks '.$time->no_of_questions.'-minute quiz has concluded! Get ready to start a new quiz next week!'}}</div>
+                                <div><b>Remaining Time: </b> {{ ($time->no_of_questions - $userQuizTime->time) > 0? ($time->no_of_questions - $userQuizTime->time) : 0}} minutes &nbsp;&nbsp;&nbsp;&nbsp;<b>Reset Date: </b> {{$resetDate}}</div>
                             @else
-                                <div><b>Note: </b>you have {{$time->no_of_questions}} minutes left for this week!' </div>
+                                <div><b>Remaining Time: </b> {{$time->no_of_questions}} minutes &nbsp;&nbsp;&nbsp;&nbsp; <b>Reset Date: </b> {{$resetDate}}</div>
                             @endif
                             <br>
                         @endif
@@ -61,7 +61,7 @@
                             <div class="mx-2">
                                 @foreach($allTopics as $year => $topics)
                                     <div class="form-check">
-                                        <p class="m-1"><b>{{ str_replace('_', ' ', $year) }}</b></p>
+                                        <small class="badge badge-primary">Year {{ str_replace('_', ' ', $year) }}</small>
                                         <div class="mx-5">
                                             @foreach($topics as $topic)
                                                 <div>

@@ -276,6 +276,7 @@ class QuizController extends Controller
         }
 
         $currentDate = Carbon::now();
+        $resetDate = $currentDate->startOfWeek()->format('d-m-Y');
         $endOfWeek = $currentDate->endOfWeek();
         $endDate = $endOfWeek->toDateTimeString();
         $currentDates = Carbon::now();
@@ -286,7 +287,7 @@ class QuizController extends Controller
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->first();
 
-        return view('student.addtime', compact('time', 'allTopics','userQuizTime'));
+        return view('student.addtime', compact('time', 'allTopics','userQuizTime' ,'resetDate'));
     }
 
     public function reportQuestion(Request $request)
