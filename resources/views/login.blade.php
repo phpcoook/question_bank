@@ -55,8 +55,10 @@
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
-    <div class="login-logo">
-        <span>Login</span>
+    <div class="text-center">
+        <img src="{{ url('assets/plugins/dist/img/logo-black.png') }}" alt="AdminLTE Logo"
+             class="w-50"
+             style="opacity: .8">
     </div>
     <!-- /.login-logo -->
     <div class="card">

@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="card-body pricing">
                                     <h1 class="card-title pricing-card-title w-100 text-bold">
-                                        ${{ ucfirst($setting->subscription_charge) }}</h1>
+                                        ${{ ucfirst($setting->subscription_charge) }} Per Month</h1>
                                     <br>
                                     <ul>
                                         <li>
@@ -129,7 +129,7 @@
                                         $displayedStandards[] = $topicItem['std'];
                                     @endphp
                                     <h4><small
-                                            class="badge badge-primary">{{ str_replace('_', ' ', $topicItem['std']) }}</small>
+                                            class="badge badge-primary">{{ ucwords(str_replace(['_', 'u'], [' ', 'U'], $topicItem['std'])) }}</small>
                                     </h4>
                                 @endif
 
@@ -299,7 +299,6 @@
             transform: rotate(-45deg);
             top: 50%;
         }
-
     </style>
 
     @if(auth()->check() && auth()->user()->role == 'student')

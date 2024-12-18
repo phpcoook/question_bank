@@ -61,8 +61,9 @@
                             <div class="mx-2">
                                 @foreach($allTopics as $year => $topics)
                                     <div class="form-check">
-                                        <small class="badge badge-primary">Year {{ str_replace('_', ' ', $year) }}</small>
-                                        <div class="mx-5">
+                                        <h4 class="m-0">
+                                        <small class="badge badge-primary">Year {{ ucwords(str_replace(['_', 'u'], [' ', 'U'], $year)) }}</small></h4>
+                                        <div class="mx-5 mb-2">
                                             @foreach($topics as $topic)
                                                 <div>
                                                     <input type="checkbox" name="topics[]" class="form-check-input"

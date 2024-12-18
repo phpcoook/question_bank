@@ -539,7 +539,7 @@
                         @if($validity)
                             <h3 class="m-5">There are no further questions available on this topic.</h3>
                         @else
-                            <h3 class="m-5">This week's 30-minute quiz has concluded! Get ready to start a new quiz next
+                            <h3 class="m-5">This week's {{$time->no_of_questions}}-minute quiz has concluded! Get ready to start a new quiz next
                                 week!</h3>
                             <p>For unlimited quizzes, consider purchasing a paid plan!</p>
 

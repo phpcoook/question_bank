@@ -20,9 +20,9 @@ class QuizController extends Controller
 
     public function startQuiz(Request $request)
     {
+        $time = Setting::first();
         try {
             if (!CustomService::checkSubscription()) {
-                $time = Setting::first();
                 $currentDate = Carbon::now();
                 $endOfWeek = $currentDate->endOfWeek();
                 $endDate = $endOfWeek->toDateTimeString();
@@ -41,7 +41,7 @@ class QuizController extends Controller
                         $validity = false;
                         $randomCombination = [];
                         $quiz_id = date('Ymdhis') . rand(0, 1000);
-                        return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+                        return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
                     }
                 } else {
                     $quizTime = new QuizTime();
@@ -116,13 +116,13 @@ class QuizController extends Controller
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
         }
     }
 
