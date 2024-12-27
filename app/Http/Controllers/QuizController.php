@@ -41,7 +41,7 @@ class QuizController extends Controller
                         $validity = false;
                         $randomCombination = [];
                         $quiz_id = date('Ymdhis') . rand(0, 1000);
-                        return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
+                        return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id', 'time'));
                     }
                 } else {
                     $quizTime = new QuizTime();
@@ -112,18 +112,43 @@ class QuizController extends Controller
                 $questions = $questionsQuery->get();  // Convert the query into a collection
             }
 
-            $result = $this->findCombinations($questions->toArray(), $target * 60);
+            $seed = time();
+            $shuffledArray = $this->shuffleArrayWithSeed($questions->toArray(), $seed);
+            $result = $this->findCombinations($shuffledArray, $target * 60);
             $randomCombination = $result;
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id', 'time'));
         } catch (\Exception $e) {
             Log::info($e->getMessage());
             $randomCombination = [];
             $validity = true;
             $quiz_id = date('Ymdhis') . rand(0, 1000);
-            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id','time'));
+            return view('student.quiz', compact('randomCombination', 'validity', 'quiz_id', 'time'));
         }
+    }
+
+    private function seedRandom($seed)
+    {
+        return function () use ($seed) {
+            $seed = ($seed * 9301 + 49297) % 233280;
+            return $seed / 233280;
+        };
+    }
+
+    private function shuffleArrayWithSeed(array $array, $seed)
+    {
+        $random = $this->seedRandom($seed);
+
+        for ($i = count($array) - 1; $i > 0; $i--) {
+            $j = floor($random() * ($i + 1));
+            // Swap elements
+            $temp = $array[$i];
+            $array[$i] = $array[$j];
+            $array[$j] = $temp;
+        }
+
+        return $array;
     }
 
     private function findCombinations(
@@ -185,7 +210,7 @@ class QuizController extends Controller
 
     public function startQuizq($target = 0)
     {
-        if(!$target){
+        if (!$target) {
             $time = Setting::first();
             $target = $time->no_of_questions;
         }
@@ -287,7 +312,7 @@ class QuizController extends Controller
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->first();
 
-        return view('student.addtime', compact('time', 'allTopics','userQuizTime' ,'resetDate'));
+        return view('student.addtime', compact('time', 'allTopics', 'userQuizTime', 'resetDate'));
     }
 
     public function reportQuestion(Request $request)
@@ -326,24 +351,24 @@ class QuizController extends Controller
             $quizData = '';
             $html = '<ul class="nav nav-pills nav-sidebar flex-column progress-box" data-widget="treeview" role="menu" data-accordion="false">';
 
-            foreach ($request->question as $index=>$question) {
+            foreach ($request->question as $index => $question) {
                 $questionId = $question['id'];
-                $quizData = Quiz::where('user_id', Auth::user()->id)->where('question_id',$questionId)->where('quiz_id',$request->quiz_id)->first();
-                if($quizData){
+                $quizData = Quiz::where('user_id', Auth::user()->id)->where('question_id', $questionId)->where('quiz_id', $request->quiz_id)->first();
+                if ($quizData) {
                     $class = 'answer-wrong';
-                    if($quizData->answer == 'correct'){
+                    if ($quizData->answer == 'correct') {
                         $class = 'answer-correct';
                     }
-                    $html .= '<li onclick="loadSkippedQuestion(['.($index).'])" class="nav-item">
-                    <span class="progress-circle '.$class.'" id="item-' . $question['id'] . '">
+                    $html .= '<li onclick="loadSkippedQuestion([' . ($index) . '])" class="nav-item">
+                    <span class="progress-circle ' . $class . '" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
                   </li>
                   <li>
                     <span class="progress-line"></span>
                   </li>';
-                }else{
-                    $html .= '<li onclick="loadSkippedQuestion(['.($index).'])" class="nav-item">
+                } else {
+                    $html .= '<li onclick="loadSkippedQuestion([' . ($index) . '])" class="nav-item">
                     <span class="progress-circle" id="item-' . $question['id'] . '">
                         <p>' . ($index + 1) . '</p>
                     </span>
